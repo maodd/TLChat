@@ -17,7 +17,7 @@
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     
     // 初始化第三方SDK
-    [[TLSDKManager sharedInstance] launchInWindow:self.window];
+//    [[TLSDKManager sharedInstance] launchInWindow:self.window];
     
     // 初始化UI
     [[TLLaunchManager sharedInstance] launchInWindow:self.window];
