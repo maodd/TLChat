@@ -11,7 +11,7 @@
 #import "TLExpressionChosenViewController+Proxy.h"
 #import "TLExpressionSearchViewController.h"
 #import "TLSearchController.h"
-#import <MJRefresh.h>
+#import <MJRefresh/MJRefresh.h>
 
 @interface TLExpressionChosenViewController () <UISearchBarDelegate>
 

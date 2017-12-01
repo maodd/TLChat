@@ -104,21 +104,23 @@
     TLTextMessage *message = [[TLTextMessage alloc] init];
     message.text = text;
     [self sendMessage:message];
-    if ([self.partner chat_userType] == TLChatUserTypeUser) {
-        TLTextMessage *message1 = [[TLTextMessage alloc] init];
-        message1.fromUser = self.partner;
-        message1.text = text;
-        [self receivedMessage:message1];
-    }
-    else {
-        for (id<TLChatUserProtocol> user in [self.partner groupMembers]) {
-            TLTextMessage *message1 = [[TLTextMessage alloc] init];
-            message1.friendID = [user chat_userID];
-            message1.fromUser = user;
-            message1.text = text;
-            [self receivedMessage:message1];
-        }
-    }
+    
+    // TODO: remove fake auto reply code below.
+//    if ([self.partner chat_userType] == TLChatUserTypeUser) {
+//        TLTextMessage *message1 = [[TLTextMessage alloc] init];
+//        message1.fromUser = self.partner;
+//        message1.text = text;
+//        [self receivedMessage:message1];
+//    }
+//    else {
+//        for (id<TLChatUserProtocol> user in [self.partner groupMembers]) {
+//            TLTextMessage *message1 = [[TLTextMessage alloc] init];
+//            message1.friendID = [user chat_userID];
+//            message1.fromUser = user;
+//            message1.text = text;
+//            [self receivedMessage:message1];
+//        }
+//    }
 }
 
 //MARK: - 录音相关

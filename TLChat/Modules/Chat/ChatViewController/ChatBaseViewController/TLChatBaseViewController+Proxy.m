@@ -46,7 +46,7 @@
 
 - (void)receivedMessage:(TLMessage *)message
 {
-    message.userID = [TLUserHelper sharedHelper].userID;
+//    message.userID = [TLUserHelper sharedHelper].userID;
     if ([self.partner chat_userType] == TLChatUserTypeUser) {
         message.partnerType = TLPartnerTypeUser;
         message.friendID = [self.partner chat_userID];
@@ -60,7 +60,7 @@
     [self addToShowMessage:message];    // 添加到列表
     
     [[TLMessageManager sharedInstance] sendMessage:message progress:^(TLMessage * message, CGFloat pregress) {
-        
+
     } success:^(TLMessage * message) {
         NSLog(@"send success");
     } failure:^(TLMessage * message) {

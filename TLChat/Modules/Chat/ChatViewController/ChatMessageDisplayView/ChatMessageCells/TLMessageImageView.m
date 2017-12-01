@@ -46,6 +46,7 @@
     [self.contentLayer setFrame:CGRectMake(0, 0, self.width, self.height)];
 }
 
+ 
 - (void)setThumbnailPath:(NSString *)imagePath highDefinitionImageURL:(NSString *)imageURL
 {
     if (imagePath == nil) {

@@ -9,7 +9,7 @@
 #import "TLExpressionPublicViewController+Proxy.h"
 #import "TLExpressionHelper.h"
 #import "TLExpressionProxy.h"
-#import <MJRefresh.h>
+#import "MJRefresh.h"
 
 @implementation TLExpressionPublicViewController (Proxy)
 

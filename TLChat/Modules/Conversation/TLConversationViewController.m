@@ -9,7 +9,9 @@
 #import "TLConversationViewController.h"
 #import "TLConversationViewController+Delegate.h"
 #import "TLSearchController.h"
-#import <AFNetworking.h>
+#import <AFNetworking/AFNetworking.h>
+#import "TLAppDelegate.h"
+#import "TLFriendHelper.h"
 
 #import "TLMessageManager+ConversationRecord.h"
 
@@ -35,14 +37,18 @@
     [[TLMessageManager sharedInstance] setConversationDelegate:self];
    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkStatusChange:) name:AFNetworkingReachabilityDidChangeNotification object:nil];
+    
+    
+    [TLFriendHelper sharedFriendHelper]; // force a friend data load.
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKFriendsDataUpdateNotification object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
-    //TODO: 临时写法
-    [self updateConversationData];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated

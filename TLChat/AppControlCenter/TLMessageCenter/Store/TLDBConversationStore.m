@@ -12,6 +12,7 @@
 #import "TLDBManager.h"
 #import "TLConversation.h"
 #import "TLMacros.h"
+#import <Parse/Parse.h>
 
 @interface TLDBConversationStore ()
 
@@ -51,9 +52,29 @@
                         [NSNumber numberWithInteger:unreadCount],
                         @"", @"", @"", @"", @"", nil];
     BOOL ok = [self excuteSQL:sqlString withArrParameter:arrPara];
+    
+    
+    // Server data
+    PFObject * dialog = [PFObject objectWithClassName:kParseClassNameDialog];
+
+    dialog[@"type"] = @(type);
+    
+    if (type == 1) { //group
+        dialog[@"name"] = fid;
+    }else{
+        dialog[@"name"] = [self makeDialogNameForFriend:fid myId:uid];
+    }
+    
+    [dialog saveEventually];
+    
     return ok;
 }
 
+- (NSString *)makeDialogNameForFriend:(NSString *)fid myId:(NSString *)uid{
+    NSArray * ids = [@[uid, fid]  sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    
+    return [ids componentsJoinedByString:@":"];
+}
 /**
  *  更新会话状态（已读）
  */
@@ -78,12 +99,13 @@
             NSString *dateString = [retSet stringForColumn:@"date"];
             conversation.date = [NSDate dateWithTimeIntervalSince1970:dateString.doubleValue];
             conversation.unreadCount = [retSet intForColumn:@"unread_count"];
+            conversation.content = [retSet stringForColumn:@"last_message"];
             [data addObject:conversation];
         }
         [retSet close];
     }];
     
-    // 获取conv对应的msg
+    // 获取conv对应的msg // TODO: move to conversation header
     for (TLConversation *conversation in data) {
         TLMessage * message = [self.messageStore lastMessageByUserID:uid partnerID:conversation.partnerID];
         if (message) {

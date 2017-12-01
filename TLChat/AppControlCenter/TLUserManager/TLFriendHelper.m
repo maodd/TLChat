@@ -11,6 +11,8 @@
 #import "TLDBGroupStore.h"
 #import "TLGroup+CreateAvatar.h"
 #import "TLUserHelper.h"
+#import <Parse/Parse.h>
+#import "TLAppDelegate.h"
 
 static TLFriendHelper *friendHelper = nil;
 
@@ -44,7 +46,14 @@ static TLFriendHelper *friendHelper = nil;
         self.groupsData = [self.groupStore groupsDataByUid:[TLUserHelper sharedHelper].userID];
         // 初始化标签数据
         self.tagsData = [[NSMutableArray alloc] init];
-        [self p_initTestData];
+//        [self p_initTestData];
+        
+        if ([PFUser currentUser]) {
+            [self p_loadFriendsData];
+        }
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_loadFriendsData) name:kAKUserLoggedInNotification object:nil];
+        
     }
     return self;
 }
@@ -168,6 +177,53 @@ static TLFriendHelper *friendHelper = nil;
             self.dataChangedBlock(self.data, self.sectionHeaders, self.friendCount);
         });
     }
+}
+
+- (void)p_loadFriendsData
+{
+    PFRelation * friendsRelation = [[PFUser currentUser] relationForKey:@"friends"];
+    PFQuery * query = [friendsRelation query] ;
+    query.cachePolicy = kPFCachePolicyCacheThenNetwork;
+    
+    [[friendsRelation query] findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+        
+        [self.friendsData removeAllObjects];
+        
+        NSLog(@"fetched %ld friends from server", objects.count);
+   
+        for (PFUser * user in objects) {
+            TLUser * model = [TLUser new];
+            model.userID = user.objectId;
+            model.nikeName = [user.username stringByTrimmingCharactersInSet:
+                              [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            if (user[@"headerImage1"] && user[@"headerImage1"] != [NSNull null]) {
+                PFFile * file = user[@"headerImage1"];
+                model.avatarURL = file.url;
+            }
+            
+            [self.friendsData addObject:model];
+            
+
+
+        }
+        
+        NSLog(@"updateFriendsData done");
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsDataUpdateNotification object:nil];
+        
+        
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            [self p_resetFriendData];
+        });
+        
+        // 更新好友数据到数据库
+        BOOL ok = [self.friendStore updateFriendsData:self.friendsData forUid:[TLUserHelper sharedHelper].userID];
+        if (!ok) {
+            DDLogError(@"保存好友数据到数据库失败!");
+        }
+        
+    }];
+    
 }
 
 - (void)p_initTestData

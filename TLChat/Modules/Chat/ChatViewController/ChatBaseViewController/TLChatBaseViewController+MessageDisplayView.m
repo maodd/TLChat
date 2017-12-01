@@ -16,8 +16,12 @@
 - (void)addToShowMessage:(TLMessage *)message
 {
     message.showTime = [self p_needShowTime:message.date];
-    [self.messageDisplayView addMessage:message];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self.messageDisplayView addMessage:message];
+        
+        NSLog(@"scrollToBottomWithAnimation");
+        
         [self.messageDisplayView scrollToBottomWithAnimation:YES];
     });
 }

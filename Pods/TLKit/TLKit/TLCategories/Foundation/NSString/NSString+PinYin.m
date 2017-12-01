@@ -31,7 +31,9 @@
     NSArray *word = [str componentsSeparatedByString:@" "];
     NSMutableString *initial = [[NSMutableString alloc] initWithCapacity:str.length / 3];
     for (NSString *str in word) {
-        [initial appendString:[str substringToIndex:1]];
+        if (str.length > 0) {
+            [initial appendString:[str substringToIndex:1]];
+        }
     }
     
     return initial;

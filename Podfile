@@ -1,4 +1,7 @@
 platform :ios, '8.0'
+use_frameworks!
+
+
 inhibit_all_warnings!
 
 target :TLChat do
@@ -30,4 +33,9 @@ target :TLChat do
     pod 'MJRefresh', '~> 3.1.0'
     pod 'MWPhotoBrowser', '~> 2.1.1'
     pod 'JSPatchPlatform', '~> 1.6.6'
+    
+    
+    pod 'Parse'
+    pod 'ParseUI'
+    pod 'ParseLiveQuery'
 end

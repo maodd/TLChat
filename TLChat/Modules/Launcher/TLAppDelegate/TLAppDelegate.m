@@ -9,8 +9,12 @@
 #import "TLAppDelegate.h"
 #import "TLLaunchManager.h"
 #import "TLSDKManager.h"
+#import <Parse/Parse.h>
 
 @implementation TLAppDelegate
+
+NSString * const kAKUserLoggedInNotification = @"kAKUserLoggedInNotification";
+NSString * const kAKFriendsDataUpdateNotification = @"kAKFriendsDataUpdateNotification";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -18,6 +22,12 @@
     
     // 初始化第三方SDK
 //    [[TLSDKManager sharedInstance] launchInWindow:self.window];
+    [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
+        configuration.applicationId = kParseAPPID;
+        configuration.clientKey = kParseCleintKey;
+        configuration.server =  kParseServer;
+        configuration.localDatastoreEnabled = NO; // If you need to enable local data store
+    }]];
     
     // 初始化UI
     [[TLLaunchManager sharedInstance] launchInWindow:self.window];
@@ -25,6 +35,8 @@
     // 紧急方法，可使用JSPatch重写
     [self urgentMethod];
     
+    
+ 
     return YES;
 }
 
@@ -32,5 +44,7 @@
 {
 
 }
+
+ 
 
 @end

@@ -8,7 +8,7 @@
 
 #import "TLChatMessageDisplayView.h"
 #import "TLChatMessageDisplayView+Delegate.h"
-#import <MJRefresh.h>
+#import <MJRefresh/MJRefresh.h>
 #import "TLMessageBaseCell.h"
 #import "TLChatEventStatistics.h"
 
@@ -134,7 +134,9 @@
 
 - (void)scrollToBottomWithAnimation:(BOOL)animation
 {
-    [self.tableView scrollToBottomWithAnimation:animation];
+    NSInteger lastRow = [self.tableView numberOfRowsInSection:0] - 1;
+    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: lastRow inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+//    [self.tableView scrollToBottomWithAnimation:animation];
 }
 
 - (void)setDisablePullToRefresh:(BOOL)disablePullToRefresh

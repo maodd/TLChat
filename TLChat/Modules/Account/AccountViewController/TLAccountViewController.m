@@ -10,6 +10,10 @@
 #import "TLLoginViewController.h"
 #import "TLRegisterViewController.h"
 #import "TLUserHelper.h"
+#import "TLAppDelegate.h"
+#import <ParseUI/ParseUI.h>
+#import <Parse/Parse.h>
+
 
 #define     HEIGHT_BUTTON       50
 #define     EDGE_BUTTON         35
@@ -79,15 +83,15 @@ typedef NS_ENUM(NSInteger, TLAccountButtonType) {
     
     
     // 测试按钮
-    UIButton *testButton = createButton(@"使用测试账号登录", [UIColor clearColor], TLAccountButtonTypeTest);
-    [testButton.titleLabel setFont:[UIFont systemFontOfSize:15.0f]];
-    [self.view addSubview:testButton];
-    [testButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(-5);
-        make.left.mas_equalTo(EDGE_BUTTON);
-        make.right.mas_equalTo(-EDGE_BUTTON);
-        make.height.mas_equalTo(HEIGHT_BUTTON);
-    }];
+//    UIButton *testButton = createButton(@"使用测试账号登录", [UIColor clearColor], TLAccountButtonTypeTest);
+//    [testButton.titleLabel setFont:[UIFont systemFontOfSize:15.0f]];
+//    [self.view addSubview:testButton];
+//    [testButton mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.bottom.mas_equalTo(-5);
+//        make.left.mas_equalTo(EDGE_BUTTON);
+//        make.right.mas_equalTo(-EDGE_BUTTON);
+//        make.height.mas_equalTo(HEIGHT_BUTTON);
+//    }];
 }
 
 
@@ -107,16 +111,18 @@ typedef NS_ENUM(NSInteger, TLAccountButtonType) {
         [self presentViewController:registerVC animated:YES completion:nil];
     }
     else if (sender.tag == TLAccountButtonTypeLogin) {
-        TLLoginViewController *loginVC = [[TLLoginViewController alloc] init];
-        TLWeakSelf(self);
-        TLWeakSelf(loginVC);
-        [loginVC setLoginSuccess:^{
-            [weakloginVC dismissViewControllerAnimated:NO completion:nil];
-            if (weakself.loginSuccess) {
-                weakself.loginSuccess();
-            }
-        }];
-        [self presentViewController:loginVC animated:YES completion:nil];
+//        TLLoginViewController *loginVC = [[TLLoginViewController alloc] init];
+//        TLWeakSelf(self);
+//        TLWeakSelf(loginVC);
+//        [loginVC setLoginSuccess:^{
+//            [weakloginVC dismissViewControllerAnimated:NO completion:nil];
+//            if (weakself.loginSuccess) {
+//                weakself.loginSuccess();
+//            }
+//        }];
+//        [self presentViewController:loginVC animated:YES completion:nil];
+        [self popUpLoginIfNeeded];
+        
     }
     else if (sender.tag == TLAccountButtonTypeTest) {
         [[TLUserHelper sharedHelper] loginTestAccount];
@@ -137,5 +143,59 @@ typedef NS_ENUM(NSInteger, TLAccountButtonType) {
 }
 
 
+# pragma mark - Parse Login
 
+- (void)popUpLoginIfNeeded {
+    
+//    if (nil == [PFUser currentUser] )
+    {
+        PFLogInViewController *logInViewController = [[PFLogInViewController alloc] init];
+        
+        logInViewController.emailAsUsername = YES;
+        logInViewController.delegate = self;
+        
+        logInViewController.fields = (PFLogInFieldsUsernameAndPassword |
+                                      PFLogInFieldsLogInButton |
+                                      
+                                      PFLogInFieldsPasswordForgotten |
+                                      PFLogInFieldsDismissButton);
+        
+        UIImageView * logo = (UIImageView *)logInViewController.logInView.logo;
+        logo.image = [UIImage imageNamed:@"logo-banner"];
+        
+        [self presentViewController:logInViewController animated:YES completion:nil];
+        
+        return;
+    }
+    
+}
+
+
+- (void)logInViewController:(PFLogInViewController *)logInController didLogInUser:(PFUser *)user {
+    
+    [self dismissViewControllerAnimated:YES completion:^{
+        
+        if (self.loginSuccess) {
+            self.loginSuccess();
+        }
+        
+    }];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kAKUserLoggedInNotification object:nil];
+    
+    
+ 
+    TLUser * me = [[TLUser alloc] init];
+    me.userID = user.objectId;
+    me.nikeName = user.username;
+    
+    if (user[@"headerImage1"]) {
+        PFFile * file = user[@"headerImage1"];
+        me.avatarURL = file.url;
+    }
+    
+    [[TLUserHelper sharedHelper] setUser:me];
+    
+
+}
 @end

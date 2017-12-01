@@ -8,7 +8,7 @@
 //
 
 #import "TLSDKManager.h"
-#import <AFNetworking.h>
+#import <AFNetworking/AFNetworking.h>
 #import <JSPatchPlatform/JSPatch.h>
 #import "TLSDKConfigKey.h"
 

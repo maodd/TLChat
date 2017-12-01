@@ -7,7 +7,7 @@
 //
 
 #import "TLExpressionMessageCell.h"
-#import <UIImage+GIF.h>
+#import "UIImage+GIF.h"
 #import "NSFileManager+TLChat.h"
 
 @interface TLExpressionMessageCell ()

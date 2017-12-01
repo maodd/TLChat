@@ -9,6 +9,8 @@
 #import "TLDBMessageStore.h"
 #import "TLDBMessageStoreSQL.h"
 #import "TLMacros.h"
+#import <Parse/Parse.h>
+#import "TLImageMessage.h"
 
 @implementation TLDBMessageStore
 
@@ -61,7 +63,60 @@
                         [NSNumber numberWithInteger:message.readState],
                         @"", @"", @"", @"", @"", nil];
     BOOL ok = [self excuteSQL:sqlString withArrParameter:arrPara];
+    
+    /// Server code, only save outgoing message. otherwise dead loop
+    if (([message.userID isEqualToString:[PFUser currentUser].objectId])) {
+        
+        
+        PFObject * msgObject = [PFObject objectWithClassName:kParseClassNameMessage];
+        msgObject[@"message"] = [message.content mj_JSONString];
+    //    msgObject[@"readAt"] = @(message.readState);
+        msgObject[@"sender"] = [PFUser currentUser].objectId; // quick way to set pointer
+        
+        if ([message isKindOfClass:[TLImageMessage class]]) {
+            TLImageMessage * imageMessage = (TLImageMessage*)message;
+            if (imageMessage.imageData) {
+                
+                PFFile * file = [PFFile fileWithData:imageMessage.imageData];
+                msgObject[@"attachment"] = file;
+                
+            }
+        }
+        
+
+        NSString * dialogName = @"";
+        if (message.partnerType == TLPartnerTypeUser) {
+            dialogName = [self makeDialogNameForFriend:  message.friendID myId:message.userID];
+        }else {
+            dialogName = message.groupID;
+        }
+        
+        msgObject[@"dialogName"] = dialogName;
+        [msgObject saveInBackground];
+//        PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
+//        [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+//
+//            if (object) {
+//                msgObject[@"dialog"] = object;
+//                [msgObject saveEventually];
+//            }
+//
+//        }];
+        
+    }
+    
+    
+    
+    
+    
     return ok;
+}
+
+// TODO: move to a helper class
+- (NSString *)makeDialogNameForFriend:(NSString *)fid myId:(NSString *)uid{
+    NSArray * ids = [@[uid, fid]  sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    
+    return [ids componentsJoinedByString:@":"];
 }
 
 - (void)messagesByUserID:(NSString *)userID partnerID:(NSString *)partnerID fromDate:(NSDate *)date count:(NSUInteger)count complete:(void (^)(NSArray *, BOOL))complete
@@ -70,7 +125,7 @@
     NSString *sqlString = [NSString stringWithFormat:
                         SQL_SELECT_MESSAGES_PAGE,
                         MESSAGE_TABLE_NAME,
-                        userID,
+//                        userID,
                         partnerID,
                         [NSString stringWithFormat:@"%lf", date.timeIntervalSince1970],
                         (long)(count + 1)];
@@ -123,7 +178,7 @@
 - (NSArray *)chatImagesAndVideosByUserID:(NSString *)userID partnerID:(NSString *)partnerID
 {
     __block NSMutableArray *data = [[NSMutableArray alloc] init];
-    NSString *sqlString = [NSString stringWithFormat:SQL_SELECT_CHAT_MEDIA, MESSAGE_TABLE_NAME, userID, partnerID];
+    NSString *sqlString = [NSString stringWithFormat:SQL_SELECT_CHAT_MEDIA, MESSAGE_TABLE_NAME, partnerID];
     
     [self excuteQuerySQL:sqlString resultBlock:^(FMResultSet *retSet) {
         while ([retSet next]) {

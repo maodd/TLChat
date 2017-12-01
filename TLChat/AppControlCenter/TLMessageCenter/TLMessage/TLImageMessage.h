@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) NSString *imagePath;                  // 本地图片Path
 @property (nonatomic, strong) NSString *imageURL;                   // 网络图片URL
+@property (nonatomic, strong) NSData *imageData;                    // easier to upload
 @property (nonatomic, assign) CGSize imageSize;
 
 @end

@@ -13,6 +13,18 @@
 #import "UIImage+Size.h"
 #import "NSFileManager+TLChat.h"
 
+
+@import Parse;
+@import ParseLiveQuery;
+@import Parse.PFQuery;
+
+@interface TLChatBaseViewController()
+@property (nonatomic, strong) PFLiveQueryClient *client;
+@property (nonatomic, strong) PFQuery *query;
+@property (nonatomic, strong) PFLiveQuerySubscription *subscription; // must use properyt to hold reference.
+@end
+
+
 @implementation TLChatBaseViewController
 
 - (void)loadView
@@ -30,6 +42,95 @@
     [super viewDidLoad];
     
     [self loadKeyboard];
+    
+    self.client = [[PFLiveQueryClient alloc] init];
+    
+    self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
+    [self.query whereKey:@"sender" notEqualTo:[PFUser currentUser].objectId]; //livequery doesn't work with pointer 
+//    
+//    [self.query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+//        for (PFObject * message in objects) {
+//            NSLog(@"query message: %@ %@",message.createdAt, message.objectId);
+//        }
+//    }];
+    
+    
+    self.subscription = [self.client  subscribeToQuery:self.query];
+    
+ 
+    [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+        NSLog(@"Subscribed");
+    }];
+    
+    [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+        NSLog(@"unsubscribed");
+    }];
+    
+    [self.subscription addEnterHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
+        NSLog(@"enter");
+    }];
+    
+    [self.subscription addEventHandler:^(PFQuery<PFObject *> * _Nonnull query, PFLiveQueryEvent * _Nonnull event) {
+        NSLog(@"event: ", event);
+    }];
+    
+    [self.subscription addDeleteHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
+        NSLog(@"message deleted: %@ %@",message.createdAt, message.objectId);
+    }];
+    
+    
+    __weak TLChatBaseViewController * weakSelf = self;
+    [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
+        
+        NSLog(@"message received: %@ %@", message.objectId, message[@"message"]);
+        
+        NSDictionary * dict = [message[@"message"] mj_JSONObject];
+        
+        
+        if (dict ) {
+            if (dict[@"text"]) {
+                TLTextMessage *message1 = [[TLTextMessage alloc] init];
+                message1.fromUser = weakSelf.partner;
+                message1.userID = message[@"sender"];
+                message1.text = dict[@"text"];
+                [weakSelf receivedMessage:message1];
+            }else if (message[@"attachment"]) {
+                TLImageMessage *message1 = [[TLImageMessage alloc] init];
+                message1.fromUser = weakSelf.partner;
+                message1.userID = message[@"sender"];
+                message1.ownerTyper = TLMessageOwnerTypeFriend;
+                PFFile * file = message[@"attachment"];
+                if (dict[@"w"] && dict[@"h"]) {
+                    message1.imageSize = CGSizeMake([dict[@"w"] floatValue], [dict[@"h"] floatValue]);
+                }
+                if (file && ![file isKindOfClass:[NSNull class]]) {
+                    [file getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
+                        if (!error) {
+
+                            NSString *imageName = dict[@"path"];
+                            NSString *imagePath = [NSFileManager pathUserChatImage:imageName];
+                            // TODO: check file exist
+                            [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil];
+                            
+                            // TODO: use thumbnail
+                            message1.imagePath = imageName; //no path needed here, cell will prefix it when rendering
+                            
+                            [weakSelf receivedMessage:message1];
+                        } else {
+                            [weakSelf receivedMessage:message1];
+                        }
+                    }];
+                }
+ 
+            
+            }
+        }
+
+        
+        
+        
+        
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -124,26 +225,29 @@
     message.ownerTyper = TLMessageOwnerTypeSelf;
     message.imagePath = imageName;
     message.imageSize = image.size;
+    message.imageData = imageData;
     [self sendMessage:message];
-    if ([self.partner chat_userType] == TLChatUserTypeUser) {
-        TLImageMessage *message1 = [[TLImageMessage alloc] init];
-        message1.fromUser = self.partner;
-        message1.ownerTyper = TLMessageOwnerTypeFriend;
-        message1.imagePath = imageName;
-        message1.imageSize = image.size;
-        [self receivedMessage:message1];
-    }
-    else {
-        for (id<TLChatUserProtocol> user in [self.partner groupMembers]) {
-            TLImageMessage *message1 = [[TLImageMessage alloc] init];
-            message1.friendID = [user chat_userID];
-            message1.fromUser = user;
-            message1.ownerTyper = TLMessageOwnerTypeFriend;
-            message1.imagePath = imageName;
-            message1.imageSize = image.size;
-            [self receivedMessage:message1];
-        }
-    }
+    
+    // TODO: remove auto reply code below
+//    if ([self.partner chat_userType] == TLChatUserTypeUser) {
+//        TLImageMessage *message1 = [[TLImageMessage alloc] init];
+//        message1.fromUser = self.partner;
+//        message1.ownerTyper = TLMessageOwnerTypeFriend;
+//        message1.imagePath = imageName;
+//        message1.imageSize = image.size;
+//        [self receivedMessage:message1];
+//    }
+//    else {
+//        for (id<TLChatUserProtocol> user in [self.partner groupMembers]) {
+//            TLImageMessage *message1 = [[TLImageMessage alloc] init];
+//            message1.friendID = [user chat_userID];
+//            message1.fromUser = user;
+//            message1.ownerTyper = TLMessageOwnerTypeFriend;
+//            message1.imagePath = imageName;
+//            message1.imageSize = image.size;
+//            [self receivedMessage:message1];
+//        }
+//    }
 }
 
 #pragma mark - # Private Methods

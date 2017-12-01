@@ -8,7 +8,7 @@
 
 #import "TLExpressionChosenViewController+Proxy.h"
 #import "TLExpressionProxy.h"
-#import <MJRefresh.h>
+#import <MJRefresh/MJRefresh.h>
 
 @implementation TLExpressionChosenViewController (Proxy)
 
