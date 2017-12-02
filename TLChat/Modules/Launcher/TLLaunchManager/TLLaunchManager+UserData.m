@@ -7,12 +7,12 @@
 //
 
 #import "TLLaunchManager+UserData.h"
-#import "TLWalletViewController.h"
+//#import "TLWalletViewController.h"
 #import "TLExpressionProxy.h"
 #import "TLEmojiGroup.h"
 #import "TLExpressionHelper.h"
 
-#import "TLMineEventStatistics.h"
+//#import "TLMineEventStatistics.h"
 
 @implementation TLLaunchManager (UserData)
 
@@ -31,29 +31,7 @@
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:lastRunDate.doubleValue];
     NSNumber *sponsorStatus = [[NSUserDefaults standardUserDefaults] objectForKey:@"sponsorStatus"];
     NSLog(@"今天第%ld次进入", (long)sponsorStatus.integerValue);
-    if ([date isSameDay:[NSDate date]]) {
-        if (sponsorStatus.integerValue == 3) {
-            [TLUIUtility showAlertWithTitle:nil message:@"如果此份源码对您有足够大帮助，您可以小额赞助我，以激励我继续维护，做得更好。" cancelButtonTitle:@"不了" otherButtonTitles:@[@"小额赞助"] actionHandler:^(NSInteger buttonIndex) {
-                if (buttonIndex == 1) {
-                    TLWalletViewController *walletVC = [[TLWalletViewController alloc] init];
-                    [self.rootVC pushViewController:walletVC animated:YES];
-                    [MobClick event:EVENT_DONATE_ALERT_YES];
-                    [[NSUserDefaults standardUserDefaults] setObject:@(-1) forKey:@"sponsorStatus"];
-                }
-                else {
-                    [MobClick event:EVENT_DONATE_ALERT_NO];
-                    [[NSUserDefaults standardUserDefaults] setObject:@(-1) forKey:@"sponsorStatus"];
-                }
-            }];
-        }
-        [[NSUserDefaults standardUserDefaults] setObject:@(sponsorStatus.integerValue + 1) forKey:@"sponsorStatus"];
-    }
-    else {
-        [[NSUserDefaults standardUserDefaults] setObject:@([[NSDate date] timeIntervalSince1970]) forKey:@"lastRunDate"];
-        if (sponsorStatus.integerValue != -1) {
-            [[NSUserDefaults standardUserDefaults] setObject:@(1) forKey:@"sponsorStatus"];
-        }
-    }
+  
 }
 
 /// 下载默认表情包

@@ -134,9 +134,9 @@
 
 - (void)scrollToBottomWithAnimation:(BOOL)animation
 {
-    NSInteger lastRow = [self.tableView numberOfRowsInSection:0] - 1;
-    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: lastRow inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-//    [self.tableView scrollToBottomWithAnimation:animation];
+//    NSInteger lastRow = [self.tableView numberOfRowsInSection:0] - 1;
+//    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: lastRow inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    [self.tableView scrollToBottomWithAnimation:animation];
 }
 
 - (void)setDisablePullToRefresh:(BOOL)disablePullToRefresh

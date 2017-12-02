@@ -13,8 +13,8 @@
 
 #import "TLConversationViewController.h"
 #import "TLFriendsViewController.h"
-#import "TLDiscoverViewController.h"
-#import "TLMineViewController.h"
+//#import "TLDiscoverViewController.h"
+//#import "TLMineViewController.h"
 
 #import "TLUserHelper.h"
 
@@ -74,8 +74,8 @@ void addBarChildViewController(UITabBarController *tabBarController, UIViewContr
     
     addBarChildViewController(self.rootVC, [[TLConversationViewController alloc] init], @"消息", @"tabbar_mainframe", @"tabbar_mainframeHL");
     addBarChildViewController(self.rootVC, [[TLFriendsViewController alloc] init], @"通讯录", @"tabbar_contacts", @"tabbar_contactsHL");
-    addBarChildViewController(self.rootVC, [[TLDiscoverViewController alloc] init], @"发现", @"tabbar_discover", @"tabbar_discoverHL");
-    addBarChildViewController(self.rootVC, [[TLMineViewController alloc] init], @"我", @"tabbar_me", @"tabbar_meHL");
+//    addBarChildViewController(self.rootVC, [[TLDiscoverViewController alloc] init], @"发现", @"tabbar_discover", @"tabbar_discoverHL");
+//    addBarChildViewController(self.rootVC, [[TLMineViewController alloc] init], @"我", @"tabbar_me", @"tabbar_meHL");
 }
 
 #pragma mark - # Getters
