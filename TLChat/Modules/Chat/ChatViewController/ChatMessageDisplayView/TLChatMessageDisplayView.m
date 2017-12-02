@@ -81,7 +81,26 @@
 - (void)addMessage:(TLMessage *)message
 {
     [self.data addObject:message];
-    [self.tableView reloadData];
+//    [self.tableView reloadData];
+    
+    CGPoint contentOffset = self.tableView.contentOffset;
+    [UIView setAnimationsEnabled:NO];
+    [self.tableView beginUpdates];
+    
+    CGFloat heightForNewRows = 0.0f;
+
+    
+    NSIndexPath * indexPathForLastRow = [NSIndexPath indexPathForRow:self.data.count - 1 inSection:0];
+    heightForNewRows += [self tableView:self.tableView heightForRowAtIndexPath:indexPathForLastRow];
+    
+    contentOffset.y += heightForNewRows;
+    
+    [self.tableView insertRowsAtIndexPaths:@[indexPathForLastRow] withRowAnimation:UITableViewRowAnimationNone];
+    
+    [self.tableView endUpdates];
+    [UIView setAnimationsEnabled:YES];
+
+    [self.tableView scrollToRowAtIndexPath:indexPathForLastRow atScrollPosition:UITableViewScrollPositionBottom animated:NO];
 }
 
 - (void)setData:(NSMutableArray *)data
@@ -134,8 +153,6 @@
 
 - (void)scrollToBottomWithAnimation:(BOOL)animation
 {
-//    NSInteger lastRow = [self.tableView numberOfRowsInSection:0] - 1;
-//    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: lastRow inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     [self.tableView scrollToBottomWithAnimation:animation];
 }
 
