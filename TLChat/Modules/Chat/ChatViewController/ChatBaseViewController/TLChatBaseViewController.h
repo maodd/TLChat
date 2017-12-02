@@ -21,12 +21,15 @@
 
 #import "TLChatUserProtocol.h"
 #import "TLUser.h"
+#import "TLConversation.h"
 
 @interface TLChatBaseViewController : UIViewController <TLChatViewControllerProxy, TLMoreKeyboardDelegate>
 {
     TLChatBarStatus lastStatus;
     TLChatBarStatus curStatus;
 }
+
+@property (nonatomic, strong) TLConversation * converstaion;
 
 /// 用户信息
 @property (nonatomic, strong) id<TLChatUserProtocol> user;

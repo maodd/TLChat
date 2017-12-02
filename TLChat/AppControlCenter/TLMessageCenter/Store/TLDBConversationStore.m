@@ -40,7 +40,7 @@
     return [self createTable:CONV_TABLE_NAME withSQL:sqlString];
 }
 
-- (BOOL)addConversationByUid:(NSString *)uid fid:(NSString *)fid type:(NSInteger)type date:(NSDate *)date;
+- (BOOL)addConversationByUid:(NSString *)uid fid:(NSString *)fid type:(NSInteger)type date:(NSDate *)date last_message:(NSString*)last_message;
 {
     NSInteger unreadCount = [self unreadMessageByUid:uid fid:fid] + 1;
     NSString *sqlString = [NSString stringWithFormat:SQL_ADD_CONV, CONV_TABLE_NAME];
@@ -50,6 +50,7 @@
                         [NSNumber numberWithInteger:type],
                         TLTimeStamp(date),
                         [NSNumber numberWithInteger:unreadCount],
+                        last_message,
                         @"", @"", @"", @"", @"", nil];
     BOOL ok = [self excuteSQL:sqlString withArrParameter:arrPara];
     
@@ -78,9 +79,9 @@
 /**
  *  更新会话状态（已读）
  */
-- (void)updateConversationByUid:(NSString *)uid fid:(NSString *)fid
+- (void)updateConversationByUid:(NSString *)uid fid:(NSString *)fid date:(NSDate *)date last_message:(NSString*)last_message
 {
-
+ 
 }
 
 /**

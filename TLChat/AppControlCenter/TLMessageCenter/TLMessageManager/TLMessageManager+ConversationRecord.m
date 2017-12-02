@@ -19,7 +19,7 @@
         partnerID = message.groupID;
         type = 1;
     }
-    BOOL ok = [self.conversationStore addConversationByUid:message.userID fid:partnerID type:type date:message.date];
+    BOOL ok = [self.conversationStore addConversationByUid:message.userID fid:partnerID type:type date:message.date last_message:[message conversationContent]];
     
     return ok;
 }

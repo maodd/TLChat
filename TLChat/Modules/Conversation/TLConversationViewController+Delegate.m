@@ -68,6 +68,9 @@
     TLChatViewController *chatVC = [[TLChatViewController alloc] init];
     
     TLConversation *conversation = [self.data objectAtIndex:indexPath.row];
+    
+    chatVC.converstaion = conversation;
+    
     if (conversation.convType == TLConversationTypePersonal) {
         TLUser *user = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:conversation.partnerID];
         if (user == nil) {

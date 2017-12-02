@@ -13,12 +13,12 @@
 /**
  *  新的会话（未读）
  */
-- (BOOL)addConversationByUid:(NSString *)uid fid:(NSString *)fid type:(NSInteger)type date:(NSDate *)date;
+- (BOOL)addConversationByUid:(NSString *)uid fid:(NSString *)fid type:(NSInteger)type date:(NSDate *)date last_message:(NSString*)last_message;
 
 /**
  *  更新会话状态（已读）
  */
-- (void)updateConversationByUid:(NSString *)uid fid:(NSString *)fid;
+- (void)updateConversationByUid:(NSString *)uid fid:(NSString *)fid date:(NSDate *)date last_message:(NSString*)last_message;
 
 /**
  *  查询所有会话

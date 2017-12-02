@@ -48,7 +48,7 @@
 {
     [super viewWillAppear:animated];
     
-
+    [self updateConversationData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated

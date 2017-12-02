@@ -46,93 +46,125 @@
     self.client = [[PFLiveQueryClient alloc] init];
     
     self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
-    [self.query whereKey:@"sender" notEqualTo:[PFUser currentUser].objectId]; //livequery doesn't work with pointer 
-//    
-//    [self.query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-//        for (PFObject * message in objects) {
-//            NSLog(@"query message: %@ %@",message.createdAt, message.objectId);
-//        }
-//    }];
+    
+    if (self.converstaion.date) {
+        [self.query whereKey:@"createdAt" greaterThan:self.converstaion.date];
+        NSLog(@"TLConversation last message date: %@", self.converstaion.date);
+    }
+    
+//    [self.query whereKey:@"sender" notEqualTo:[PFUser currentUser].objectId]; //livequery doesn't work with pointer
+    
+    [self.query orderByAscending:@"createdAt"];
+    
+    [self.query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+        for (PFObject * message in [objects sortedArrayUsingComparator:^NSComparisonResult(PFObject *  _Nonnull obj1, PFObject *  _Nonnull obj2) {
+            return [obj1[@"createdAt"] isEarlierThanDate:obj2[@"createdAt"]];
+        }]) {
+            
+            [self processMessageFromServer:message];
+        }
+    }];
     
     
     self.subscription = [self.client  subscribeToQuery:self.query];
     
  
-    [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
         NSLog(@"Subscribed");
     }];
     
-    [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+    self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
         NSLog(@"unsubscribed");
     }];
     
-    [self.subscription addEnterHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
+    self.subscription = [self.subscription addEnterHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
         NSLog(@"enter");
     }];
     
-    [self.subscription addEventHandler:^(PFQuery<PFObject *> * _Nonnull query, PFLiveQueryEvent * _Nonnull event) {
-        NSLog(@"event: ", event);
+    self.subscription = [self.subscription addEventHandler:^(PFQuery<PFObject *> * _Nonnull query, PFLiveQueryEvent * _Nonnull event) {
+        NSLog(@"event: %@", event);
     }];
     
-    [self.subscription addDeleteHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
+    self.subscription = [self.subscription addDeleteHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
         NSLog(@"message deleted: %@ %@",message.createdAt, message.objectId);
     }];
     
     
     __weak TLChatBaseViewController * weakSelf = self;
-    [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
+    self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
         
-        NSLog(@"message received: %@ %@", message.objectId, message[@"message"]);
-        
-        NSDictionary * dict = [message[@"message"] mj_JSONObject];
-        
-        
-        if (dict ) {
-            if (dict[@"text"]) {
-                TLTextMessage *message1 = [[TLTextMessage alloc] init];
-                message1.fromUser = weakSelf.partner;
-                message1.userID = message[@"sender"];
-                message1.text = dict[@"text"];
-                [weakSelf receivedMessage:message1];
-            }else if (message[@"attachment"]) {
-                TLImageMessage *message1 = [[TLImageMessage alloc] init];
-                message1.fromUser = weakSelf.partner;
-                message1.userID = message[@"sender"];
-                message1.ownerTyper = TLMessageOwnerTypeFriend;
-                PFFile * file = message[@"attachment"];
-                if (dict[@"w"] && dict[@"h"]) {
-                    message1.imageSize = CGSizeMake([dict[@"w"] floatValue], [dict[@"h"] floatValue]);
-                }
-                if (file && ![file isKindOfClass:[NSNull class]]) {
-                    [file getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
-                        if (!error) {
-
-                            NSString *imageName = dict[@"path"];
-                            NSString *imagePath = [NSFileManager pathUserChatImage:imageName];
-                            // TODO: check file exist
-                            [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil];
-                            
-                            // TODO: use thumbnail
-                            message1.imagePath = imageName; //no path needed here, cell will prefix it when rendering
-                            
-                            [weakSelf receivedMessage:message1];
-                        } else {
-                            [weakSelf receivedMessage:message1];
-                        }
-                    }];
-                }
- 
-            
-            }
-        }
-
-        
-        
+      
+        [weakSelf processMessageFromServer:message];
         
         
     }];
 }
 
+- (void)processMessageFromServer:(PFObject *)message {
+    
+    NSLog(@"message received: %@ %@ %@", message.objectId, message[@"message"], message[@"sender"]);
+    
+    NSDictionary * dict = [message[@"message"] mj_JSONObject];
+    
+    __weak TLChatBaseViewController * weakSelf = self;
+    
+    if (dict ) {
+        if (dict[@"text"]) {
+            TLTextMessage *message1 = [[TLTextMessage alloc] init];
+            message1.messageID = message.objectId;
+            if ([[self.user chat_userID] isEqualToString: message[@"sender"]]) {
+                message1.fromUser = weakSelf.user;
+                message1.ownerTyper = TLMessageOwnerTypeSelf;
+                
+            }else{
+                message1.fromUser = weakSelf.partner;
+                message1.ownerTyper = TLMessageOwnerTypeFriend;
+            }
+            
+            message1.userID = message[@"sender"];
+            message1.text = dict[@"text"];
+            [weakSelf receivedMessage:message1];
+        }else if (message[@"attachment"]) {
+            TLImageMessage *message1 = [[TLImageMessage alloc] init];
+            message1.messageID = message.objectId;
+            if ([[self.user chat_userID]  isEqualToString: message[@"sender"]]) {
+                message1.fromUser = weakSelf.user;
+                message1.ownerTyper = TLMessageOwnerTypeSelf;
+                
+            }else{
+                message1.fromUser = weakSelf.partner;
+            }
+            message1.userID = message[@"sender"];
+            message1.ownerTyper = TLMessageOwnerTypeFriend;
+            PFFile * file = message[@"attachment"];
+            if (dict[@"w"] && dict[@"h"]) {
+                message1.imageSize = CGSizeMake([dict[@"w"] floatValue], [dict[@"h"] floatValue]);
+            }
+            if (file && ![file isKindOfClass:[NSNull class]]) {
+                [file getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
+                    if (!error) {
+                        
+                        NSString *imageName = dict[@"path"];
+                        NSString *imagePath = [NSFileManager pathUserChatImage:imageName];
+                        // TODO: check file exist
+                        [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil];
+                        
+                        // TODO: use thumbnail
+                        message1.imagePath = imageName; //no path needed here, cell will prefix it when rendering
+                        
+                        [weakSelf receivedMessage:message1];
+                    } else {
+                        [weakSelf receivedMessage:message1];
+                    }
+                }];
+            }
+            
+            
+        }
+    }
+    
+    
+}
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];

@@ -49,8 +49,9 @@
     }
     
     NSString *sqlString = [NSString stringWithFormat:SQL_ADD_MESSAGE, MESSAGE_TABLE_NAME];
+    NSString * newMessageID = [NSString stringWithFormat:@"%lld", (long long)([[NSDate date] timeIntervalSince1970] * 10000)];
     NSArray *arrPara = [NSArray arrayWithObjects:
-                        message.messageID,
+                        newMessageID,
                         message.userID,
                         fid,
                         TLNoNilString(subfid),
@@ -65,7 +66,7 @@
     BOOL ok = [self excuteSQL:sqlString withArrParameter:arrPara];
     
     /// Server code, only save outgoing message. otherwise dead loop
-    if (([message.userID isEqualToString:[PFUser currentUser].objectId])) {
+    if (message.messageID == nil) {
         
         
         PFObject * msgObject = [PFObject objectWithClassName:kParseClassNameMessage];

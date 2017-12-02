@@ -55,7 +55,7 @@
         message.partnerType = TLPartnerTypeGroup;
         message.groupID = [self.partner chat_userID];
     }
-    message.ownerTyper = TLMessageOwnerTypeFriend;
+//    message.ownerTyper = TLMessageOwnerTypeFriend;
     message.date = [NSDate date];
     [self addToShowMessage:message];    // 添加到列表
     
