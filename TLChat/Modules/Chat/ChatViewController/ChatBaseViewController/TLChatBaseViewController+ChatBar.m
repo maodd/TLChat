@@ -172,23 +172,23 @@
             message.msgStatus = TLVoiceMessageStatusNormal;
             [message resetMessageFrame];
             [self sendMessage:message];
-            if ([self.partner chat_userType] == TLChatUserTypeUser) {
-                TLVoiceMessage *message1 = [[TLVoiceMessage alloc] init];
-                message1.fromUser = self.partner;
-                message1.recFileName = fileName;
-                message1.time = time;
-                [self receivedMessage:message1];
-            }
-            else {
-                for (id<TLChatUserProtocol> user in [self.partner groupMembers]) {
-                    TLVoiceMessage *message1 = [[TLVoiceMessage alloc] init];
-                    message1.friendID = [user chat_userID];
-                    message1.fromUser = user;
-                    message1.recFileName = fileName;
-                    message1.time = time;
-                    [self receivedMessage:message1];
-                }
-            }
+//            if ([self.partner chat_userType] == TLChatUserTypeUser) {
+//                TLVoiceMessage *message1 = [[TLVoiceMessage alloc] init];
+//                message1.fromUser = self.partner;
+//                message1.recFileName = fileName;
+//                message1.time = time;
+//                [self receivedMessage:message1];
+//            }
+//            else {
+//                for (id<TLChatUserProtocol> user in [self.partner groupMembers]) {
+//                    TLVoiceMessage *message1 = [[TLVoiceMessage alloc] init];
+//                    message1.friendID = [user chat_userID];
+//                    message1.fromUser = user;
+//                    message1.recFileName = fileName;
+//                    message1.time = time;
+//                    [self receivedMessage:message1];
+//                }
+//            }
         }
     } cancelBlock:^{
         [self.messageDisplayView deleteMessage:message];

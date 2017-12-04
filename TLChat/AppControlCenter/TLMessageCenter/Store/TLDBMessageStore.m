@@ -11,6 +11,7 @@
 #import "TLMacros.h"
 #import <Parse/Parse.h>
 #import "TLImageMessage.h"
+#import "TLVoiceMessage.h"
 #import "TLFriendHelper.h"
 
 @implementation TLDBMessageStore
@@ -98,6 +99,18 @@
                 
                 
             }
+        }else if ([message isKindOfClass:[TLVoiceMessage class]]) {
+            TLVoiceMessage * voiceMessage = (TLVoiceMessage*)message;
+            if ([voiceMessage path]) {
+                NSData * data = [NSData dataWithContentsOfFile:voiceMessage.path];
+                if (data) {
+                    PFFile * file = [PFFile fileWithData:data];
+                    msgObject[@"attachment"] = file;
+                }
+                
+            }
+            
+            
         }
         
 

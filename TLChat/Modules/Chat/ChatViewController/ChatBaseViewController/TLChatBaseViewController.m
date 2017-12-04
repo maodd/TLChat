@@ -104,84 +104,151 @@
     
     NSDictionary * dict = [message[@"message"] mj_JSONObject];
     
-    __weak TLChatBaseViewController * weakSelf = self;
+ 
     
     if (dict ) {
         if (dict[@"text"]) {
-            TLTextMessage *message1 = [[TLTextMessage alloc] init];
-            message1.SavedOnServer = YES;
-            message1.messageID = message.objectId;
-            if ([[self.user chat_userID] isEqualToString: message[@"sender"]]) {
-                message1.fromUser = weakSelf.user;
-                message1.ownerTyper = TLMessageOwnerTypeSelf;
-                
-            }else{
-                message1.fromUser = weakSelf.partner;
-                message1.ownerTyper = TLMessageOwnerTypeFriend;
-            }
-            
-            message1.userID = message[@"sender"];
-            message1.text = dict[@"text"];
-            if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
-                
-            }else{
-                [weakSelf receivedMessage:message1];
-            }
+            [self handleTextMessage:message bypassMine:bypassMine];
+        }else if (dict[@"time"]) {
+            [self handleVoiceMessage:message bypassMine:bypassMine];
         }else if (message[@"thumbnail"]) {
-            TLImageMessage *message1 = [[TLImageMessage alloc] init];
-            message1.SavedOnServer = YES;
-            message1.messageID = message.objectId;
-            if ([[self.user chat_userID]  isEqualToString: message[@"sender"]]) {
-                message1.fromUser = weakSelf.user;
-                message1.ownerTyper = TLMessageOwnerTypeSelf;
-                
-            }else{
-                message1.fromUser = weakSelf.partner;
-                message1.ownerTyper = TLMessageOwnerTypeFriend;
-            }
-            message1.userID = message[@"sender"];
- 
-            PFFile * file = message[@"thumbnail"];
-            if (dict[@"w"] && dict[@"h"]) {
-                message1.imageSize = CGSizeMake([dict[@"w"] floatValue], [dict[@"h"] floatValue]);
-            }
-            if (file && ![file isKindOfClass:[NSNull class]]) {
-                [file getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
-                    if (!error) {
-                        
-                        NSString *imageName = [NSString stringWithFormat:@"thumb-%@", dict[@"path"]];
-                        NSString *imagePath = [NSFileManager pathUserChatImage:imageName];
-                        
-//                        if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
-                            [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil];
-//                        }
-                        
-                        
-                        message1.thumbnailImagePath = imageName; //no path needed here, cell will prefix it when rendering
-                        PFFile * attachment =  message[@"attachment"];
-                        message1.imageURL = attachment.url;
-                        
-                        if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
-                            
-                        }else{
-                            [weakSelf receivedMessage:message1];
-                        }
-                    } else {
-                        if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
-                            
-                        }else{
-                            [weakSelf receivedMessage:message1];
-                        }
-                    }
-                }];
-            }
-            
-            
+            [self handleImageMessage:message bypassMine:bypassMine];
         }
     }
     
     
 }
+
+- (void)handleTextMessage:(PFObject *)message bypassMine:(BOOL)bypassMine{
+    NSDictionary * dict = [message[@"message"] mj_JSONObject];
+    __weak TLChatBaseViewController * weakSelf = self;
+    TLTextMessage *message1 = [[TLTextMessage alloc] init];
+    message1.SavedOnServer = YES;
+    message1.messageID = message.objectId;
+    if ([[self.user chat_userID] isEqualToString: message[@"sender"]]) {
+        message1.fromUser = weakSelf.user;
+        message1.ownerTyper = TLMessageOwnerTypeSelf;
+        
+    }else{
+        message1.fromUser = weakSelf.partner;
+        message1.ownerTyper = TLMessageOwnerTypeFriend;
+    }
+    
+    message1.userID = message[@"sender"];
+    message1.text = dict[@"text"];
+    if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
+        
+    }else{
+        [weakSelf receivedMessage:message1];
+    }
+}
+- (void)handleImageMessage:(PFObject *)message bypassMine:(BOOL)bypassMine{
+    __weak TLChatBaseViewController * weakSelf = self;
+    NSDictionary * dict = [message[@"message"] mj_JSONObject];
+    
+    TLImageMessage *message1 = [[TLImageMessage alloc] init];
+    message1.SavedOnServer = YES;
+    message1.messageID = message.objectId;
+    if ([[self.user chat_userID]  isEqualToString: message[@"sender"]]) {
+        message1.fromUser = weakSelf.user;
+        message1.ownerTyper = TLMessageOwnerTypeSelf;
+        
+    }else{
+        message1.fromUser = weakSelf.partner;
+        message1.ownerTyper = TLMessageOwnerTypeFriend;
+    }
+    message1.userID = message[@"sender"];
+    
+    PFFile * file = message[@"thumbnail"];
+    if (dict[@"w"] && dict[@"h"]) {
+        message1.imageSize = CGSizeMake([dict[@"w"] floatValue], [dict[@"h"] floatValue]);
+    }
+    if (file && ![file isKindOfClass:[NSNull class]]) {
+        [file getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
+            if (!error) {
+                
+                NSString *imageName = [NSString stringWithFormat:@"thumb-%@", dict[@"path"]];
+                NSString *imagePath = [NSFileManager pathUserChatImage:imageName];
+                
+                //                        if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
+                [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil];
+                //                        }
+                
+                
+                message1.thumbnailImagePath = imageName; //no path needed here, cell will prefix it when rendering
+                PFFile * attachment =  message[@"attachment"];
+                message1.imageURL = attachment.url;
+                
+                if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
+                    
+                }else{
+                    [weakSelf receivedMessage:message1];
+                }
+            } else {
+                if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
+                    
+                }else{
+                    [weakSelf receivedMessage:message1];
+                }
+            }
+        }];
+    }
+    
+    
+}
+
+- (void)handleVoiceMessage:(PFObject *)message bypassMine:(BOOL)bypassMine{
+    __weak TLChatBaseViewController * weakSelf = self;
+    NSDictionary * dict = [message[@"message"] mj_JSONObject];
+    
+    TLVoiceMessage *message1 = [[TLVoiceMessage alloc] init];
+    message1.SavedOnServer = YES;
+    message1.messageID = message.objectId;
+    if ([[self.user chat_userID]  isEqualToString: message[@"sender"]]) {
+        message1.fromUser = weakSelf.user;
+        message1.ownerTyper = TLMessageOwnerTypeSelf;
+        
+    }else{
+        message1.fromUser = weakSelf.partner;
+        message1.ownerTyper = TLMessageOwnerTypeFriend;
+    }
+    message1.userID = message[@"sender"];
+    
+    PFFile * file = message[@"attachment"];
+ 
+    if (file && ![file isKindOfClass:[NSNull class]]) {
+        [file getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+            if (!error) {
+                
+                NSString *fileName = dict[@"path"];
+                NSString *filePath = [NSFileManager pathUserChatVoice:fileName];
+                
+                if (![[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+                    [[NSFileManager defaultManager] createFileAtPath:filePath contents:data attributes:nil];
+                }
+                
+                message1.recFileName = fileName;
+                message1.time = [dict[@"time"] floatValue];
+                message1.msgStatus = TLVoiceMessageStatusNormal;
+                
+                if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
+                    
+                }else{
+                    [weakSelf receivedMessage:message1];
+                }
+            } else {
+                if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
+                    
+                }else{
+                    [weakSelf receivedMessage:message1];
+                }
+            }
+        }];
+    }
+    
+    
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
