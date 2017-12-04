@@ -69,7 +69,7 @@
     
     TLConversation *conversation = [self.data objectAtIndex:indexPath.row];
     
-    chatVC.converstaion = conversation;
+    chatVC.conversationKey = conversation.key;
     
     if (conversation.convType == TLConversationTypePersonal) {
         TLUser *user = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:conversation.partnerID];

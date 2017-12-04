@@ -59,6 +59,12 @@ static TLFriendHelper *friendHelper = nil;
 }
 
 #pragma mark - Public Methods -
+- (NSString *)makeDialogNameForFriend:(NSString *)fid myId:(NSString *)uid{
+    NSArray * ids = [@[uid, fid]  sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    
+    return [ids componentsJoinedByString:@":"];
+}
+
 - (TLUser *)getFriendInfoByUserID:(NSString *)userID
 {
     if (userID == nil) {

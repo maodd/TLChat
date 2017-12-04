@@ -12,6 +12,7 @@
 #import "TLDBManager.h"
 #import "TLConversation.h"
 #import "TLMacros.h"
+#import "TLFriendHelper.h"
 #import <Parse/Parse.h>
 
 @interface TLDBConversationStore ()
@@ -20,7 +21,9 @@
 
 @end
 
-@implementation TLDBConversationStore
+@implementation TLDBConversationStore {
+    BOOL _isQueryingDialog;
+}
 
 - (id)init
 {
@@ -42,6 +45,20 @@
 
 - (BOOL)addConversationByUid:(NSString *)uid fid:(NSString *)fid type:(NSInteger)type date:(NSDate *)date last_message:(NSString*)last_message;
 {
+    NSString * dialogKey = @"";
+    NSString * dialogName = @"";
+    if (type == 1) { //group
+        dialogKey = fid;
+        TLGroup * group = [[TLFriendHelper sharedFriendHelper] getGroupInfoByGroupID:fid];
+        dialogName = group.groupName;
+    }else{
+        dialogKey = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:fid myId:uid];
+        
+        TLUser *user = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:fid];
+        dialogName = user.nikeName;
+    }
+    
+    
     NSInteger unreadCount = [self unreadMessageByUid:uid fid:fid] + 1;
     NSString *sqlString = [NSString stringWithFormat:SQL_ADD_CONV, CONV_TABLE_NAME];
     NSArray *arrPara = [NSArray arrayWithObjects:
@@ -51,31 +68,46 @@
                         TLTimeStamp(date),
                         [NSNumber numberWithInteger:unreadCount],
                         last_message,
+                        dialogKey,
+                        
                         @"", @"", @"", @"", @"", nil];
     BOOL ok = [self excuteSQL:sqlString withArrParameter:arrPara];
     
     
     // Server data
-    PFObject * dialog = [PFObject objectWithClassName:kParseClassNameDialog];
 
-    dialog[@"type"] = @(type);
     
-    if (type == 1) { //group
-        dialog[@"name"] = fid;
-    }else{
-        dialog[@"name"] = [self makeDialogNameForFriend:fid myId:uid];
+    
+    if (_isQueryingDialog) {
+        return ok;
     }
     
-    [dialog saveEventually];
+    PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
+    [query whereKey:@"key" equalTo:dialogKey];
+    
+    _isQueryingDialog = YES;
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
+        _isQueryingDialog = NO;
+        if (number == 0) {
+            PFObject * dialog = [PFObject objectWithClassName:kParseClassNameDialog];
+            
+            dialog[@"type"] = @(type);
+            dialog[@"key"] = dialogKey;
+            dialog[@"user"] = [PFUser currentUser];
+            
+
+            dialog[@"name"] = dialogName;
+            
+            [dialog saveEventually];
+        }
+    }];
+    
+
     
     return ok;
 }
 
-- (NSString *)makeDialogNameForFriend:(NSString *)fid myId:(NSString *)uid{
-    NSArray * ids = [@[uid, fid]  sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-    
-    return [ids componentsJoinedByString:@":"];
-}
+
 /**
  *  更新会话状态（已读）
  */
@@ -101,6 +133,7 @@
             conversation.date = [NSDate dateWithTimeIntervalSince1970:dateString.doubleValue];
             conversation.unreadCount = [retSet intForColumn:@"unread_count"];
             conversation.content = [retSet stringForColumn:@"last_message"];
+            conversation.key = [retSet stringForColumn:@"last_message"];
             [data addObject:conversation];
         }
         [retSet close];

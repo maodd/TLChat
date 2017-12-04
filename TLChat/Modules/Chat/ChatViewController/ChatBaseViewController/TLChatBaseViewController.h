@@ -29,7 +29,7 @@
     TLChatBarStatus curStatus;
 }
 
-@property (nonatomic, strong) TLConversation * converstaion;
+@property (nonatomic, strong) NSString  * conversationKey;
 
 /// 用户信息
 @property (nonatomic, strong) id<TLChatUserProtocol> user;

@@ -22,6 +22,8 @@
 {
     __block BOOL ok = YES;
     [self.dbQueue inDatabase:^(FMDatabase *db) {
+        
+        NSLog(@"dbpath: %@", [db databasePath]);
         if(![db tableExists:tableName]){
             ok = [db executeUpdate:sqlString withArgumentsInArray:nil];
         }

@@ -11,6 +11,7 @@
 #import "TLMacros.h"
 #import <Parse/Parse.h>
 #import "TLImageMessage.h"
+#import "TLFriendHelper.h"
 
 @implementation TLDBMessageStore
 
@@ -34,7 +35,7 @@
 
 - (BOOL)addMessage:(TLMessage *)message
 {
-    if (message == nil || message.messageID == nil || message.userID == nil || (message.friendID == nil && message.groupID == nil)) {
+    if (message == nil || message.userID == nil || message.messageID == nil || (message.friendID == nil && message.groupID == nil)) {
         return NO;
     }
     
@@ -49,9 +50,11 @@
     }
     
     NSString *sqlString = [NSString stringWithFormat:SQL_ADD_MESSAGE, MESSAGE_TABLE_NAME];
-    NSString * newMessageID = [NSString stringWithFormat:@"%lld", (long long)([[NSDate date] timeIntervalSince1970] * 10000)];
+    BOOL ok = YES;
+
+    
     NSArray *arrPara = [NSArray arrayWithObjects:
-                        newMessageID,
+                        message.messageID,
                         message.userID,
                         fid,
                         TLNoNilString(subfid),
@@ -63,11 +66,10 @@
                         [NSNumber numberWithInteger:message.sendState],
                         [NSNumber numberWithInteger:message.readState],
                         @"", @"", @"", @"", @"", nil];
-    BOOL ok = [self excuteSQL:sqlString withArrParameter:arrPara];
+     ok = [self excuteSQL:sqlString withArrParameter:arrPara];
     
-    /// Server code, only save outgoing message. otherwise dead loop
-    if (message.messageID == nil) {
-        
+   if (!message.SavedOnServer) {
+           /// server side save
         
         PFObject * msgObject = [PFObject objectWithClassName:kParseClassNameMessage];
         msgObject[@"message"] = [message.content mj_JSONString];
@@ -78,31 +80,37 @@
             TLImageMessage * imageMessage = (TLImageMessage*)message;
             if (imageMessage.imageData) {
                 
+                if ([imageMessage.imageData length] > 10 * 1024 * 1024) {
+                    CGSize newSize = CGSizeMake(1000, 1000 * imageMessage.imageSize.height / imageMessage.imageSize.width);
+                    UIImage * newImage = [[UIImage imageWithData:imageMessage.imageData] scalingToSize:newSize];
+                    imageMessage.imageData = UIImageJPEGRepresentation(newImage, 1.0);
+                }
+                
                 PFFile * file = [PFFile fileWithData:imageMessage.imageData];
                 msgObject[@"attachment"] = file;
+                
+                
+                CGSize thumbnailSize = CGSizeMake(100, 100 * imageMessage.imageSize.height / imageMessage.imageSize.width);
+                UIImage * thumbnailImage = [[UIImage imageWithData:imageMessage.imageData] scalingToSize:thumbnailSize];
+                PFFile * thumbnail = [PFFile fileWithData:UIImageJPEGRepresentation(thumbnailImage, 0.5)];
+                msgObject[@"thumbnail"] = thumbnail;
+                
+                
                 
             }
         }
         
 
-        NSString * dialogName = @"";
+        NSString * dialogKey = @"";
         if (message.partnerType == TLPartnerTypeUser) {
-            dialogName = [self makeDialogNameForFriend:  message.friendID myId:message.userID];
+            dialogKey = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:  message.friendID myId:message.userID];
         }else {
-            dialogName = message.groupID;
+            dialogKey = message.groupID;
         }
         
-        msgObject[@"dialogName"] = dialogName;
+        msgObject[@"dialogKey"] = dialogKey;
         [msgObject saveInBackground];
-//        PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
-//        [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-//
-//            if (object) {
-//                msgObject[@"dialog"] = object;
-//                [msgObject saveEventually];
-//            }
-//
-//        }];
+
         
     }
     
@@ -113,12 +121,7 @@
     return ok;
 }
 
-// TODO: move to a helper class
-- (NSString *)makeDialogNameForFriend:(NSString *)fid myId:(NSString *)uid{
-    NSArray * ids = [@[uid, fid]  sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-    
-    return [ids componentsJoinedByString:@":"];
-}
+
 
 - (void)messagesByUserID:(NSString *)userID partnerID:(NSString *)partnerID fromDate:(NSDate *)date count:(NSUInteger)count complete:(void (^)(NSArray *, BOOL))complete
 {

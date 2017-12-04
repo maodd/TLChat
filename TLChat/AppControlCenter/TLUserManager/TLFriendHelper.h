@@ -49,4 +49,5 @@
 
 - (TLGroup *)getGroupInfoByGroupID:(NSString *)groupID;
 
+- (NSString *)makeDialogNameForFriend:(NSString *)fid myId:(NSString *)uid;
 @end

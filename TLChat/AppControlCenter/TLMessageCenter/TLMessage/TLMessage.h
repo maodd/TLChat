@@ -51,6 +51,8 @@ typedef NS_ENUM(NSInteger, TLMessageReadState) {
     TLMessageFrame *kMessageFrame;
 }
 
+@property (nonatomic, assign) BOOL      SavedOnServer;              // flag to control should this message save to server or not.
+
 @property (nonatomic, strong) NSString *messageID;                  // 消息ID
 @property (nonatomic, strong) NSString *userID;                     // 发送者ID
 @property (nonatomic, strong) NSString *friendID;                   // 接收者ID

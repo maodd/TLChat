@@ -92,4 +92,6 @@ typedef NS_ENUM(NSInteger, TLMessageRemindType) {
 @property (nonatomic, assign) NSInteger unreadCount;
 
 
+@property (nonatomic, strong) NSString  * key;
+
 @end

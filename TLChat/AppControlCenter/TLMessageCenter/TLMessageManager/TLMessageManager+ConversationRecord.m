@@ -8,6 +8,7 @@
 
 #import "TLMessageManager+ConversationRecord.h"
 #import "TLMessageManager+MessageRecord.h"
+#import "TLUserHelper.h"
 
 @implementation TLMessageManager (ConversationRecord)
 
@@ -19,7 +20,7 @@
         partnerID = message.groupID;
         type = 1;
     }
-    BOOL ok = [self.conversationStore addConversationByUid:message.userID fid:partnerID type:type date:message.date last_message:[message conversationContent]];
+    BOOL ok = [self.conversationStore addConversationByUid:[TLUserHelper sharedHelper].userID fid:partnerID type:type date:message.date last_message:[message conversationContent]];
     
     return ok;
 }

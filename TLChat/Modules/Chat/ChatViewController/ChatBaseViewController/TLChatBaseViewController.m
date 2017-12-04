@@ -12,6 +12,8 @@
 #import "TLChatBaseViewController+MessageDisplayView.h"
 #import "UIImage+Size.h"
 #import "NSFileManager+TLChat.h"
+#import "TLFriendHelper.h"
+#import "TLUserHelper.h"
 
 
 @import Parse;
@@ -47,12 +49,8 @@
     
     self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
     
-    if (self.converstaion.date) {
-        [self.query whereKey:@"createdAt" greaterThan:self.converstaion.date];
-        NSLog(@"TLConversation last message date: %@", self.converstaion.date);
-    }
-    
-//    [self.query whereKey:@"sender" notEqualTo:[PFUser currentUser].objectId]; //livequery doesn't work with pointer
+
+    [self.query whereKey:@"dialogKey" equalTo:self.conversationKey]; //livequery doesn't work with pointer
     
     [self.query orderByAscending:@"createdAt"];
     
@@ -61,7 +59,7 @@
             return [obj1[@"createdAt"] isEarlierThanDate:obj2[@"createdAt"]];
         }]) {
             
-            [self processMessageFromServer:message];
+            [self processMessageFromServer:message bypassMine:NO];
         }
     }];
     
@@ -94,13 +92,13 @@
     self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
         
       
-        [weakSelf processMessageFromServer:message];
+        [weakSelf processMessageFromServer:message bypassMine:YES];
         
         
     }];
 }
 
-- (void)processMessageFromServer:(PFObject *)message {
+- (void)processMessageFromServer:(PFObject *)message bypassMine:(BOOL)bypassMine{
     
     NSLog(@"message received: %@ %@ %@", message.objectId, message[@"message"], message[@"sender"]);
     
@@ -111,6 +109,7 @@
     if (dict ) {
         if (dict[@"text"]) {
             TLTextMessage *message1 = [[TLTextMessage alloc] init];
+            message1.SavedOnServer = YES;
             message1.messageID = message.objectId;
             if ([[self.user chat_userID] isEqualToString: message[@"sender"]]) {
                 message1.fromUser = weakSelf.user;
@@ -123,9 +122,14 @@
             
             message1.userID = message[@"sender"];
             message1.text = dict[@"text"];
-            [weakSelf receivedMessage:message1];
-        }else if (message[@"attachment"]) {
+            if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
+                
+            }else{
+                [weakSelf receivedMessage:message1];
+            }
+        }else if (message[@"thumbnail"]) {
             TLImageMessage *message1 = [[TLImageMessage alloc] init];
+            message1.SavedOnServer = YES;
             message1.messageID = message.objectId;
             if ([[self.user chat_userID]  isEqualToString: message[@"sender"]]) {
                 message1.fromUser = weakSelf.user;
@@ -133,10 +137,11 @@
                 
             }else{
                 message1.fromUser = weakSelf.partner;
+                message1.ownerTyper = TLMessageOwnerTypeFriend;
             }
             message1.userID = message[@"sender"];
-            message1.ownerTyper = TLMessageOwnerTypeFriend;
-            PFFile * file = message[@"attachment"];
+ 
+            PFFile * file = message[@"thumbnail"];
             if (dict[@"w"] && dict[@"h"]) {
                 message1.imageSize = CGSizeMake([dict[@"w"] floatValue], [dict[@"h"] floatValue]);
             }
@@ -144,17 +149,29 @@
                 [file getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
                     if (!error) {
                         
-                        NSString *imageName = dict[@"path"];
+                        NSString *imageName = [NSString stringWithFormat:@"thumb-%@", dict[@"path"]];
                         NSString *imagePath = [NSFileManager pathUserChatImage:imageName];
-                        // TODO: check file exist
-                        [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil];
                         
-                        // TODO: use thumbnail
-                        message1.imagePath = imageName; //no path needed here, cell will prefix it when rendering
+//                        if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
+                            [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil];
+//                        }
                         
-                        [weakSelf receivedMessage:message1];
+                        
+                        message1.thumbnailImagePath = imageName; //no path needed here, cell will prefix it when rendering
+                        PFFile * attachment =  message[@"attachment"];
+                        message1.imageURL = attachment.url;
+                        
+                        if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
+                            
+                        }else{
+                            [weakSelf receivedMessage:message1];
+                        }
                     } else {
-                        [weakSelf receivedMessage:message1];
+                        if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
+                            
+                        }else{
+                            [weakSelf receivedMessage:message1];
+                        }
                     }
                 }];
             }
@@ -203,6 +220,11 @@
     }
     _partner = partner;
     [self.navigationItem setTitle:[_partner chat_username]];
+    
+    // TODO: handle group key
+    NSString * key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:[_partner chat_userID] myId:[[TLUserHelper sharedHelper] userID] ];
+    [self setConversationKey:key];
+    
     [self resetChatVC];
 }
 
@@ -247,7 +269,7 @@
  */
 - (void)sendImageMessage:(UIImage *)image
 {
-    NSData *imageData = (UIImagePNGRepresentation(image) ? UIImagePNGRepresentation(image) :UIImageJPEGRepresentation(image, 0.5));
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
     NSString *imageName = [NSString stringWithFormat:@"%lf.jpg", [NSDate date].timeIntervalSince1970];
     NSString *imagePath = [NSFileManager pathUserChatImage:imageName];
     [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil];
@@ -256,30 +278,19 @@
     message.fromUser = self.user;
     message.ownerTyper = TLMessageOwnerTypeSelf;
     message.imagePath = imageName;
-    message.imageSize = image.size;
+    
+    NSString *thumbImageName = [NSString stringWithFormat:@"thumb-%@", imageName];
+    NSString *thumbImagePath = [NSFileManager pathUserChatImage:imageName];
+    
+    [[NSFileManager defaultManager] createFileAtPath:thumbImagePath contents:imageData attributes:nil];
+    
+    
+    message.thumbnailImagePath = thumbImageName;
+    message.imageSize = image.size; //png size doesn't include oritation info.
     message.imageData = imageData;
     [self sendMessage:message];
     
-    // TODO: remove auto reply code below
-//    if ([self.partner chat_userType] == TLChatUserTypeUser) {
-//        TLImageMessage *message1 = [[TLImageMessage alloc] init];
-//        message1.fromUser = self.partner;
-//        message1.ownerTyper = TLMessageOwnerTypeFriend;
-//        message1.imagePath = imageName;
-//        message1.imageSize = image.size;
-//        [self receivedMessage:message1];
-//    }
-//    else {
-//        for (id<TLChatUserProtocol> user in [self.partner groupMembers]) {
-//            TLImageMessage *message1 = [[TLImageMessage alloc] init];
-//            message1.friendID = [user chat_userID];
-//            message1.fromUser = user;
-//            message1.ownerTyper = TLMessageOwnerTypeFriend;
-//            message1.imagePath = imageName;
-//            message1.imageSize = image.size;
-//            [self receivedMessage:message1];
-//        }
-//    }
+
 }
 
 #pragma mark - # Private Methods
