@@ -28,7 +28,7 @@
         
         [friends removeAllObjects];
         
-        NSLog(@"fetched %u friends from server", objects.count);
+        NSLog(@"fetched %lu friends from server", objects.count);
         
         for (PFUser * user in objects) {
             TLUser * model = [TLUser new];
@@ -39,6 +39,7 @@
                 PFFile * file = user[@"headerImage1"];
                 model.avatarURL = file.url;
             }
+            model.date = user.updatedAt;
             
             [friends addObject:model];
             
@@ -79,7 +80,7 @@
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:friend.userID
                                                                                  type:TLConversationTypePersonal
-                                                                                 date:[NSDate date]
+                                                                                 date:friend.date
                                                                          last_message:@"Let's start chat"
                                                                             localOnly:YES];
         }

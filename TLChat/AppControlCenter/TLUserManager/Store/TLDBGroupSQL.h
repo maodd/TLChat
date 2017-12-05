@@ -17,6 +17,7 @@
                                             uid TEXT,\
                                             gid TEXT,\
                                             name TEXT,\
+                                            date TEXT,\
                                             ext1 TEXT,\
                                             ext2 TEXT,\
                                             ext3 TEXT,\
@@ -24,7 +25,7 @@
                                             ext5 TEXT,\
                                             PRIMARY KEY(uid, gid))"
 
-#define     SQL_UPDATE_GROUP                @"REPLACE INTO %@ ( uid, gid, name, ext1, ext2, ext3, ext4, ext5) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )"
+#define     SQL_UPDATE_GROUP                @"REPLACE INTO %@ ( uid, gid, name, date, ext1, ext2, ext3, ext4, ext5) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ,?)"
 
 #define     SQL_SELECT_GROUPS               @"SELECT * FROM %@ WHERE uid = '%@'"
 

@@ -41,6 +41,7 @@
                         TLNoNilString(user.nikeName),
                         TLNoNilString(user.avatarURL),
                         TLNoNilString(user.remarkName),
+                        TLTimeStamp(user.date),
                         @"", @"", @"", @"", @"", nil];
     BOOL ok = [self excuteSQL:sqlString withArrParameter:arrPara];
     return ok;
@@ -88,6 +89,8 @@
             user.nikeName = [retSet stringForColumn:@"nikename"];
             user.avatarURL = [retSet stringForColumn:@"avatar"];
             user.remarkName = [retSet stringForColumn:@"remark"];
+            NSString *dateString = [retSet stringForColumn:@"date"];
+            user.date = [NSDate dateWithTimeIntervalSince1970:dateString.doubleValue];
             [data addObject:user];
         }
         [retSet close];

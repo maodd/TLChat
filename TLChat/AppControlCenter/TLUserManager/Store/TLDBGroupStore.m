@@ -42,6 +42,7 @@
                         TLNoNilString(uid),
                         TLNoNilString(group.groupID),
                         TLNoNilString(group.groupName),
+                        TLTimeStamp(group.date),
                         @"", @"", @"", @"", @"", nil];
     BOOL ok = [self excuteSQL:sqlString withArrParameter:arrPara];
     if (ok) {
@@ -92,6 +93,9 @@
             TLGroup *group = [[TLGroup alloc] init];
             group.groupID = [retSet stringForColumn:@"gid"];
             group.groupName = [retSet stringForColumn:@"name"];
+ 
+            NSString *dateString = [retSet stringForColumn:@"date"];
+            group.date = [NSDate dateWithTimeIntervalSince1970:dateString.doubleValue];
             [data addObject:group];
         }
         [retSet close];

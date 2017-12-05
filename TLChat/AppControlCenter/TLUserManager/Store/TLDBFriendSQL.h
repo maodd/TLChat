@@ -18,6 +18,7 @@
                                             nikename TEXT, \
                                             avatar TEXT,\
                                             remark TEXT,\
+                                            date TEXT,\
                                             ext1 TEXT,\
                                             ext2 TEXT,\
                                             ext3 TEXT,\
@@ -25,7 +26,7 @@
                                             ext5 TEXT,\
                                             PRIMARY KEY(uid, fid))"
 
-#define     SQL_UPDATE_FRIEND               @"REPLACE INTO %@ ( uid, fid, username, nikename, avatar, remark, ext1, ext2, ext3, ext4, ext5) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+#define     SQL_UPDATE_FRIEND               @"REPLACE INTO %@ ( uid, fid, username, nikename, avatar, remark, date, ext1, ext2, ext3, ext4, ext5) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
 #define     SQL_SELECT_FRIENDS              @"SELECT * FROM %@ WHERE uid = '%@'"
 

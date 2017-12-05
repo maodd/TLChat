@@ -235,7 +235,7 @@
         NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:content fid:message[@"sender"]];
         
         
-        conv.content = lastMsg;
+        conv.content = conv.convType == TLConversationTypeGroup ? lastMsg : content;
         conv.date = message.createdAt;
         
         dispatch_async(dispatch_get_main_queue(), ^{

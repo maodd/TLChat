@@ -47,6 +47,7 @@
 
 @property (nonatomic, assign) BOOL showNameInChat;
 
+@property (nonatomic, strong) NSDate *date;
 
 - (void)addObject:(id)anObject;
 

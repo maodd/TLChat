@@ -46,6 +46,8 @@
         [TLUIUtility hiddenLoading];
         [TLUIUtility showAlertWithTitle:@"错误" message:@"未成功获取到通讯录信息"];
     }];
+    
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -64,6 +66,7 @@
         [_searchController setSearchResultsUpdater:self.searchVC];
         [_searchController.searchBar setPlaceholder:@"搜索"];
         [_searchController.searchBar setDelegate:self];
+       
     }
     return _searchController;
 }

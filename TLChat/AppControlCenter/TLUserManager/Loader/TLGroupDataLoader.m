@@ -30,7 +30,7 @@
         
         [groups removeAllObjects];
         
-        NSLog(@"fetched %u groups from server", objects.count);
+        NSLog(@"fetched %lu groups from server", objects.count);
         
         for (PFObject * course in objects) {
             TLGroup * model = [TLGroup new];
@@ -39,7 +39,7 @@
             NSString * name = [NSString stringWithFormat:@"%@ (%@)", course[@"summary"], term[@"name"]];
             model.groupName = [name stringByTrimmingCharactersInSet:
                               [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-            
+            model.date = course.createdAt;
             model.groupAvatarPath = @"";
             
             [groups addObject:model];
@@ -97,7 +97,7 @@
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:key
                                                                                  type:TLConversationTypeGroup
-                                                                                 date:[NSDate date]
+                                                                                 date:group.date
                                                                          last_message:@"Welcome"
                                                                             localOnly:YES];
         }

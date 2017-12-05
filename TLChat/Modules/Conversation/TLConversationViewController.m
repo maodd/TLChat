@@ -49,6 +49,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupDataUpdateNotification object:nil];
 
     [self updateConversationData];
+    
+     self.definesPresentationContext = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated

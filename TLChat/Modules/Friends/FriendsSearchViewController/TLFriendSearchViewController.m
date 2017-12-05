@@ -8,6 +8,11 @@
 
 #import "TLFriendSearchViewController.h"
 #import "TLFriendCell.h"
+#import "TLNewFriendViewController.h"
+#import "TLGroupViewController.h"
+#import "TLTagsViewController.h"
+#import "TLPublicServerViewController.h"
+#import "TLFriendDetailViewController.h"
 
 @interface TLFriendSearchViewController ()
 
@@ -65,6 +70,19 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return HEIGHT_FRIEND_CELL;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    TLUser *user = [self.data objectAtIndex:indexPath.row];
+ 
+    TLFriendDetailViewController *detailVC = [[TLFriendDetailViewController alloc] init];
+    [detailVC setUser:user];
+    [self setHidesBottomBarWhenPushed:YES];
+    [self.presentingViewController.navigationController pushViewController:detailVC animated:YES];
+    [self setHidesBottomBarWhenPushed:NO];
+ 
 }
 
 //MARK: UISearchResultsUpdating

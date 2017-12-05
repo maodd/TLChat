@@ -44,6 +44,8 @@
         [weakSelf.footerLabel setText:[NSString stringWithFormat:@"%ld位联系人", (long)friendCount]];
         [weakSelf.tableView reloadData];
     }];
+    
+    self.definesPresentationContext = YES;
 }
 
 #pragma mark - Event Response -

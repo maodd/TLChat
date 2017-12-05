@@ -42,6 +42,7 @@
 
 @property (nonatomic, strong) TLUserChatSetting *chatSetting;
 
+@property (nonatomic, strong) NSDate * date;
 
 #pragma mark - 列表用
 /**
