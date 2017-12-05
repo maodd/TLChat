@@ -10,6 +10,7 @@
 #import "TLConversation+TLUser.h"
 #import "TLConversationCell.h"
 #import "TLFriendHelper.h"
+#import "TLMessage.h"
 
 @implementation TLConversationViewController (Delegate)
 
@@ -38,6 +39,8 @@
         }
         self.data = [[NSMutableArray alloc] initWithArray:data];
         [self.tableView reloadData];
+        
+        [self p_initLiveQuery];
     }];
 }
 
@@ -166,6 +169,81 @@
     else {
         [TLUIUtility showAlertWithTitle:item.title message:@"功能暂未实现"];
     }
+}
+
+- (void)p_initLiveQuery
+{
+    self.client = [[PFLiveQueryClient alloc] init];
+    
+    self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
+    
+    NSArray * keys = [self.data valueForKeyPath:@"key"];
+    [self.query whereKey:@"dialogKey" containedIn:keys];
+    
+    
+    self.subscription = [self.client  subscribeToQuery:self.query];
+    
+    
+    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+        NSLog(@"Subscribed");
+    }];
+    
+    self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+        NSLog(@"unsubscribed");
+    }];
+    
+    self.subscription = [self.subscription addEnterHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
+        NSLog(@"enter");
+    }];
+    
+    self.subscription = [self.subscription addEventHandler:^(PFQuery<PFObject *> * _Nonnull query, PFLiveQueryEvent * _Nonnull event) {
+        NSLog(@"event: %@", event);
+    }];
+    
+    self.subscription = [self.subscription addDeleteHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
+        NSLog(@"message deleted: %@ %@",message.createdAt, message.objectId);
+    }];
+    
+    
+    __weak TLConversationViewController * weakSelf = self;
+    self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
+        
+        
+        [weakSelf processMessageFromServer:message bypassMine:YES];
+        
+        
+    }];
+}
+
+
+- (void)processMessageFromServer:(PFObject *)message bypassMine:(BOOL)bypassMine{
+    
+    NSLog(@"message received: %@ %@ %@", message.objectId, message[@"message"], message[@"sender"]);
+    
+
+    NSArray * matches = [self.data filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@", message[@"dialogKey"]]];
+    if (matches.count > 0) {
+        TLConversation * conv = matches.firstObject;
+        
+        NSInteger idx = [self.data indexOfObject:conv];
+        
+        NSIndexPath * indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+        
+        
+        NSString * content = [TLMessage conversationContentForMessage:message[@"message"]];
+
+        NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:content fid:message[@"sender"]];
+        
+        
+        conv.content = lastMsg;
+        conv.date = message.createdAt;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+             [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        });
+       
+    }
+    
 }
 
 @end

@@ -134,20 +134,20 @@
             conversation.date = [NSDate dateWithTimeIntervalSince1970:dateString.doubleValue];
             conversation.unreadCount = [retSet intForColumn:@"unread_count"];
             conversation.content = [retSet stringForColumn:@"last_message"];
-            conversation.key = [retSet stringForColumn:@"last_message"];
+            conversation.key = [retSet stringForColumn:@"key"];
             [data addObject:conversation];
         }
         [retSet close];
     }];
     
     // 获取conv对应的msg // TODO: move to conversation header
-    for (TLConversation *conversation in data) {
-        TLMessage * message = [self.messageStore lastMessageByUserID:uid partnerID:conversation.partnerID];
-        if (message) {
-            conversation.content = [message conversationContent];
-            conversation.date = message.date;
-        }
-    }
+//    for (TLConversation *conversation in data) {
+//        TLMessage * message = [self.messageStore lastMessageByUserID:uid partnerID:conversation.partnerID];
+//        if (message) {
+//            conversation.content = [message conversationContent];
+//            conversation.date = message.date;
+//        }
+//    }
     
     return data;
 }

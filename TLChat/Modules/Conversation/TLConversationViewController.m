@@ -15,6 +15,8 @@
 
 #import "TLMessageManager+ConversationRecord.h"
 
+
+
 @interface TLConversationViewController ()
 
 @property (nonatomic, strong) UIImageView *scrollTopView;
@@ -22,6 +24,7 @@
 @property (nonatomic, strong) TLSearchController *searchController;
 
 @property (nonatomic, strong) TLAddMenuView *addMenuView;
+
 
 @end
 
@@ -44,13 +47,15 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKFriendsDataUpdateNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupDataUpdateNotification object:nil];
+
+    [self updateConversationData];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
-    [self updateConversationData];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -104,6 +109,8 @@
     UIBarButtonItem *rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"nav_add"] style:UIBarButtonItemStyleDone target:self action:@selector(rightBarButtonDown:)];
     [self.navigationItem setRightBarButtonItem:rightBarButtonItem];
 }
+
+
 
 #pragma mark - Getter -
 - (TLSearchController *) searchController

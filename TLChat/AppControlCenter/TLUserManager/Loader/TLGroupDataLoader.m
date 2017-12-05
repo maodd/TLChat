@@ -84,16 +84,7 @@
         
         if (object) {
             NSString * content = [TLMessage conversationContentForMessage: object[@"message"]];
-            NSString * lastMsg = @"";
-            
-            if ([object[@"sender"] isEqualToString:[PFUser currentUser].objectId]) {
-                lastMsg = content;
-            }else{
-                TLUser * user = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:object[@"sender"]];
-                lastMsg = [NSString stringWithFormat:@"%@: %@", user.nikeName, content];
-            }
-                
-            
+            NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:content fid:object[@"sender"]];
              
             
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId

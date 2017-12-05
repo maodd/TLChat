@@ -23,7 +23,10 @@
         partnerID = message.groupID;
         type = 1;
     }
-    BOOL ok = [self.conversationStore addConversationByUid:[TLUserHelper sharedHelper].userID fid:partnerID type:type date:message.date last_message:[message conversationContent] localOnly:NO];
+    
+    NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:[message conversationContent] fid:message.fromUser.chat_userID];
+    
+    BOOL ok = [self.conversationStore addConversationByUid:[TLUserHelper sharedHelper].userID fid:partnerID type:type date:message.date last_message:lastMsg localOnly:NO];
     
     return ok;
 }

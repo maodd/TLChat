@@ -23,7 +23,7 @@
 @interface TLChatBaseViewController()
 @property (nonatomic, strong) PFLiveQueryClient *client;
 @property (nonatomic, strong) PFQuery *query;
-@property (nonatomic, strong) PFLiveQuerySubscription *subscription; // must use properyt to hold reference.
+@property (nonatomic, strong) PFLiveQuerySubscription *subscription; // must use property to hold reference.
 @end
 
 
@@ -289,13 +289,13 @@
     [self.navigationItem setTitle:[_partner chat_username]];
     
 
-    NSString * key = @"";
-    if ([partner isKindOfClass:[TLGroup class]]) {
-        key = [_partner chat_userID];
-    }else{
-        [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:[_partner chat_userID] myId:[[TLUserHelper sharedHelper] userID] ];
-    }
-    [self setConversationKey:key];
+//    NSString * key = @"";
+//    if ([partner isKindOfClass:[TLGroup class]]) {
+//        key = [_partner chat_userID];
+//    }else{
+//        key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:[_partner chat_userID] myId:[[TLUserHelper sharedHelper] userID] ];
+//    }
+//    [self setConversationKey:key];
     
     [self resetChatVC];
 }

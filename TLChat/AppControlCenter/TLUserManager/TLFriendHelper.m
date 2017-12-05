@@ -72,6 +72,18 @@ static TLFriendHelper *friendHelper = nil;
     return [ids componentsJoinedByString:@":"];
 }
 
+- (NSString *)formatLastMessage:(NSString *)content fid:(NSString *)fid {
+    NSString * lastMsg = @"";
+    
+    if ([fid isEqualToString:[TLUserHelper sharedHelper].userID]) {
+        lastMsg = content;
+    }else{
+        TLUser * user = [self getFriendInfoByUserID:fid];
+        lastMsg = [NSString stringWithFormat:@"%@: %@", user.nikeName, content];
+    }
+    return lastMsg;
+}
+
 - (TLUser *)getFriendInfoByUserID:(NSString *)userID
 {
     if (userID == nil) {
