@@ -84,6 +84,7 @@
     
     PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
     [query whereKey:@"key" equalTo:dialogKey];
+    [query whereKey:@"user" equalTo:[PFUser currentUser]];
     
     _isQueryingDialog = YES;
     [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {

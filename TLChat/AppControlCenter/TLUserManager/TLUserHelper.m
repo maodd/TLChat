@@ -41,13 +41,17 @@
 
 - (void)setUser:(TLUser *)user
 {
+    [[NSUserDefaults standardUserDefaults] setObject:user.userID forKey:@"loginUid"];
+    
     _user = user;
     TLDBUserStore *userStore = [[TLDBUserStore alloc] init];
     if (![userStore updateUser:user]) {
         DDLogError(@"登录数据存库失败");
+        
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"loginUid"];
     }
 
-    [[NSUserDefaults standardUserDefaults] setObject:user.userID forKey:@"loginUid"];
+
 }
 - (TLUser *)user
 {

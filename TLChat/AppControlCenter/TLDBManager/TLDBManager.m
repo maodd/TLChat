@@ -18,6 +18,10 @@ static TLDBManager *manager;
 {
     static dispatch_once_t once;
     NSString *userID = [TLUserHelper sharedHelper].userID;
+    if (userID == nil) {
+        DDLogError(@"TLDBManager：userID is null");
+    }
+    
     dispatch_once(&once, ^{
         manager = [[TLDBManager alloc] initWithUserID:userID];
     });
