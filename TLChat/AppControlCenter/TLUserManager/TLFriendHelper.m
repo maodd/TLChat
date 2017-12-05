@@ -52,6 +52,8 @@ static TLFriendHelper *friendHelper = nil;
 //        [self p_initTestGroupData];
         
         if ([[TLUserHelper sharedHelper] isLogin]) {
+            
+            // TODO: might need to do queue waitForAll trick here, because load group data needs frienddata loaded first to get user name to display for last messge.
             [self p_loadFriendsData];
             [self p_loadGroupsData];
         }
@@ -212,6 +214,8 @@ static TLFriendHelper *friendHelper = nil;
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsDataUpdateNotification object:nil];
 
         [TLFriendDataLoader recreateLocalDialogsForFriends];
+
+
     
     }];
     
@@ -235,7 +239,8 @@ static TLFriendHelper *friendHelper = nil;
         }
         
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupDataUpdateNotification object:nil];
-        
+
+        [TLGroupDataLoader recreateLocalDialogsForGroups];
         
     }];
     

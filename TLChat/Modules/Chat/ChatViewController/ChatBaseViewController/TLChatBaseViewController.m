@@ -288,8 +288,13 @@
     _partner = partner;
     [self.navigationItem setTitle:[_partner chat_username]];
     
-    // TODO: handle group key
-    NSString * key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:[_partner chat_userID] myId:[[TLUserHelper sharedHelper] userID] ];
+
+    NSString * key = @"";
+    if ([partner isKindOfClass:[TLGroup class]]) {
+        key = [_partner chat_userID];
+    }else{
+        [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:[_partner chat_userID] myId:[[TLUserHelper sharedHelper] userID] ];
+    }
     [self setConversationKey:key];
     
     [self resetChatVC];

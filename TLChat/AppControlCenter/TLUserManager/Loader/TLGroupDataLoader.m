@@ -14,6 +14,8 @@
 #import "TLConversation.h"
 #import "TLMessage.h"
 #import "TLAppDelegate.h"
+#import "TLFriendHelper.h"
+#import "TLUser.h"
 
 @implementation TLGroupDataLoader
 
@@ -42,8 +44,6 @@
             
             [groups addObject:model];
             
-            // OPTIONAL: auto create converstaion for each group
-            [self createCourseDialogWithLatestMessage:course];
             
         }
         
@@ -67,9 +67,15 @@
     return key;
 }
 
-+ (void)createCourseDialogWithLatestMessage:(PFObject *)course
++ (void)recreateLocalDialogsForGroups {
+    for (TLGroup * group in [TLFriendHelper sharedFriendHelper].groupsData) {
+        [self createCourseDialogWithLatestMessage:group];
+    }
+}
+
++ (void)createCourseDialogWithLatestMessage:(TLGroup *)group
 {
-    NSString * key = [self makeCourseDialogKey:course];
+    NSString * key = group.groupID;
     PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
     [query whereKey:@"dialogKey" equalTo:key];
     [query orderByDescending:@"createdAt"];
@@ -77,12 +83,25 @@
     [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         
         if (object) {
+            NSString * content = [TLMessage conversationContentForMessage: object[@"message"]];
+            NSString * lastMsg = @"";
+            
+            if ([object[@"sender"] isEqualToString:[PFUser currentUser].objectId]) {
+                lastMsg = content;
+            }else{
+                TLUser * user = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:object[@"sender"]];
+                lastMsg = [NSString stringWithFormat:@"%@: %@", user.nikeName, content];
+            }
+                
+            
+             
+            
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:key
                                                                                  type:TLConversationTypeGroup
                                                                                  date:object.createdAt
-                                                                         last_message:[TLMessage conversationContentForMessage: object[@"message"]]
-                                                                            localOnly:YES];
+                                                                         last_message:lastMsg
+                                                                            localOnly:YES]; 
         }else{
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:key

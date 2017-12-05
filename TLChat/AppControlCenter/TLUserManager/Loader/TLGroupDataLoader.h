@@ -13,4 +13,5 @@
 
 + (void)p_loadGroupsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *groups))completionBlock;
 
++ (void)recreateLocalDialogsForGroups;
 @end
