@@ -53,10 +53,14 @@
     [self.usernameLabel setText:[message.fromUser chat_username]];
     if ([message.fromUser chat_avatarPath].length > 0) {
         NSString *path = [NSFileManager pathUserAvatar:[message.fromUser chat_avatarPath]];
+ 
         [self.avatarButton setImage:[UIImage imageNamed:path] forState:UIControlStateNormal];
+        
     }
-    else {
+    else if ([message.fromUser chat_avatarURL].length > 0) {
         [self.avatarButton tt_setImageWithURL:TLURL([message.fromUser chat_avatarURL]) forState:UIControlStateNormal];
+    }else {
+        [self.avatarButton setImage:[UIImage imageNamed:DEFAULT_AVATAR_PATH] forState:UIControlStateNormal];
     }
     
     // 时间

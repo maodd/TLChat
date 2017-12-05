@@ -16,4 +16,6 @@
 
 - (BOOL)deleteConversationByPartnerID:(NSString *)partnerID;
 
+- (void)refreshConversationRecord;
+
 @end

@@ -11,8 +11,10 @@
 #import "TLDBGroupStore.h"
 #import "TLGroup+CreateAvatar.h"
 #import "TLUserHelper.h"
-#import <Parse/Parse.h>
+
 #import "TLAppDelegate.h"
+#import "TLFriendDataLoader.h"
+#import "TLGroupDataLoader.h"
 
 static TLFriendHelper *friendHelper = nil;
 
@@ -47,12 +49,15 @@ static TLFriendHelper *friendHelper = nil;
         // 初始化标签数据
         self.tagsData = [[NSMutableArray alloc] init];
 //        [self p_initTestData];
+//        [self p_initTestGroupData];
         
-        if ([PFUser currentUser]) {
+        if ([[TLUserHelper sharedHelper] isLogin]) {
             [self p_loadFriendsData];
+            [self p_loadGroupsData];
         }
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_loadFriendsData) name:kAKUserLoggedInNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_loadGroupsData) name:kAKUserLoggedInNotification object:nil];
         
     }
     return self;
@@ -187,52 +192,54 @@ static TLFriendHelper *friendHelper = nil;
 
 - (void)p_loadFriendsData
 {
-    PFRelation * friendsRelation = [[PFUser currentUser] relationForKey:@"friends"];
-    PFQuery * query = [friendsRelation query] ;
-    query.cachePolicy = kPFCachePolicyCacheThenNetwork;
-    
-    [[friendsRelation query] findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+    [TLFriendDataLoader p_loadFriendsDataWithCompletionBlock:^(NSArray<TLUser *> *friends) {
         
-        [self.friendsData removeAllObjects];
-        
-        NSLog(@"fetched %ld friends from server", objects.count);
-   
-        for (PFUser * user in objects) {
-            TLUser * model = [TLUser new];
-            model.userID = user.objectId;
-            model.nikeName = [user.username stringByTrimmingCharactersInSet:
-                              [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-            if (user[@"headerImage1"] && user[@"headerImage1"] != [NSNull null]) {
-                PFFile * file = user[@"headerImage1"];
-                model.avatarURL = file.url;
-            }
-            
-            [self.friendsData addObject:model];
-            
-
-
-        }
-        
-        NSLog(@"updateFriendsData done");
-
-        [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsDataUpdateNotification object:nil];
-        
+ 
         
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             [self p_resetFriendData];
         });
         
         // 更新好友数据到数据库
+        
+        self.friendsData = [friends mutableCopy];
         BOOL ok = [self.friendStore updateFriendsData:self.friendsData forUid:[TLUserHelper sharedHelper].userID];
         if (!ok) {
             DDLogError(@"保存好友数据到数据库失败!");
         }
         
+        [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsDataUpdateNotification object:nil];
+
+    
     }];
     
 }
 
-- (void)p_initTestData
+- (void)p_loadGroupsData
+{
+    [TLGroupDataLoader p_loadGroupsDataWithCompletionBlock:^(NSArray<TLGroup *> *groups) {
+
+        self.groupsData = [groups mutableCopy];
+        
+        
+        
+        BOOL ok = [self.groupStore updateGroupsData:self.groupsData forUid:[TLUserHelper sharedHelper].userID];
+        if (!ok) {
+            DDLogError(@"保存群数据到数据库失败!");
+        }
+        // 生成Group Icon
+        for (TLGroup *group in self.groupsData) {
+            [group createGroupAvatarWithCompleteAction:nil];
+        }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupDataUpdateNotification object:nil];
+        
+        
+    }];
+    
+}
+
+- (void)p_initTestFriendsData
 {
     // 好友数据
     NSString *path = [[NSBundle mainBundle] pathForResource:@"FriendList" ofType:@"json"];
@@ -250,14 +257,20 @@ static TLFriendHelper *friendHelper = nil;
         [self p_resetFriendData];
     });
     
+}
+
+
+
+- (void)p_initTestGroupData
+{
     // 群数据
-    path = [[NSBundle mainBundle] pathForResource:@"FriendGroupList" ofType:@"json"];
-    jsonData = [NSData dataWithContentsOfFile:path];
-    jsonArray = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:nil];
-    arr = [TLGroup mj_objectArrayWithKeyValuesArray:jsonArray];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"FriendGroupList" ofType:@"json"];
+    NSData *jsonData = [NSData dataWithContentsOfFile:path];
+    NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingAllowFragments error:nil];
+    NSArray *arr = [TLGroup mj_objectArrayWithKeyValuesArray:jsonArray];
     [self.groupsData removeAllObjects];
     [self.groupsData addObjectsFromArray:arr];
-    ok = [self.groupStore updateGroupsData:self.groupsData forUid:[TLUserHelper sharedHelper].userID];
+    BOOL ok = [self.groupStore updateGroupsData:self.groupsData forUid:[TLUserHelper sharedHelper].userID];
     if (!ok) {
         DDLogError(@"保存群数据到数据库失败!");
     }

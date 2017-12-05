@@ -14,7 +14,7 @@
 
 - (void)createGroupAvatarWithCompleteAction:(void (^)(NSString *groupID))completeAction
 {
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+//    dispatch_async(dispatch_get_global_queue(0, 0), ^{
         NSInteger usersCount = self.users.count > 9 ? 9 : self.users.count;
         CGFloat viewWidth = 200;
         CGFloat width = viewWidth / 3 * 0.85;
@@ -64,7 +64,7 @@
                 x += (width + space3);
             }
         }
-    });
+//    });
 }
 
 

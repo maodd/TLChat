@@ -83,7 +83,7 @@
     [self excuteQuerySQL:sqlString resultBlock:^(FMResultSet *retSet) {
         while ([retSet next]) {
             TLUser *user = [[TLUser alloc] init];
-            user.userID = [retSet stringForColumn:@"uid"];
+            user.userID = [retSet stringForColumn:@"fid"];
             user.username = [retSet stringForColumn:@"username"];
             user.nikeName = [retSet stringForColumn:@"nikename"];
             user.avatarURL = [retSet stringForColumn:@"avatar"];

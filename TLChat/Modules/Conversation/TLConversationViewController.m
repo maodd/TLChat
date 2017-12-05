@@ -42,6 +42,8 @@
     [TLFriendHelper sharedFriendHelper]; // force a friend data load.
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKFriendsDataUpdateNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupDataUpdateNotification object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated

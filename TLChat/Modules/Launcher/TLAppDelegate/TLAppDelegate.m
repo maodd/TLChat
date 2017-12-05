@@ -15,6 +15,8 @@
 
 NSString * const kAKUserLoggedInNotification = @"kAKUserLoggedInNotification";
 NSString * const kAKFriendsDataUpdateNotification = @"kAKFriendsDataUpdateNotification";
+NSString * const kAKGroupDataUpdateNotification = @"kAKGroupDataUpdateNotification";
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

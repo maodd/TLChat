@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0CE752DB282CB0615FCC8540 /* Pods_TLChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A274DBE4E261E83A41A376E /* Pods_TLChat.framework */; };
+		69C396FF1FD7042400B5A7BE /* TLFriendDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 69C396FE1FD7042400B5A7BE /* TLFriendDataLoader.m */; };
+		69C397021FD709E700B5A7BE /* TLGroupDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 69C397011FD709E700B5A7BE /* TLGroupDataLoader.m */; };
 		C2097EE81C52326500163B5C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C2097EE71C52326500163B5C /* main.m */; };
 		C2097F011C52326500163B5C /* TLChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C2097F001C52326500163B5C /* TLChatTests.m */; };
 		C2097F0C1C52326500163B5C /* TLChatUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = C2097F0B1C52326500163B5C /* TLChatUITests.m */; };
@@ -297,6 +299,10 @@
 
 /* Begin PBXFileReference section */
 		28C098D007CC6D63F81358AB /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		69C396FD1FD7042400B5A7BE /* TLFriendDataLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLFriendDataLoader.h; sourceTree = "<group>"; };
+		69C396FE1FD7042400B5A7BE /* TLFriendDataLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TLFriendDataLoader.m; sourceTree = "<group>"; };
+		69C397001FD709E700B5A7BE /* TLGroupDataLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLGroupDataLoader.h; sourceTree = "<group>"; };
+		69C397011FD709E700B5A7BE /* TLGroupDataLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TLGroupDataLoader.m; sourceTree = "<group>"; };
 		75B8BEA1E816AE40E5E1CBA0 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		8A274DBE4E261E83A41A376E /* Pods_TLChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TLChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		99FC90F8BB6CC8FC216CB6EE /* Pods-TLChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TLChat.release.xcconfig"; path = "Pods/Target Support Files/Pods-TLChat/Pods-TLChat.release.xcconfig"; sourceTree = "<group>"; };
@@ -886,6 +892,17 @@
 				8A274DBE4E261E83A41A376E /* Pods_TLChat.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		69C396FC1FD703ED00B5A7BE /* Loader */ = {
+			isa = PBXGroup;
+			children = (
+				69C396FD1FD7042400B5A7BE /* TLFriendDataLoader.h */,
+				69C396FE1FD7042400B5A7BE /* TLFriendDataLoader.m */,
+				69C397001FD709E700B5A7BE /* TLGroupDataLoader.h */,
+				69C397011FD709E700B5A7BE /* TLGroupDataLoader.m */,
+			);
+			path = Loader;
 			sourceTree = "<group>";
 		};
 		C2097EDA1C52326500163B5C = {
@@ -2564,6 +2581,7 @@
 		C2D7CBD91F72497900648CED /* TLUserManager */ = {
 			isa = PBXGroup;
 			children = (
+				69C396FC1FD703ED00B5A7BE /* Loader */,
 				C2D7CC711F72852E00648CED /* Store */,
 				C2D7CC251F726D7200648CED /* Models */,
 				C2D7CC081F72680200648CED /* TLFriendHelper.h */,
@@ -3082,6 +3100,7 @@
 				C243B6521F7A5B5D0059A886 /* UIButton+TLWebImage.m in Sources */,
 				C2D7CB3E1F72470400648CED /* TLEmojiKeyboard+EmojiGroupControl.m in Sources */,
 				C2D7CBC11F72470500648CED /* TLChatBackgroundSelectViewController.m in Sources */,
+				69C397021FD709E700B5A7BE /* TLGroupDataLoader.m in Sources */,
 				C23EE4711F7392540069885F /* TLExpressionBannerCell.m in Sources */,
 				C2D7CC541F7281D200648CED /* TLMessage.m in Sources */,
 				C2D7CBBE1F72470500648CED /* TLChatBackgroundSelectCell.m in Sources */,
@@ -3142,6 +3161,7 @@
 				C2D7CB7A1F72470400648CED /* TLAddFriendViewController.m in Sources */,
 				C2D7CBBA1F72470500648CED /* TLSearchController.m in Sources */,
 				C2D7CB141F72470400648CED /* TLRegisterViewController.m in Sources */,
+				69C396FF1FD7042400B5A7BE /* TLFriendDataLoader.m in Sources */,
 				C292D3311F7A4B98007EB0A6 /* TLMomentExtensionView.m in Sources */,
 				C243B6511F7A5B5A0059A886 /* UIImageView+TLWebImage.m in Sources */,
 				C292D3291F7A4B78007EB0A6 /* TLMomentImagesCell.m in Sources */,

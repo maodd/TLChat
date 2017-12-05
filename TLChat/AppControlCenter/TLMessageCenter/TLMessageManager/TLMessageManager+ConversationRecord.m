@@ -9,6 +9,9 @@
 #import "TLMessageManager+ConversationRecord.h"
 #import "TLMessageManager+MessageRecord.h"
 #import "TLUserHelper.h"
+#import "TLGroup.h"
+#import "TLFriendHelper.h"
+#import "TLConversation.h"
 
 @implementation TLMessageManager (ConversationRecord)
 
@@ -38,6 +41,19 @@
         ok = [self.conversationStore deleteConversationByUid:self.userID fid:partnerID];
     }
     return ok;
+}
+
+- (void)refreshConversationRecord
+{
+    NSArray<NSString*> * groupIds = [[TLFriendHelper sharedFriendHelper].groupsData valueForKeyPath:@"groupID"];
+    NSArray<TLConversation*> * oldData = [self.conversationStore conversationsByUid:self.userID];
+    for (TLConversation * conv in oldData) {
+        if (conv.convType == TLConversationTypeGroup && ![groupIds containsObject: conv.partnerID]) {
+            [self deleteConversationByPartnerID:conv.partnerID];
+        }
+    }
+   
+    
 }
 
 @end

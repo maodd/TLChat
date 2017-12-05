@@ -23,6 +23,8 @@
 //MARK: TLMessageManagerConvVCDelegate
 - (void)updateConversationData
 {
+    [[TLMessageManager sharedInstance] refreshConversationRecord];
+    
     [[TLMessageManager sharedInstance] conversationRecord:^(NSArray *data) {
         for (TLConversation *conversation in data) {
             if (conversation.convType == TLConversationTypePersonal) {

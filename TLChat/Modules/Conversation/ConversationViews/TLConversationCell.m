@@ -63,7 +63,7 @@
         [self.avatarImageView tt_setImageWithURL:TLURL(conversation.avatarURL) placeholderImage:[UIImage imageNamed:DEFAULT_AVATAR_PATH]];
     }
     else {
-        [self.avatarImageView setImage:nil];
+        [self.avatarImageView setImage:[UIImage imageNamed:DEFAULT_AVATAR_PATH]]; //should be group avatar
     }
     [self.usernameLabel setText:conversation.partnerName];
     [self.detailLabel setText:conversation.content];

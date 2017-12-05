@@ -35,7 +35,7 @@
 
 #pragma mark - # 群
 /// 群数据
-@property (nonatomic, strong) NSMutableArray *groupsData;
+@property (nonatomic, strong) NSMutableArray<TLGroup*> *groupsData;
 
 
 #pragma mark - # 标签
