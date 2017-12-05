@@ -13,7 +13,7 @@
 /**
  *  新的会话（未读）
  */
-- (BOOL)addConversationByUid:(NSString *)uid fid:(NSString *)fid type:(NSInteger)type date:(NSDate *)date last_message:(NSString*)last_message;
+- (BOOL)addConversationByUid:(NSString *)uid fid:(NSString *)fid type:(NSInteger)type date:(NSDate *)date last_message:(NSString*)last_message localOnly:(BOOL)localOnly;
 
 /**
  *  更新会话状态（已读）

@@ -207,9 +207,11 @@ static TLFriendHelper *friendHelper = nil;
         if (!ok) {
             DDLogError(@"保存好友数据到数据库失败!");
         }
+ 
         
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsDataUpdateNotification object:nil];
 
+        [TLFriendDataLoader recreateLocalDialogsForFriends];
     
     }];
     

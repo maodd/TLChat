@@ -10,6 +10,10 @@
 
 #import "TLGroupDataLoader.h"
 #import <Parse/Parse.h>
+#import "TLMessageManager.h"
+#import "TLConversation.h"
+#import "TLMessage.h"
+#import "TLAppDelegate.h"
 
 @implementation TLGroupDataLoader
 
@@ -24,11 +28,11 @@
         
         [groups removeAllObjects];
         
-        NSLog(@"fetched %ld groups from server", objects.count);
+        NSLog(@"fetched %u groups from server", objects.count);
         
         for (PFObject * course in objects) {
             TLGroup * model = [TLGroup new];
-            model.groupID = course.objectId;
+            model.groupID = [self makeCourseDialogKey:course];
             PFObject * term = (PFObject*)course[@"term"];
             NSString * name = [NSString stringWithFormat:@"%@ (%@)", course[@"summary"], term[@"name"]];
             model.groupName = [name stringByTrimmingCharactersInSet:
@@ -38,7 +42,8 @@
             
             [groups addObject:model];
             
-            
+            // OPTIONAL: auto create converstaion for each group
+            [self createCourseDialogWithLatestMessage:course];
             
         }
         
@@ -48,5 +53,46 @@
         
     }];
     
+}
+
++ (NSString *)makeCourseDialogKey:(PFObject *)course
+{
+    PFObject * term = (PFObject*)course[@"term"];
+    NSString * name = [NSString stringWithFormat:@"%@ %@", course[@"summary"], term[@"name"]];
+    NSString * key = [name stringByTrimmingCharactersInSet:
+                       [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    key = [key stringByReplacingOccurrencesOfString:@" " withString:@"-"];
+ 
+    return key;
+}
+
++ (void)createCourseDialogWithLatestMessage:(PFObject *)course
+{
+    NSString * key = [self makeCourseDialogKey:course];
+    PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
+    [query whereKey:@"dialogKey" equalTo:key];
+    [query orderByDescending:@"createdAt"];
+    
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        
+        if (object) {
+            [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
+                                                                                  fid:key
+                                                                                 type:TLConversationTypeGroup
+                                                                                 date:object.createdAt
+                                                                         last_message:[TLMessage conversationContentForMessage: object[@"message"]]
+                                                                            localOnly:YES];
+        }else{
+            [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
+                                                                                  fid:key
+                                                                                 type:TLConversationTypeGroup
+                                                                                 date:[NSDate date]
+                                                                         last_message:@"Welcome"
+                                                                            localOnly:YES];
+        }
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupDataUpdateNotification object:nil];
+    }];
 }
 @end

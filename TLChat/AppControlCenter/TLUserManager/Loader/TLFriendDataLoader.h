@@ -13,5 +13,5 @@
 
 + (void)p_loadFriendsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *friends))completionBlock;
 
-
++ (void)recreateLocalDialogsForFriends;
 @end

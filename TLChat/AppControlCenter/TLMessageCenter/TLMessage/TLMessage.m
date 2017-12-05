@@ -66,4 +66,21 @@
     return _content;
 }
 
++ (NSString *)conversationContentForMessage:(NSString *)message {
+    
+    NSDictionary * dict = [message mj_JSONObject];
+    if (dict[@"text"]) {
+        return dict[@"text"];
+    }
+    
+    if (dict[@"time"]) {
+        return @"[Audio]";
+    }
+    
+    if (dict[@"path"]) {
+        return @"[Photo]";
+    }
+    
+    return @"";
+}
 @end

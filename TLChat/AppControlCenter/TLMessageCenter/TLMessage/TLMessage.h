@@ -76,6 +76,7 @@ typedef NS_ENUM(NSInteger, TLMessageReadState) {
 @property (nonatomic, strong, readonly) TLMessageFrame *messageFrame;         // 消息frame
 
 + (TLMessage *)createMessageByType:(TLMessageType)type;
++ (NSString *)conversationContentForMessage:(NSString *)message;
 
 - (void)resetMessageFrame;
 

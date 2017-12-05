@@ -43,7 +43,7 @@
     return [self createTable:CONV_TABLE_NAME withSQL:sqlString];
 }
 
-- (BOOL)addConversationByUid:(NSString *)uid fid:(NSString *)fid type:(NSInteger)type date:(NSDate *)date last_message:(NSString*)last_message;
+- (BOOL)addConversationByUid:(NSString *)uid fid:(NSString *)fid type:(NSInteger)type date:(NSDate *)date last_message:(NSString*)last_message localOnly:(BOOL)localOnly;
 {
     NSString * dialogKey = @"";
     NSString * dialogName = @"";
@@ -78,7 +78,7 @@
 
     
     
-    if (_isQueryingDialog) {
+    if (localOnly || _isQueryingDialog) {
         return ok;
     }
     
