@@ -10,6 +10,7 @@
 #import <SDWebImage/SDWebImageDownloader.h>
 #import <SDWebImage/SDImageCache.h>
 
+
 #pragma mark - ## TLImageDownloaderTask
 typedef NS_ENUM(NSInteger, TLImageDownloadState) {
     TLImageDownloadStateNone,
@@ -88,7 +89,7 @@ typedef NS_ENUM(NSInteger, TLImageDownloadState) {
         }
         @weakify(self);
         task.downloadState = TLImageDownloadStateDownloading;
-        task.token = [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:task.url options:SDWebImageDownloaderHighPriority progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
+        task.token = [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:task.url options:nil progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
             @strongify(self);
             if (!self) {
                 return;

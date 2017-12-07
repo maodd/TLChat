@@ -12,7 +12,7 @@
 #import "TLMessageManager.h"
 #import "TLConversation.h"
 #import "TLMessage.h"
-#import "TLAppDelegate.h"
+//#import "TLAppDelegate.h"
 
 @implementation TLFriendDataLoader
 

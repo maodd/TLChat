@@ -49,13 +49,13 @@ static TLChatViewController *chatVC;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [MobClick beginLogPageView:@"ChatVC"];
+//    [MobClick beginLogPageView:@"ChatVC"];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    [MobClick endLogPageView:@"ChatVC"];
+//    [MobClick endLogPageView:@"ChatVC"];
 }
 
 - (void)dealloc

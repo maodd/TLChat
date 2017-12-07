@@ -21,9 +21,10 @@
 {
     [self __tt_loadView];
     
-    [self.navigationBar setBarTintColor:[UIColor colorBlackForNavBar]];
-    [self.navigationBar setTintColor:[UIColor whiteColor]];
-    [self.view setBackgroundColor:[UIColor colorGrayBG]];
+    // TODO: make this into config.
+//    [self.navigationBar setBarTintColor:[UIColor colorBlackForNavBar]];
+//    [self.navigationBar setTintColor:[UIColor whiteColor]];
+//    [self.view setBackgroundColor:[UIColor colorGrayBG]];
 }
 
 @end

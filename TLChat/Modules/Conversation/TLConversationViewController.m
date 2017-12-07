@@ -10,7 +10,7 @@
 #import "TLConversationViewController+Delegate.h"
 #import "TLSearchController.h"
 #import <AFNetworking/AFNetworking.h>
-#import "TLAppDelegate.h"
+//#import "TLAppDelegate.h"
 #import "TLFriendHelper.h"
 
 #import "TLMessageManager+ConversationRecord.h"

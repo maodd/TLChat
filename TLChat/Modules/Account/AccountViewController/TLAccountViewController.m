@@ -10,7 +10,7 @@
 #import "TLLoginViewController.h"
 #import "TLRegisterViewController.h"
 #import "TLUserHelper.h"
-#import "TLAppDelegate.h"
+//#import "TLAppDelegate.h"
 #import <ParseUI/ParseUI.h>
 #import <Parse/Parse.h>
 

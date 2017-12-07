@@ -28,7 +28,7 @@
 {
     [super viewWillAppear:animated];
     
-    [MobClick beginLogPageView:self.analyzeTitle];
+//    [MobClick beginLogPageView:self.analyzeTitle];
     if ([UIApplication sharedApplication].statusBarStyle != self.statusBarStyle) {
         [UIApplication sharedApplication].statusBarStyle = self.statusBarStyle;
     }
@@ -37,7 +37,7 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    [MobClick endLogPageView:self.analyzeTitle];
+//    [MobClick endLogPageView:self.analyzeTitle];
 }
 
 - (void)dealloc

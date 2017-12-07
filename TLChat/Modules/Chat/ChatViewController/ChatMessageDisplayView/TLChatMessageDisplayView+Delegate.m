@@ -145,7 +145,7 @@
         BOOL ok = [self.delegate chatMessageDisplayView:self deleteMessage:message];
         if (ok) {
             [self deleteMessage:message withAnimation:YES];
-            [MobClick event:EVENT_DELETE_MESSAGE];
+//            [MobClick event:EVENT_DELETE_MESSAGE];
         }
         else {
             [TLUIUtility showAlertWithTitle:@"错误" message:@"从数据库中删除消息失败。"];

@@ -41,7 +41,7 @@
         self.headers = headers;
         [self.tableView reloadData];
         
-        [MobClick event:EVENT_GET_CONTACTS];
+//        [MobClick event:EVENT_GET_CONTACTS];
     } failed:^{
         [TLUIUtility hiddenLoading];
         [TLUIUtility showAlertWithTitle:@"错误" message:@"未成功获取到通讯录信息"];

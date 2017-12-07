@@ -43,13 +43,13 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [MobClick beginLogPageView:self.analyzeTitle];
+//    [MobClick beginLogPageView:self.analyzeTitle];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    [MobClick endLogPageView:self.analyzeTitle];
+//    [MobClick endLogPageView:self.analyzeTitle];
 }
 
 - (void)dealloc

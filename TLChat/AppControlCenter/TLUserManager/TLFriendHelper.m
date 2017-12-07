@@ -12,7 +12,7 @@
 #import "TLGroup+CreateAvatar.h"
 #import "TLUserHelper.h"
 
-#import "TLAppDelegate.h"
+//#import "TLAppDelegate.h"
 #import "TLFriendDataLoader.h"
 #import "TLGroupDataLoader.h"
 
