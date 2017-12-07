@@ -10,7 +10,9 @@
 #import "TLDBUserStoreSQL.h"
 #import "TLUser.h"
 
-@implementation TLDBUserStore
+@implementation TLDBUserStore {
+
+}
 
 - (id)init
 {

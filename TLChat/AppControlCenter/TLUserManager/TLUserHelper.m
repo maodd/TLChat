@@ -60,8 +60,16 @@
             TLDBUserStore *userStore = [[TLDBUserStore alloc] init];
             _user = [userStore userByID:self.userID];
             if (!_user) {
-                [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"loginUid"];
+//                [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"loginUid"];
+                
+                _user = [TLUser new];
+                _user.userID = self.userID;
+                _user.username = [PFUser currentUser].username;
+                _user.nikeName = [PFUser currentUser].username;
+                
             }
+            
+            [self setUser:_user];
         }
     }
     return _user;
@@ -69,8 +77,7 @@
 
 - (NSString *)userID
 {
-    NSString *uid = [[NSUserDefaults standardUserDefaults] objectForKey:@"loginUid"];
-    return uid;
+    return [PFUser currentUser].objectId;
 }
 
 - (BOOL)isLogin

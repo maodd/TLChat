@@ -14,7 +14,7 @@
 #import "NSFileManager+TLChat.h"
 #import "TLFriendHelper.h"
 #import "TLUserHelper.h"
-
+#import <IQKeyboardManager/IQKeyboardManager.h>
 
 @import Parse;
 @import ParseLiveQuery;
@@ -98,6 +98,8 @@
     }];
 }
 
+
+
 - (void)processMessageFromServer:(PFObject *)message bypassMine:(BOOL)bypassMine{
     
     NSLog(@"message received: %@ %@ %@", message.objectId, message[@"message"], message[@"sender"]);
@@ -130,7 +132,7 @@
         message1.fromUser = weakSelf.user;
         message1.ownerTyper = TLMessageOwnerTypeSelf;
         
-    }else{
+    }else if ([[self.partner chat_userID] isEqualToString: message[@"sender"]]){
         message1.fromUser = weakSelf.partner;
         message1.ownerTyper = TLMessageOwnerTypeFriend;
     }
@@ -257,6 +259,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardFrameWillChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    
+    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:NO];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -264,6 +268,8 @@
     [super viewWillDisappear:animated];
     [[TLAudioPlayer sharedAudioPlayer] stopPlayingAudio];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+//    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:YES];
 }
 
 - (void)dealloc
@@ -289,20 +295,20 @@
     [self.navigationItem setTitle:[_partner chat_username]];
     
 
-//    NSString * key = @"";
-//    if ([partner isKindOfClass:[TLGroup class]]) {
-//        key = [_partner chat_userID];
-//    }else{
-//        key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:[_partner chat_userID] myId:[[TLUserHelper sharedHelper] userID] ];
-//    }
-//    [self setConversationKey:key];
+    NSString * key = @"";
+    if ([_partner isKindOfClass:[TLGroup class]]) {
+        key = [(TLGroup*)partner groupID];
+    }else{
+        key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:[_partner chat_userID] myId:[[TLUserHelper sharedHelper] userID] ];
+    }
+    [self setConversationKey:key];
     
     [self resetChatVC];
 }
 
 - (void)setChatMoreKeyboardData:(NSMutableArray *)moreKeyboardData
 {
-    [self.moreKeyboard setChatMoreKeyboardData:moreKeyboardData];
+    [self.moreKeyboard setChatMoreKeyboardData:moreKeyboardData]; 
 }
 
 - (void)setChatEmojiKeyboardData:(NSMutableArray *)emojiKeyboardData

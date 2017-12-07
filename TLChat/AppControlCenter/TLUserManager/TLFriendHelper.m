@@ -11,6 +11,7 @@
 #import "TLDBGroupStore.h"
 #import "TLGroup+CreateAvatar.h"
 #import "TLUserHelper.h"
+#import "TLMessage.h"
 
 //#import "TLAppDelegate.h"
 #import "TLFriendDataLoader.h"
@@ -75,11 +76,13 @@ static TLFriendHelper *friendHelper = nil;
 - (NSString *)formatLastMessage:(NSString *)content fid:(NSString *)fid {
     NSString * lastMsg = @"";
     
+    NSString * message = [TLMessage conversationContentForMessage: content];
     if ([fid isEqualToString:[TLUserHelper sharedHelper].userID]) {
-        lastMsg = content;
+        lastMsg = message;
     }else{
         TLUser * user = [self getFriendInfoByUserID:fid];
-        lastMsg = [NSString stringWithFormat:@"%@: %@", user.nikeName, content];
+        
+        lastMsg = [NSString stringWithFormat:@"%@: %@", user.nikeName, message];
     }
     return lastMsg;
 }
@@ -94,7 +97,19 @@ static TLFriendHelper *friendHelper = nil;
             return user;
         }
     }
-    return nil;
+    
+    // TODO: persisent to db.
+    PFQuery * query = [PFUser query];
+    query.cachePolicy = kPFCachePolicyCacheElseNetwork;
+    [query whereKey:@"objectId" equalTo:userID];
+    PFUser * userObject = [query getFirstObject];
+    
+    TLUser * user = [TLUser new];
+    user.userID = userObject.objectId;
+    user.username = userObject.username;
+    user.nikeName = userObject.username;
+    
+    return user;
 }
 
 - (TLGroup *)getGroupInfoByGroupID:(NSString *)groupID

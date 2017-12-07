@@ -83,8 +83,8 @@
     [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         
         if (object) {
-            NSString * content = [TLMessage conversationContentForMessage: object[@"message"]];
-            NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:content fid:object[@"sender"]];
+ 
+            NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:object[@"message"] fid:object[@"sender"]];
              
             
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
