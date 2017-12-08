@@ -14,4 +14,6 @@
 + (void)p_loadGroupsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *groups))completionBlock;
 
 + (void)recreateLocalDialogsForGroups;
+
++ (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName;
 @end

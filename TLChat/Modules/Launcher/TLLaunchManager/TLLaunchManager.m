@@ -43,7 +43,7 @@ void addBarChildViewController(UITabBarController *tabBarController, UIViewContr
 - (void)launchInWindow:(UIWindow *)window
 {
     [window removeAllSubviews];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+//    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     
     UIViewController *rootVC;
     if ([TLUserHelper sharedHelper].isLogin) {      // 已登录

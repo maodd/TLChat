@@ -12,6 +12,7 @@
 #import "TLFriendDetailViewController.h"
 #import <MWPhotoBrowser/MWPhotoBrowser.h>
 #import "NSFileManager+TLChat.h"
+#import "HSUIManager.h"
 
 @interface TLChatViewController ()
 
@@ -72,10 +73,25 @@
 //MARK: TLChatViewControllerProxy
 - (void)didClickedUserAvatar:(TLUser *)user
 {
-    TLFriendDetailViewController *detailVC = [[TLFriendDetailViewController alloc] init];
-    [detailVC setUser:user];
-    [self setHidesBottomBarWhenPushed:YES];
-    [self.navigationController pushViewController:detailVC animated:YES];
+//    TLFriendDetailViewController *detailVC = [[TLFriendDetailViewController alloc] init];
+//    [detailVC setUser:user];
+//    [self setHidesBottomBarWhenPushed:YES];
+//    [self.navigationController pushViewController:detailVC animated:YES];
+    
+//    self.userId = [NSString stringWithFormat:@"%ld", [[dict valueForKey:@"userId"] integerValue]];
+//    self.name = [dict stringForKey:@"name"];
+//    self.headerIcon = [dict stringForKey:@"headerIcon"];
+//    self.friendState =[dict integerForKey:@"isFriend"];
+    
+    HSStudentUserInfo * userInfo = [[HSStudentUserInfo alloc] initWithDict:
+                                    @{@"userId":user.userID,
+                                      @"name":user.username,
+                                      @"headerIcon":user.avatarURL,
+                                      @"isFriend":@(YES)
+                                      }]; // TODO: handle non-friend chat.
+    
+    [HSUIManager openUserDetails:userInfo navigationController:self.navigationController];
+    
 }
 
 - (void)didClickedImageMessages:(NSArray *)imageMessages atIndex:(NSInteger)index

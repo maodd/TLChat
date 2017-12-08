@@ -16,6 +16,7 @@
 //#import "TLAppDelegate.h"
 #import "TLFriendHelper.h"
 #import "TLUser.h"
+#import "DefaultPortraitView.h"
 
 @implementation TLGroupDataLoader
 
@@ -105,4 +106,13 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupDataUpdateNotification object:nil];
     }];
 }
+
++ (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName {
+    DefaultPortraitView *defaultPortrait = [[DefaultPortraitView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    [defaultPortrait setColorAndLabel:groupID Nickname:groupName];
+    UIImage *portrait = [defaultPortrait imageFromView];
+    return portrait;
+}
+    
+
 @end

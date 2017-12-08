@@ -66,7 +66,12 @@
                 _user.userID = self.userID;
                 _user.username = [PFUser currentUser].username;
                 _user.nikeName = [PFUser currentUser].username;
-                
+                PFFile * file = [PFUser currentUser][@"headerImage1"];
+                if (file) {
+                    _user.avatarURL = file.url;
+                }
+
+                // TODO: subscribe for user avatar change notification.
             }
             
             [self setUser:_user];
@@ -82,7 +87,7 @@
 
 - (BOOL)isLogin
 {
-    return self.user.userID.length > 0;
+    return [PFUser currentUser].objectId.length > 0;
 }
 
 @end

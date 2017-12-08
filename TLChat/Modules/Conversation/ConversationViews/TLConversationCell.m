@@ -10,6 +10,7 @@
 #import "NSDate+TLChat.h"
 #import "TLMacros.h"
 #import "NSFileManager+TLChat.h"
+#import "TLGroupDataLoader.h"
 
 #define     CONV_SPACE_X            10.0f
 #define     CONV_SPACE_Y            9.5f
@@ -62,7 +63,11 @@
     else if (conversation.avatarURL.length > 0){
         [self.avatarImageView tt_setImageWithURL:TLURL(conversation.avatarURL) placeholderImage:[UIImage imageNamed:DEFAULT_AVATAR_PATH]];
     }
-    else {
+    else if (conversation.convType == TLConversationTypeGroup){
+  
+        [self.avatarImageView setImage:[TLGroupDataLoader generateGroupName:conversation.partnerID groupName:conversation.partnerName]];
+        
+    }else{
         [self.avatarImageView setImage:[UIImage imageNamed:DEFAULT_AVATAR_PATH]]; //should be group avatar
     }
     [self.usernameLabel setText:conversation.partnerName];

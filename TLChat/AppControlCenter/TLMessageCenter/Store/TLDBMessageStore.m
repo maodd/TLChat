@@ -76,7 +76,7 @@
         msgObject[@"message"] = [message.content mj_JSONString];
     //    msgObject[@"readAt"] = @(message.readState);
         msgObject[@"sender"] = [PFUser currentUser].objectId; // quick way to set pointer
-       msgObject[@"localID"] = message.messageID;
+        msgObject[@"localID"] = message.messageID;
        
         if ([message isKindOfClass:[TLImageMessage class]]) {
             TLImageMessage * imageMessage = (TLImageMessage*)message;
@@ -124,6 +124,9 @@
         
         msgObject[@"dialogKey"] = dialogKey;
         [msgObject saveInBackground];
+       
+       // TODO: handel saving result, then update local message sendState
+       
 
         
     }

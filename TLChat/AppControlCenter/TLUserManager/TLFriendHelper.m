@@ -109,6 +109,12 @@ static TLFriendHelper *friendHelper = nil;
     user.username = userObject.username;
     user.nikeName = userObject.username;
     
+    PFFile * file = userObject[@"headerImage1"];
+    if (file) {
+        user.avatarURL = file.url;
+    }
+    
+    
     return user;
 }
 

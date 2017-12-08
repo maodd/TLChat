@@ -32,7 +32,7 @@ static TLChatViewController *chatVC;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self.navigationItem setRightBarButtonItem:self.rightBarButton];
+    //    [self.navigationItem setRightBarButtonItem:self.rightBarButton]; //TODO: implement right bar logic 
     
     self.user = (id<TLChatUserProtocol>)[TLUserHelper sharedHelper].user;
     self.moreKBhelper = [[TLMoreKBHelper alloc] init];

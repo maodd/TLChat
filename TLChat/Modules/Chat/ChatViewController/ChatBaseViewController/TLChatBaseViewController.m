@@ -45,22 +45,12 @@
 {
     [super viewDidLoad];
     
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+
+    
     [self loadKeyboard];
     
-    [[TLMessageManager sharedInstance] refreshConversationRecord];
-    
-    [[TLMessageManager sharedInstance] conversationRecord:^(NSArray *data) {
-        NSDate * lastMsgDate = nil;
-        for (TLConversation *conversation in data) {
-            if ([conversation.partnerID isEqualToString:self.partner.chat_userID]) {
-                
-                lastMsgDate = conversation.date;
-                break;
-            }
-        }
-        
-        [self setupLiveQuery:lastMsgDate];
-    }];
+
     
 }
 
@@ -117,10 +107,16 @@
     __weak TLChatBaseViewController * weakSelf = self;
     self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
         
-        
+        NSLog(@"new message added: %@", message);
         [weakSelf processMessageFromServer:message bypassMine:YES];
         
         
+    }];
+    
+    self.subscription = [self.subscription addErrorHandler:^(PFQuery<PFObject *> * _Nonnull query, NSError * _Nonnull error) {
+        NSLog(@"error: %@", error.localizedDescription);
+        
+        [weakSelf.client reconnect];
     }];
 }
 
@@ -210,7 +206,7 @@
         message1.imageSize = CGSizeMake([dict[@"w"] floatValue], [dict[@"h"] floatValue]);
     }
     
-    NSString *imageName = [NSString stringWithFormat:@"thumb-%@", dict[@"path"]];
+//    NSString *imageName = [NSString stringWithFormat:@"thumb-%@", dict[@"path"]];
 //    NSString *imagePath = [NSFileManager pathUserChatImage:imageName];
  
     message1.thumbnailImageURL = file.url;
@@ -311,8 +307,25 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardFrameWillChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
-    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:NO];
+    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:NO]; // conflict with chat? has to set this to no.
+    
+    [[TLMessageManager sharedInstance] refreshConversationRecord];
+    
+    [[TLMessageManager sharedInstance] conversationRecord:^(NSArray *data) {
+        NSDate * lastMsgDate = nil;
+        for (TLConversation *conversation in data) {
+            if ([conversation.partnerID isEqualToString:self.partner.chat_userID]) {
+                
+                lastMsgDate = conversation.date;
+                break;
+            }
+        }
+        
+        [self setupLiveQuery:lastMsgDate];
+    }];
 }
+
+
 
 - (void)viewWillDisappear:(BOOL)animated
 {
@@ -321,6 +334,13 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
 //    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:YES];
+    
+    if (self.client) {
+        [self.client unsubscribeFromQuery:self.query];
+        [self.client disconnect];
+        self.client = nil;
+    }
+    
 }
 
 - (void)dealloc

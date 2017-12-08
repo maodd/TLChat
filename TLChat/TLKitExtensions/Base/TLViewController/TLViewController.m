@@ -13,7 +13,7 @@
 - (id)init
 {
     if (self = [super init]) {
-        [self setStatusBarStyle:UIStatusBarStyleLightContent];
+//        [self setStatusBarStyle:UIStatusBarStyleLightContent];
     }
     return self;
 }

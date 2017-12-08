@@ -32,7 +32,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.navigationItem setTitle:@"微信"];
+    [self.navigationItem setTitle:@"聊天"];
     
     [self p_initUI];        // 初始化界面UI
     [self registerCellClass];
@@ -46,9 +46,9 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKFriendsDataUpdateNotification object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupDataUpdateNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupDataUpdateNotification object:nil];
 
-    [self updateConversationData];
+//    [self updateConversationData]; // should wait for group and friends data download first.
     
      self.definesPresentationContext = YES;
 }
@@ -87,10 +87,10 @@
         case AFNetworkReachabilityStatusReachableViaWiFi:
         case AFNetworkReachabilityStatusReachableViaWWAN:
         case AFNetworkReachabilityStatusUnknown:
-            [self.navigationItem setTitle:@"微信"];
+            [self.navigationItem setTitle:@"聊天"];
             break;
         case AFNetworkReachabilityStatusNotReachable:
-            [self.navigationItem setTitle:@"微信(未连接)"];
+            [self.navigationItem setTitle:@"聊天(未连接)"];
             break;
         default:
             break;
@@ -100,8 +100,9 @@
 #pragma mark - Private Methods -
 - (void)p_initUI
 {
+    self.edgesForExtendedLayout = UIRectEdgeNone;
     [self.tableView setBackgroundColor:[UIColor whiteColor]];
-    [self.tableView setTableHeaderView:self.searchController.searchBar];
+    //    [self.tableView setTableHeaderView:self.searchController.searchBar]; //TODO: change to search in chat, not in all friends.
     [self.tableView addSubview:self.scrollTopView];
     [self.scrollTopView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.mas_equalTo(self.tableView);
@@ -123,6 +124,7 @@
         [_searchController.searchBar setPlaceholder:@"搜索"];
         [_searchController.searchBar setDelegate:self];
         [_searchController setShowVoiceButton:YES];
+        _searchController.hidesNavigationBarDuringPresentation = NO;
     }
     return _searchController;
 }

@@ -14,7 +14,11 @@
 #import "TLMessage.h"
 //#import "TLAppDelegate.h"
 
-@implementation TLFriendDataLoader
+@implementation TLFriendDataLoader {
+ 
+}
+
+static BOOL isLoadingData = NO;
 
 + (void)p_loadFriendsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *friends))completionBlock {
     
@@ -24,17 +28,32 @@
     
     NSMutableArray<TLUser*> *friends = [NSMutableArray array];
     
+    if (isLoadingData) {
+        return;
+    }
+    isLoadingData = YES;
     [[friendsRelation query] findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         
-        [friends removeAllObjects];
+        isLoadingData = NO;
+        
         
         NSLog(@"fetched %lu friends from server", objects.count);
         
         for (PFUser * user in objects) {
             TLUser * model = [TLUser new];
             model.userID = user.objectId;
-            model.nikeName = [user.username stringByTrimmingCharactersInSet:
-                              [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+      
+            NSString * nickName = [user.username stringByTrimmingCharactersInSet:
+                                   [NSCharacterSet whitespaceCharacterSet]];
+            NSError *error = nil;
+            
+            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"  +" options:NSRegularExpressionCaseInsensitive error:&error];
+            nickName = [regex stringByReplacingMatchesInString:nickName options:0 range:NSMakeRange(0, [nickName length]) withTemplate:@" "];
+            DLog(@"[%@]", nickName);
+            model.username = nickName;
+            model.nikeName = nickName;
+            
+      
             if (user[@"headerImage1"] && user[@"headerImage1"] != [NSNull null]) {
                 PFFile * file = user[@"headerImage1"];
                 model.avatarURL = file.url;
