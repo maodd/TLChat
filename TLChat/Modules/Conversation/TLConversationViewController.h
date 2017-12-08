@@ -13,7 +13,9 @@
 @import ParseLiveQuery;
 @import Parse.PFQuery;
 
-@interface TLConversationViewController : TLTableViewController
+@interface TLConversationViewController : TLTableViewController {
+    NSArray * _currentKeys;
+}
 
 @property (nonatomic, strong) TLFriendSearchViewController *searchVC;
 
@@ -23,5 +25,5 @@
 @property (nonatomic, strong) PFLiveQueryClient *client;
 @property (nonatomic, strong) PFQuery *query;
 @property (nonatomic, strong) PFLiveQuerySubscription *subscription; // must use property to hold reference.
-
+- (void)p_initLiveQuery;
 @end

@@ -103,7 +103,7 @@
                                                                             localOnly:YES];
         }
 
-        [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupDataUpdateNotification object:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
     }];
 }
 

@@ -29,9 +29,9 @@
                                         PRIMARY KEY(uid, fid))"
 
 
-#define     SQL_ADD_CONV                @"REPLACE INTO %@ ( uid, fid, conv_type, date, unread_count, last_message, key, ext1, ext2, ext3, ext4, ext5) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+#define     SQL_ADD_CONV                @"REPLACE INTO %@ ( uid, fid, conv_type, date, last_message, key, ext1, ext2, ext3, ext4, ext5) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-#define     SQL_UPDATE_CONV             @"UPDATE %@ SET date = '%@', last_message = '%@' WHERE uid = '%@' AND fid = '%@'"
+#define     SQL_UPDATE_CONV             @"UPDATE %@ SET unread_count = %d WHERE uid = '%@' AND fid = '%@'"
 
 
 

@@ -47,7 +47,9 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKFriendsDataUpdateNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupDataUpdateNotification object:nil];
-
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_initLiveQuery) name:kAKGroupDataUpdateNotification object:nil];
+    
     
      self.definesPresentationContext = YES;
 }

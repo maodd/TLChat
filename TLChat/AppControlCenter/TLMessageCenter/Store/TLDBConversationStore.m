@@ -59,14 +59,14 @@
     }
     
     
-    NSInteger unreadCount = [self unreadMessageByUid:uid fid:fid] + 1;
+//    NSInteger unreadCount = [self unreadMessageByUid:uid fid:fid] + 1;
     NSString *sqlString = [NSString stringWithFormat:SQL_ADD_CONV, CONV_TABLE_NAME];
     NSArray *arrPara = [NSArray arrayWithObjects:
                         uid,
                         fid,
                         [NSNumber numberWithInteger:type],
                         TLTimeStamp(date),
-                        [NSNumber numberWithInteger:unreadCount],
+//                        [NSNumber numberWithInteger:unreadCount], // don't increase here, which is done by separated method.
                         last_message,
                         dialogKey,
                         
@@ -112,11 +112,30 @@
 /**
  *  更新会话状态（已读）
  */
-- (void)updateConversationByUid:(NSString *)uid fid:(NSString *)fid date:(NSDate *)date last_message:(NSString*)last_message
+- (void)updateConversationByUid:(NSString *)uid fid:(NSString *)fid unreadCount:(NSInteger)unreadCount
 {
- 
+
+    NSString *sqlString = [NSString stringWithFormat:SQL_UPDATE_CONV, CONV_TABLE_NAME, unreadCount, uid, fid];
+    
+    [self excuteSQL:sqlString withArrParameter:nil];
+    
+    return;
 }
 
+- (void)resetUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid
+{
+    [self updateConversationByUid:uid fid:fid unreadCount:0];
+    
+    return;
+}
+
+- (void)increaseUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid
+{
+    NSInteger unreadCount = [self unreadMessageByUid:uid fid:fid] + 1;
+    [self updateConversationByUid:uid fid:fid unreadCount:unreadCount];
+    
+    return;
+}
 /**
  *  查询所有会话
  */

@@ -18,7 +18,8 @@
 /**
  *  更新会话状态（已读）
  */
-- (void)updateConversationByUid:(NSString *)uid fid:(NSString *)fid date:(NSDate *)date last_message:(NSString*)last_message;
+- (void)resetUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid;
+- (void)increaseUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid;
 
 /**
  *  查询所有会话

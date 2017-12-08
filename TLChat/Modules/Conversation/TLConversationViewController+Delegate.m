@@ -11,6 +11,8 @@
 #import "TLConversationCell.h"
 #import "TLFriendHelper.h"
 #import "TLMessage.h"
+#import "TLUserHelper.h"
+#import "TLMessageManager.h"
 
 @implementation TLConversationViewController (Delegate)
 
@@ -40,7 +42,7 @@
         self.data = [[NSMutableArray alloc] initWithArray:data];
         [self.tableView reloadData];
         
-        [self p_initLiveQuery];
+
     }];
 }
 
@@ -73,6 +75,8 @@
     TLChatViewController *chatVC = [[TLChatViewController alloc] init];
     
     TLConversation *conversation = [self.data objectAtIndex:indexPath.row];
+ 
+    
     
     chatVC.conversationKey = conversation.key;
     
@@ -173,6 +177,16 @@
 
 - (void)p_initLiveQuery
 {
+    NSArray * keys = [self.data valueForKeyPath:@"key"];
+    DLog(@"subscribed keys: %@", keys);
+    
+    if (_currentKeys ) {//&& _currentKeys == keys
+        NSLog(@"nothing changed in keys, skipping...");
+        return;
+    }
+    
+    _currentKeys = keys;
+    
     if (self.client) {
         [self.client unsubscribeFromQuery:self.query];
         [self.client disconnect];
@@ -184,15 +198,15 @@
     
     self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
     
-    NSArray * keys = [self.data valueForKeyPath:@"key"];
+
     [self.query whereKey:@"dialogKey" containedIn:keys];
-    
+
     
     self.subscription = [self.client  subscribeToQuery:self.query];
     
     
     self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
-        NSLog(@"Subscribed");
+        DLog(@"Subscribed");
     }];
     
     self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
@@ -248,6 +262,9 @@
         dispatch_async(dispatch_get_main_queue(), ^{
              [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         });
+        
+     
+        [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID fid:conv.partnerID] ;
        
     }
     

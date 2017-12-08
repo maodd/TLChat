@@ -50,7 +50,7 @@
     
     [self loadKeyboard];
     
-
+   
     
 }
 
@@ -84,7 +84,7 @@
     
     
     self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
-        NSLog(@"Subscribed");
+        DLog(@"Subscribed");
     }];
     
     self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
@@ -352,6 +352,8 @@
         
         [self setupLiveQuery:lastMsgDate];
     }];
+    
+     [[TLMessageManager sharedInstance].conversationStore resetUnreadNumberForConversationByUid:[self.user chat_userID] fid:self.conversationKey];
 }
 
 
