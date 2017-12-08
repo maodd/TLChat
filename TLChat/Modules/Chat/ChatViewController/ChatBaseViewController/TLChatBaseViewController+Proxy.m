@@ -58,6 +58,7 @@
 //    message.ownerTyper = TLMessageOwnerTypeFriend;
 //    message.date = [NSDate date];
     [self addToShowMessage:message];    // 添加到列表
+ 
     
     [[TLMessageManager sharedInstance] sendMessage:message progress:^(TLMessage * message, CGFloat pregress) {
 

@@ -58,6 +58,12 @@
     }
 }
 
+- (void)setThumbnailUrl:(NSString *)imageUrl highDefinitionImageURL:(NSString *)imageURL
+{
+    [self tt_setImageWithURL:[NSURL URLWithString:imageUrl]];
+    
+}
+
 - (void)setBackgroundImage:(UIImage *)backgroundImage
 {
     UIImage *image = [backgroundImage copy];

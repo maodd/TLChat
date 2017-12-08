@@ -40,6 +40,9 @@
     if ([message thumbnailImagePath]) {
         NSString *imagePath = [NSFileManager pathUserChatImage:[message thumbnailImagePath]];
         [self.msgImageView setThumbnailPath:imagePath highDefinitionImageURL:[message imageURL]];
+    }else if ([message thumbnailImageURL]) {
+       
+        [self.msgImageView setThumbnailUrl:[message thumbnailImageURL] highDefinitionImageURL:[message imageURL]];
     }
     else {
         [self.msgImageView setThumbnailPath:nil highDefinitionImageURL:[message imageURL]];

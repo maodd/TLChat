@@ -76,7 +76,8 @@
         msgObject[@"message"] = [message.content mj_JSONString];
     //    msgObject[@"readAt"] = @(message.readState);
         msgObject[@"sender"] = [PFUser currentUser].objectId; // quick way to set pointer
-        
+       msgObject[@"localID"] = message.messageID;
+       
         if ([message isKindOfClass:[TLImageMessage class]]) {
             TLImageMessage * imageMessage = (TLImageMessage*)message;
             if (imageMessage.imageData) {

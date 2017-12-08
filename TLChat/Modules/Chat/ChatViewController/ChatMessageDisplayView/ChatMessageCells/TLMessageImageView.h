@@ -20,4 +20,6 @@
  */
 - (void)setThumbnailPath:(NSString *)imagePath highDefinitionImageURL:(NSString *)imageURL;
 
+- (void)setThumbnailUrl:(NSString *)imageUrl highDefinitionImageURL:(NSString *)imageURL;
+
 @end

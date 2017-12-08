@@ -15,6 +15,8 @@
 #import "TLFriendHelper.h"
 #import "TLUserHelper.h"
 #import <IQKeyboardManager/IQKeyboardManager.h>
+#import "TLMessageManager.h"
+#import "TLMessageManager+ConversationRecord.h"
 
 @import Parse;
 @import ParseLiveQuery;
@@ -45,15 +47,37 @@
     
     [self loadKeyboard];
     
+    [[TLMessageManager sharedInstance] refreshConversationRecord];
+    
+    [[TLMessageManager sharedInstance] conversationRecord:^(NSArray *data) {
+        NSDate * lastMsgDate = nil;
+        for (TLConversation *conversation in data) {
+            if ([conversation.partnerID isEqualToString:self.partner.chat_userID]) {
+                
+                lastMsgDate = conversation.date;
+                break;
+            }
+        }
+        
+        [self setupLiveQuery:lastMsgDate];
+    }];
+    
+}
+
+- (void)setupLiveQuery:(NSDate *)date {
+    
     self.client = [[PFLiveQueryClient alloc] init];
     
     self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
     
-
+    
+    
     [self.query whereKey:@"dialogKey" equalTo:self.conversationKey]; //livequery doesn't work with pointer
     
     [self.query orderByAscending:@"createdAt"];
-    
+    if (date) {
+        [self.query whereKey:@"createdAt" greaterThan:date];
+    }
     [self.query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         for (PFObject * message in [objects sortedArrayUsingComparator:^NSComparisonResult(PFObject *  _Nonnull obj1, PFObject *  _Nonnull obj2) {
             return [obj1[@"createdAt"] isEarlierThanDate:obj2[@"createdAt"]];
@@ -63,10 +87,12 @@
         }
     }];
     
+ 
+    
     
     self.subscription = [self.client  subscribeToQuery:self.query];
     
- 
+    
     self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
         NSLog(@"Subscribed");
     }];
@@ -91,7 +117,7 @@
     __weak TLChatBaseViewController * weakSelf = self;
     self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
         
-      
+        
         [weakSelf processMessageFromServer:message bypassMine:YES];
         
         
@@ -142,9 +168,25 @@
     if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
         
     }else{
-        [weakSelf receivedMessage:message1];
+        if ([self isLocalMessage:message]) {
+            
+        }else{
+            [weakSelf receivedMessage:message1];
+        }
+            
     }
 }
+
+- (BOOL)isLocalMessage:(PFObject*)message {
+    if (message[@"localID"]) {
+        
+        NSArray * matches = [self.messageDisplayView.data filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"messageID == %@", message[@"localID"]]];
+        return (matches.count > 0);
+    }
+    return NO;
+}
+
+
 - (void)handleImageMessage:(PFObject *)message bypassMine:(BOOL)bypassMine{
     __weak TLChatBaseViewController * weakSelf = self;
     NSDictionary * dict = [message[@"message"] mj_JSONObject];
@@ -169,34 +211,39 @@
     }
     
     NSString *imageName = [NSString stringWithFormat:@"thumb-%@", dict[@"path"]];
-    NSString *imagePath = [NSFileManager pathUserChatImage:imageName];
+//    NSString *imagePath = [NSFileManager pathUserChatImage:imageName];
  
-    message1.thumbnailImagePath = imageName; //no path needed here, cell will prefix it when rendering
+    message1.thumbnailImageURL = file.url;
+//    message1.thumbnailImagePath = imageName; //no path needed here, cell will prefix it when rendering
     PFFile * attachment =  message[@"attachment"];
     message1.imageURL = attachment.url;
     
     if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
         
     }else{
-        [weakSelf receivedMessage:message1];
+        if ([self isLocalMessage:message]) {
+            
+        }else{
+            [weakSelf receivedMessage:message1];
+        }
     }
     
-    if (file && ![file isKindOfClass:[NSNull class]]) {
- 
-    
-        [file getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
-            if (!error) {
- 
-                if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
-                    [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil];
-                }
-                
- 
-            } else {
-                
-            }
-        }];
-    }
+//    if (file && ![file isKindOfClass:[NSNull class]]) {
+//
+//
+//        [file getDataInBackgroundWithBlock:^(NSData *imageData, NSError *error) {
+//            if (!error) {
+//
+//                if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
+//                    [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil];
+//                }
+//
+//
+//            } else {
+//
+//            }
+//        }];
+//    }
     
     
 }
@@ -229,7 +276,11 @@
     if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
         
     }else{
-        [weakSelf receivedMessage:message1];
+        if ([self isLocalMessage:message]) {
+            
+        }else{
+            [weakSelf receivedMessage:message1];
+        }
     }
     
     PFFile * file = message[@"attachment"];
@@ -308,7 +359,7 @@
 
 - (void)setChatMoreKeyboardData:(NSMutableArray *)moreKeyboardData
 {
-    [self.moreKeyboard setChatMoreKeyboardData:moreKeyboardData]; 
+    [self.moreKeyboard setChatMoreKeyboardData:moreKeyboardData];
 }
 
 - (void)setChatEmojiKeyboardData:(NSMutableArray *)emojiKeyboardData
@@ -358,7 +409,7 @@
     message.imagePath = imageName;
     
     NSString *thumbImageName = [NSString stringWithFormat:@"thumb-%@", imageName];
-    NSString *thumbImagePath = [NSFileManager pathUserChatImage:imageName];
+    NSString *thumbImagePath = [NSFileManager pathUserChatImage:thumbImageName];
     
     [[NSFileManager defaultManager] createFileAtPath:thumbImagePath contents:imageData attributes:nil];
     
