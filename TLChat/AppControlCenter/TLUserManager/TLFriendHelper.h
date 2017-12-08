@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "TLUserGroup.h"
 #import "TLGroup.h"
+@class TLMessage;
 
 @interface TLFriendHelper : NSObject
 
@@ -52,4 +53,5 @@
 - (NSString *)makeDialogNameForFriend:(NSString *)fid myId:(NSString *)uid;
 
 - (NSString *)formatLastMessage:(NSString *)content fid:(NSString *)fid;
+- (NSString *)formatLastMessage:(TLMessage *)message;
 @end

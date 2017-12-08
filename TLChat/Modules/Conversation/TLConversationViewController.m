@@ -46,9 +46,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKFriendsDataUpdateNotification object:nil];
     
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupDataUpdateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupDataUpdateNotification object:nil];
 
-//    [self updateConversationData]; // should wait for group and friends data download first.
     
      self.definesPresentationContext = YES;
 }
@@ -57,6 +56,8 @@
 {
     [super viewWillAppear:animated];
     
+    [self updateConversationData]; // should wait for group and friends data download first.
+
 
 }
 
@@ -65,6 +66,12 @@
     [super viewWillDisappear:animated];
     if (self.addMenuView.isShow) {
         [self.addMenuView dismiss];
+    }
+    
+    if (self.client) {
+        [self.client unsubscribeFromQuery:self.query];
+        [self.client disconnect];
+        self.client = nil;
     }
 }
 

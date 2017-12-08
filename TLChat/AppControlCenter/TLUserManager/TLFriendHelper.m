@@ -73,10 +73,14 @@ static TLFriendHelper *friendHelper = nil;
     return [ids componentsJoinedByString:@":"];
 }
 
+- (NSString *)formatLastMessage:(TLMessage *)message {
+    return [self formatLastMessage:[message conversationContent] fid:message.userID];
+}
+
 - (NSString *)formatLastMessage:(NSString *)content fid:(NSString *)fid {
     NSString * lastMsg = @"";
     
-    NSString * message = [TLMessage conversationContentForMessage: content];
+    NSString * message = content;
     if ([fid isEqualToString:[TLUserHelper sharedHelper].userID]) {
         lastMsg = message;
     }else{

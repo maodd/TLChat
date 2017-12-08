@@ -46,7 +46,7 @@
     [super viewDidLoad];
     
     self.edgesForExtendedLayout = UIRectEdgeNone;
-
+    self.hidesBottomBarWhenPushed = YES;
     
     [self loadKeyboard];
     
@@ -124,7 +124,7 @@
 
 - (void)processMessageFromServer:(PFObject *)message bypassMine:(BOOL)bypassMine{
     
-    NSLog(@"message received: %@ %@ %@", message.objectId, message[@"message"], message[@"sender"]);
+    DLog(@"message received: %@ %@ %@", message.objectId, message[@"message"], message[@"sender"]);
     
     NSDictionary * dict = [message[@"message"] mj_JSONObject];
     
@@ -154,8 +154,14 @@
         message1.fromUser = weakSelf.user;
         message1.ownerTyper = TLMessageOwnerTypeSelf;
         
-    }else if ([[self.partner chat_userID] isEqualToString: message[@"sender"]]){
-        message1.fromUser = weakSelf.partner;
+    }else{
+        if ([self.partner isKindOfClass:[TLGroup class]]) {
+            TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:message[@"sender"]];
+            message1.fromUser = friend;
+        }else{
+            message1.fromUser = self.partner;
+        }
+        
         message1.ownerTyper = TLMessageOwnerTypeFriend;
     }
     
@@ -164,7 +170,7 @@
     if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
         
     }else{
-        if ([self isLocalMessage:message]) {
+        if ([self isLocalMessage:message] || [self hasDownloaded:message]) {
             
         }else{
             [weakSelf receivedMessage:message1];
@@ -177,6 +183,15 @@
     if (message[@"localID"]) {
         
         NSArray * matches = [self.messageDisplayView.data filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"messageID == %@", message[@"localID"]]];
+        return (matches.count > 0);
+    }
+    return NO;
+}
+
+- (BOOL)hasDownloaded:(PFObject*)message {
+    if (message[@"messageID"]) {
+        
+        NSArray * matches = [self.messageDisplayView.data filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"messageID == %@", message[@"messageID"]]];
         return (matches.count > 0);
     }
     return NO;
@@ -196,7 +211,13 @@
         message1.ownerTyper = TLMessageOwnerTypeSelf;
         
     }else{
-        message1.fromUser = weakSelf.partner;
+        if ([self.partner isKindOfClass:[TLGroup class]]) {
+            TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:message[@"sender"]];
+            message1.fromUser = friend;
+        }else{
+            message1.fromUser = self.partner;
+        }
+
         message1.ownerTyper = TLMessageOwnerTypeFriend;
     }
     message1.userID = message[@"sender"];
@@ -217,7 +238,7 @@
     if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
         
     }else{
-        if ([self isLocalMessage:message]) {
+        if ([self isLocalMessage:message] || [self hasDownloaded:message]) {
             
         }else{
             [weakSelf receivedMessage:message1];
@@ -257,7 +278,15 @@
         message1.ownerTyper = TLMessageOwnerTypeSelf;
         
     }else{
-        message1.fromUser = weakSelf.partner;
+        
+        if ([self.partner isKindOfClass:[TLGroup class]]) {
+            TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:message[@"sender"]];
+            message1.fromUser = friend;
+        }else{
+            message1.fromUser = self.partner;
+        }
+        
+
         message1.ownerTyper = TLMessageOwnerTypeFriend;
     }
     message1.userID = message[@"sender"];
@@ -272,7 +301,7 @@
     if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
         
     }else{
-        if ([self isLocalMessage:message]) {
+        if ([self isLocalMessage:message] || [self hasDownloaded:message]) {
             
         }else{
             [weakSelf receivedMessage:message1];

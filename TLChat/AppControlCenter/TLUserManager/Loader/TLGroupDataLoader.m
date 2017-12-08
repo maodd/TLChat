@@ -85,7 +85,7 @@
         
         if (object) {
  
-            NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:object[@"message"] fid:object[@"sender"]];
+            NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:[TLMessage conversationContentForMessage:  object[@"message"]] fid:object[@"sender"]];
              
             
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId

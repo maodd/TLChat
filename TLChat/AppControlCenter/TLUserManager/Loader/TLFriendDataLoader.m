@@ -49,7 +49,7 @@ static BOOL isLoadingData = NO;
             
             NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"  +" options:NSRegularExpressionCaseInsensitive error:&error];
             nickName = [regex stringByReplacingMatchesInString:nickName options:0 range:NSMakeRange(0, [nickName length]) withTemplate:@" "];
-            DLog(@"[%@]", nickName);
+   
             model.username = nickName;
             model.nikeName = nickName;
             

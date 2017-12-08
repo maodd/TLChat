@@ -72,7 +72,7 @@
         if (count > 0) {
             [weakself.tableView reloadData];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakself.tableView scrollToBottomWithAnimation:NO];
+                [weakself scrollToBottomWithAnimation:NO];
             });
         }
     }];
@@ -83,18 +83,13 @@
     [self.data addObject:message];
 //    [self.tableView reloadData];
     
-    CGPoint contentOffset = self.tableView.contentOffset;
+ 
     [UIView setAnimationsEnabled:NO];
     [self.tableView beginUpdates];
     
-    CGFloat heightForNewRows = 0.0f;
-
-    
+  
     NSIndexPath * indexPathForLastRow = [NSIndexPath indexPathForRow:self.data.count - 1 inSection:0];
-    heightForNewRows += [self tableView:self.tableView heightForRowAtIndexPath:indexPathForLastRow];
-    
-    contentOffset.y += heightForNewRows;
-    
+
     [self.tableView insertRowsAtIndexPaths:@[indexPathForLastRow] withRowAnimation:UITableViewRowAnimationNone];
     
     [self.tableView endUpdates];
@@ -153,7 +148,14 @@
 
 - (void)scrollToBottomWithAnimation:(BOOL)animation
 {
-    [self.tableView scrollToBottomWithAnimation:animation];
+//    [self.tableView scrollToBottomWithAnimation:animation];
+    if (self.data.count == 0) {
+        return;
+    }
+    NSIndexPath * indexPathForLastRow = [NSIndexPath indexPathForRow:self.data.count - 1 inSection:0];
+   
+    
+    [self.tableView scrollToRowAtIndexPath:indexPathForLastRow atScrollPosition:UITableViewScrollPositionBottom animated:NO];
 }
 
 - (void)setDisablePullToRefresh:(BOOL)disablePullToRefresh

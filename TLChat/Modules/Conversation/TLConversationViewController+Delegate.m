@@ -173,6 +173,13 @@
 
 - (void)p_initLiveQuery
 {
+    if (self.client) {
+        [self.client unsubscribeFromQuery:self.query];
+        [self.client disconnect];
+        self.client = nil;
+    }
+    
+    
     self.client = [[PFLiveQueryClient alloc] init];
     
     self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
@@ -218,7 +225,7 @@
 
 - (void)processMessageFromServer:(PFObject *)message bypassMine:(BOOL)bypassMine{
     
-    NSLog(@"message received: %@ %@ %@", message.objectId, message[@"message"], message[@"sender"]);
+    DLog(@"message received: %@ %@ %@", message.objectId, message[@"message"], message[@"sender"]);
     
 
     NSArray * matches = [self.data filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@", message[@"dialogKey"]]];
@@ -232,7 +239,7 @@
         
         NSString * content = [TLMessage conversationContentForMessage:message[@"message"]];
 
-        NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:content fid:message[@"sender"]];
+        NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:[TLMessage conversationContentForMessage:  message[@"message"]] fid:message[@"sender"]];
         
         
         conv.content = conv.convType == TLConversationTypeGroup ? lastMsg : content;
