@@ -60,7 +60,7 @@
     
     [self updateConversationData]; // should wait for group and friends data download first.
 
-
+    [self p_initLiveQuery];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -74,6 +74,8 @@
         [self.client unsubscribeFromQuery:self.query];
         [self.client disconnect];
         self.client = nil;
+        
+        _currentKeys = nil;
     }
 }
 

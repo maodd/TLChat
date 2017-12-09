@@ -96,7 +96,7 @@
     }];
     
     self.subscription = [self.subscription addEventHandler:^(PFQuery<PFObject *> * _Nonnull query, PFLiveQueryEvent * _Nonnull event) {
-        NSLog(@"event: %@", event);
+        NSLog(@"event: %ld %@", (long)event.type, event.object[@"message"]);
     }];
     
     self.subscription = [self.subscription addDeleteHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
