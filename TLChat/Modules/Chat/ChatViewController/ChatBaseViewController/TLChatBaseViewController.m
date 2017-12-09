@@ -81,14 +81,14 @@
     
     
     self.subscription = [self.client  subscribeToQuery:self.query];
-    
+    __weak TLChatBaseViewController * weakSelf = self;
     
     self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
-        DLog(@"Subscribed");
+        DLog(@"Subscribed to %@", weakSelf.conversationKey);
     }];
     
     self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
-        NSLog(@"unsubscribed");
+        NSLog(@"unsubscribed from %@", weakSelf.conversationKey);
     }];
     
     self.subscription = [self.subscription addEnterHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
@@ -104,7 +104,7 @@
     }];
     
     
-    __weak TLChatBaseViewController * weakSelf = self;
+    
     self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
         
         NSLog(@"new message added: %@", message);

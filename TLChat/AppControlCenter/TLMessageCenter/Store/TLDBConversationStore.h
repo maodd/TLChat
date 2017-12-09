@@ -7,6 +7,7 @@
 //
 
 #import "TLDBBaseStore.h"
+#import "TLConversation.h"
 
 @interface TLDBConversationStore : TLDBBaseStore
 
@@ -20,11 +21,14 @@
  */
 - (void)resetUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid;
 - (void)increaseUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid;
+- (void)increaseUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid addNumber:(NSInteger)addNumber;
 
 /**
  *  查询所有会话
  */
 - (NSArray *)conversationsByUid:(NSString *)uid;
+
+- (TLConversation *)conversationByKey:(NSString *)key;
 
 /**
  *  未读消息数
@@ -40,6 +44,8 @@
  *  删除用户的所有会话
  */
 - (BOOL)deleteConversationsByUid:(NSString *)uid;
+
+- (void)countUnreadMessages:(TLConversation *)conversation;
 
 
 @end

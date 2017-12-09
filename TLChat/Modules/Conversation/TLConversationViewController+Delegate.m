@@ -178,7 +178,7 @@
 - (void)p_initLiveQuery
 {
     NSArray * keys = [self.data valueForKeyPath:@"key"];
-    DLog(@"subscribed keys: %@", keys);
+    
     
     if (_currentKeys ) {//&& _currentKeys == keys
         NSLog(@"nothing changed in keys, skipping...");
@@ -192,6 +192,7 @@
         [self.client disconnect];
         self.client = nil;
     }
+    DLog(@"subscribed keys: %@", keys);
     
     
     self.client = [[PFLiveQueryClient alloc] init];

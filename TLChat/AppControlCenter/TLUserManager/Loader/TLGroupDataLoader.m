@@ -17,6 +17,7 @@
 #import "TLFriendHelper.h"
 #import "TLUser.h"
 #import "DefaultPortraitView.h"
+#import "TLUserHelper.h"
 
 @implementation TLGroupDataLoader
 
@@ -71,6 +72,8 @@
 + (void)recreateLocalDialogsForGroups {
     for (TLGroup * group in [TLFriendHelper sharedFriendHelper].groupsData) {
         [self createCourseDialogWithLatestMessage:group];
+        TLConversation * conversation = [[TLMessageManager sharedInstance].conversationStore conversationByKey:group.groupID];
+        [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation];
     }
 }
 
@@ -91,14 +94,14 @@
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:key
                                                                                  type:TLConversationTypeGroup
-                                                                                 date:object.createdAt
+                                                                                 date:nil
                                                                          last_message:lastMsg
                                                                             localOnly:YES]; 
         }else{
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:key
                                                                                  type:TLConversationTypeGroup
-                                                                                 date:group.date
+                                                                                 date:nil
                                                                          last_message:@"Welcome"
                                                                             localOnly:YES];
         }
@@ -106,6 +109,8 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
     }];
 }
+
+
 
 + (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName {
     DefaultPortraitView *defaultPortrait = [[DefaultPortraitView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];

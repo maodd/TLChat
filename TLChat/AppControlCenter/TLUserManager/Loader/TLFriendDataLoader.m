@@ -76,6 +76,11 @@ static BOOL isLoadingData = NO;
 + (void)recreateLocalDialogsForFriends {
     for (TLUser * friend in [TLFriendHelper sharedFriendHelper].friendsData) {
         [self createFriendDialogWithLatestMessage:friend];
+        
+        NSString * key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:friend.userID myId:[PFUser currentUser].objectId];
+        
+        TLConversation * conversation = [[TLMessageManager sharedInstance].conversationStore conversationByKey:key];
+        [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation];
     }
 }
 

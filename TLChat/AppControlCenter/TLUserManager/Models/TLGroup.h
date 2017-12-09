@@ -49,6 +49,8 @@
 
 @property (nonatomic, strong) NSDate *date;
 
+@property (nonatomic, strong) NSString *conversationKey;
+
 - (void)addObject:(id)anObject;
 
 - (id)objectAtIndex:(NSUInteger)index;

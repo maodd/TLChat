@@ -25,5 +25,5 @@
 @property (nonatomic, strong) PFLiveQueryClient *client;
 @property (nonatomic, strong) PFQuery *query;
 @property (nonatomic, strong) PFLiveQuerySubscription *subscription; // must use property to hold reference.
-- (void)p_initLiveQuery;
+
 @end

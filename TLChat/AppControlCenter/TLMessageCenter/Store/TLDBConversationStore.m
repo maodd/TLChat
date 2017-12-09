@@ -14,6 +14,7 @@
 #import "TLMacros.h"
 #import "TLFriendHelper.h"
 #import <Parse/Parse.h>
+#import "TLUserHelper.h"
 
 @interface TLDBConversationStore ()
 
@@ -57,7 +58,7 @@
         TLUser *user = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:fid];
         dialogName = user.nikeName;
     }
-    
+    NSDate * lastReadDate = date ?: [self lastReadDateByUid:uid fid:fid];
     
 //    NSInteger unreadCount = [self unreadMessageByUid:uid fid:fid] + 1;
     NSString *sqlString = [NSString stringWithFormat:SQL_ADD_CONV, CONV_TABLE_NAME];
@@ -65,7 +66,7 @@
                         uid,
                         fid,
                         [NSNumber numberWithInteger:type],
-                        TLTimeStamp(date),
+                        TLTimeStamp(lastReadDate),
 //                        [NSNumber numberWithInteger:unreadCount], // don't increase here, which is done by separated method.
                         last_message,
                         dialogKey,
@@ -129,11 +130,17 @@
     return;
 }
 
-- (void)increaseUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid
+- (void)increaseUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid addNumber:(NSInteger)addNumber
 {
-    NSInteger unreadCount = [self unreadMessageByUid:uid fid:fid] + 1;
+    NSInteger unreadCount = [self unreadMessageByUid:uid fid:fid] + addNumber;
     [self updateConversationByUid:uid fid:fid unreadCount:unreadCount];
     
+    return;
+}
+
+- (void)increaseUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid
+{
+    [self increaseUnreadNumberForConversationByUid:uid fid:fid addNumber:1];
     return;
 }
 /**
@@ -171,6 +178,39 @@
     return data;
 }
 
+- (TLConversation *)conversationByKey:(NSString *)key
+{
+    __block NSMutableArray *data = [[NSMutableArray alloc] init];
+    NSString *sqlString = [NSString stringWithFormat: SQL_SELECT_CONV_BY_KEY, CONV_TABLE_NAME, key];
+    
+    [self excuteQuerySQL:sqlString resultBlock:^(FMResultSet *retSet) {
+        while ([retSet next]) {
+            TLConversation *conversation = [[TLConversation alloc] init];
+            conversation.partnerID = [retSet stringForColumn:@"fid"];
+            conversation.convType = [retSet intForColumn:@"conv_type"];
+            NSString *dateString = [retSet stringForColumn:@"date"];
+            conversation.date = [NSDate dateWithTimeIntervalSince1970:dateString.doubleValue];
+            conversation.unreadCount = [retSet intForColumn:@"unread_count"];
+            conversation.content = [retSet stringForColumn:@"last_message"];
+            conversation.key = [retSet stringForColumn:@"key"];
+            [data addObject:conversation];
+        }
+        [retSet close];
+    }];
+    
+    // 获取conv对应的msg // TODO: move to conversation header
+    //    for (TLConversation *conversation in data) {
+    //        TLMessage * message = [self.messageStore lastMessageByUserID:uid partnerID:conversation.partnerID];
+    //        if (message) {
+    //            conversation.content = [message conversationContent];
+    //            conversation.date = message.date;
+    //        }
+    //    }
+    
+    
+    return data.firstObject;
+}
+
 - (NSInteger)unreadMessageByUid:(NSString *)uid fid:(NSString *)fid
 {
     __block NSInteger unreadCount = 0;
@@ -182,6 +222,22 @@
         [retSet close];
     }];
     return unreadCount;
+}
+
+- (NSDate*)lastReadDateByUid:(NSString *)uid fid:(NSString *)fid
+{
+    __block NSDate * lastReadDate = nil;
+    NSString *sqlString = [NSString stringWithFormat:SQL_SELECT_CONV_DATE, CONV_TABLE_NAME, uid, fid];
+    
+    [self excuteQuerySQL:sqlString resultBlock:^(FMResultSet *retSet) {
+        if ([retSet next]) {
+            NSString *dateString = [retSet stringForColumn:@"date"];
+            lastReadDate = [NSDate dateWithTimeIntervalSince1970:dateString.doubleValue];
+        }
+        [retSet close];
+    }];
+    
+    return lastReadDate;
 }
 
 /**
@@ -211,6 +267,26 @@
         _messageStore = [[TLDBMessageStore alloc] init];
     }
     return _messageStore;
+}
+
+- (void)countUnreadMessages:(TLConversation *)conversation
+{
+    NSString * key = conversation.key;
+    PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
+    [query whereKey:@"dialogKey" equalTo:key];
+    [query whereKey:@"createdAt" greaterThan:conversation.date];
+    [query orderByDescending:@"createdAt"];
+    
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
+        if (number > 0) {
+            
+            [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID fid:key addNumber:number];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
+        }
+        
+        
+    }];
 }
 
 @end
