@@ -12,6 +12,7 @@
 #import <AFNetworking/AFNetworking.h>
 //#import "TLAppDelegate.h"
 #import "TLFriendHelper.h"
+#import "TLUserHelper.h"
 
 #import "TLMessageManager+ConversationRecord.h"
 
@@ -41,12 +42,18 @@
    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkStatusChange:) name:AFNetworkingReachabilityDidChangeNotification object:nil];
     
-    
-    [TLFriendHelper sharedFriendHelper]; // force a friend data load.
+    if ([TLUserHelper sharedHelper].isLogin) {
+        [TLFriendHelper sharedFriendHelper]; // force a friend data load.
+    }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKFriendsDataUpdateNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupDataUpdateNotification object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupLastMessageUpdateNotification object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupLastMessageUpdateNotification object:nil];
+
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_initLiveQuery) name:kAKGroupDataUpdateNotification object:nil];
     

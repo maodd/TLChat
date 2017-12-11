@@ -353,7 +353,9 @@
         [self setupLiveQuery:lastMsgDate];
     }];
     
-     [[TLMessageManager sharedInstance].conversationStore resetUnreadNumberForConversationByUid:[self.user chat_userID] key:self.conversationKey];
+    [[TLMessageManager sharedInstance].conversationStore resetUnreadNumberForConversationByUid:[self.user chat_userID] key:self.conversationKey];
+    [[TLMessageManager sharedInstance].conversationStore updateLastReadDateForConversationByUid:[self.user chat_userID] key:self.conversationKey];
+    
 }
 
 

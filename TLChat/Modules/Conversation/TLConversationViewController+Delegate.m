@@ -189,7 +189,7 @@
     NSArray * keys = [self.data valueForKeyPath:@"key"];
     
     
-    if (_currentKeys ) {//&& _currentKeys == keys
+    if (_currentKeys && _currentKeys == keys ) {
         NSLog(@"nothing changed in keys, skipping...");
         return;
     }

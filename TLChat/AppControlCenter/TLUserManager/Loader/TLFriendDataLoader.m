@@ -75,19 +75,29 @@ static BOOL isLoadingData = NO;
 
 + (void)recreateLocalDialogsForFriends {
     for (TLUser * friend in [TLFriendHelper sharedFriendHelper].friendsData) {
-        [self createFriendDialogWithLatestMessage:friend];
+        [self createFriendDialogWithLatestMessage:friend completionBlock:^{
         
-        NSString * key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:friend.userID myId:[PFUser currentUser].objectId];
+            DLog(@"friend.userID %@", friend.userID);
+            NSString * key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:friend.userID myId:[PFUser currentUser].objectId];
+            
+            TLConversation * conversation = [[TLMessageManager sharedInstance].conversationStore conversationByKey:key];
+            if (conversation) {
+                [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation];
+            }else{
+                DLog(@"no converstation for friend: %@", friend.userID);
+            }
+            
+            
+        }];
         
-        TLConversation * conversation = [[TLMessageManager sharedInstance].conversationStore conversationByKey:key];
-        [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation];
     }
 }
 
-+ (void)createFriendDialogWithLatestMessage:(TLUser *)friend
++ (void)createFriendDialogWithLatestMessage:(TLUser *)friend completionBlock:(void(^)())completionBlock
 {
     NSString * key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:friend.userID myId:[PFUser currentUser].objectId];
     PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
+    DLog(@"key %@", key);
     [query whereKey:@"dialogKey" equalTo:key];
     [query orderByDescending:@"createdAt"];
     
@@ -97,16 +107,21 @@ static BOOL isLoadingData = NO;
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:friend.userID
                                                                                  type:TLConversationTypePersonal
-                                                                                 date:nil
+                                                                                 date:object.createdAt
                                                                          last_message:[TLMessage conversationContentForMessage: object[@"message"]]
                                                                             localOnly:YES];
+            
         }else{
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:friend.userID
                                                                                  type:TLConversationTypePersonal
-                                                                                 date:nil
+                                                                                 date:friend.date
                                                                          last_message:@"Let's start chat"
                                                                             localOnly:YES];
+        }
+        
+        if (completionBlock) {
+            completionBlock();
         }
        
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsDataUpdateNotification object:nil];

@@ -71,7 +71,8 @@ typedef NS_ENUM(NSInteger, TLMessageRemindType) {
 /**
  *  时间
  */
-@property (nonatomic, strong) NSDate *date;
+@property (nonatomic, strong) NSDate *date;          // date of last message
+@property (nonatomic, strong) NSDate *lastReadDate;  // only local, to check newer message from last time read.
 
 /**
  *  消息展示内容

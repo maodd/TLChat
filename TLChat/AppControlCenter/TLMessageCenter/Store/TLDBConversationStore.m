@@ -58,7 +58,7 @@
         TLUser *user = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:fid];
         dialogName = user.nikeName;
     }
-    NSDate * lastReadDate = date ?: [self lastReadDateByUid:uid fid:fid];
+ 
     
  
     NSString *sqlString = [NSString stringWithFormat:SQL_ADD_CONV, CONV_TABLE_NAME];
@@ -66,7 +66,7 @@
                         uid,
                         fid,
                         [NSNumber numberWithInteger:type],
-                        TLTimeStamp(lastReadDate),
+                        TLTimeStamp(date),
  
                         last_message,
                         dialogKey,
@@ -113,6 +113,32 @@
 /**
  *  更新会话状态（已读）
  */
+
+- (void)updateLastReadDateForConversationByUid:(NSString *)uid key:(NSString *)key
+{
+    NSString *sqlString = [NSString stringWithFormat:SQL_UPDATE_CONV_LAST_READ_DATE, CONV_TABLE_NAME, TLTimeStamp([NSDate date]), uid, key];
+    
+    [self excuteSQL:sqlString withArrParameter:nil];
+    
+    // Server Data
+    
+    PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
+    [query whereKey:@"user" equalTo:[PFUser currentUser]];
+    [query whereKey:@"key" equalTo:key];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+       
+        if (object) {
+            
+            object[@"lastReadDate"] = [NSDate date];
+            [object saveEventually];
+        }
+        
+    }];
+    
+    return;
+}
+
+
 - (void)updateConversationByUid:(NSString *)uid key:(NSString *)key unreadCount:(NSInteger)unreadCount
 {
 
@@ -158,6 +184,10 @@
             conversation.convType = [retSet intForColumn:@"conv_type"];
             NSString *dateString = [retSet stringForColumn:@"date"];
             conversation.date = [NSDate dateWithTimeIntervalSince1970:dateString.doubleValue];
+
+            NSString *lastReadDateString = [retSet stringForColumn:@"last_read_date"];
+            conversation.lastReadDate = [NSDate dateWithTimeIntervalSince1970:lastReadDateString.doubleValue];
+
             conversation.unreadCount = [retSet intForColumn:@"unread_count"];
             conversation.content = [retSet stringForColumn:@"last_message"];
             conversation.key = [retSet stringForColumn:@"key"];
@@ -190,6 +220,10 @@
             conversation.convType = [retSet intForColumn:@"conv_type"];
             NSString *dateString = [retSet stringForColumn:@"date"];
             conversation.date = [NSDate dateWithTimeIntervalSince1970:dateString.doubleValue];
+            
+            NSString *lastReadDateString = [retSet stringForColumn:@"last_read_date"];
+            conversation.lastReadDate = [NSDate dateWithTimeIntervalSince1970:lastReadDateString.doubleValue];
+            
             conversation.unreadCount = [retSet intForColumn:@"unread_count"];
             conversation.content = [retSet stringForColumn:@"last_message"];
             conversation.key = [retSet stringForColumn:@"key"];
@@ -231,8 +265,8 @@
     
     [self excuteQuerySQL:sqlString resultBlock:^(FMResultSet *retSet) {
         if ([retSet next]) {
-            NSString *dateString = [retSet stringForColumn:@"date"];
-            lastReadDate = [NSDate dateWithTimeIntervalSince1970:dateString.doubleValue];
+            NSString *lastReadDateString = [retSet stringForColumn:@"last_read_date"];
+            lastReadDate = [NSDate dateWithTimeIntervalSince1970:lastReadDateString.doubleValue];
         }
         [retSet close];
     }];
@@ -273,20 +307,63 @@
 {
     NSString * key = conversation.key;
     PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
+ 
     [query whereKey:@"dialogKey" equalTo:key];
-    [query whereKey:@"createdAt" greaterThan:conversation.date];
-    [query orderByDescending:@"createdAt"];
+    if (conversation.lastReadDate && ![conversation.lastReadDate isEqualToDate:[NSDate dateWithTimeIntervalSince1970:0]]) {
+        DLog(@"conversation.lastReadDate: %@", conversation.lastReadDate);
+        [query whereKey:@"createdAt" greaterThan:conversation.lastReadDate];
+        
+        [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
+            if (number > 0) {
+                
+                [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key addNumber:number];
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
+            }
+            
+            
+        }];
+        
+    }else{
+        
+        PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
+        [query whereKey:@"user" equalTo:[PFUser currentUser]];
+        [query whereKey:@"key" equalTo:key];
+        [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+            
+            if (object && object[@"lastReadDate"]) {
+                
+                [query whereKey:@"createdAt" greaterThan:object[@"lastReadDate"]];
+                
+                [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
+                    if (number > 0) {
+                        
+                        [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key addNumber:number];
+                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
+                    }
+                    
+                    
+                }];
+            }else{
+                [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
+                    if (number > 0) {
+                        
+                        [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key addNumber:number];
+                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
+                    }
+                    
+                    
+                }];
+            }
+            
+        }];
+        
+    }
+
     
-    [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
-        if (number > 0) {
-            
-            [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key addNumber:number];
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
-        }
-        
-        
-    }];
+
 }
 
 @end

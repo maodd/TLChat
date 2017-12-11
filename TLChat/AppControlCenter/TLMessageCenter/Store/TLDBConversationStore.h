@@ -22,6 +22,7 @@
 - (void)resetUnreadNumberForConversationByUid:(NSString *)uid key:(NSString *)key;
 - (void)increaseUnreadNumberForConversationByUid:(NSString *)uid key:(NSString *)key;
 - (void)increaseUnreadNumberForConversationByUid:(NSString *)uid key:(NSString *)key addNumber:(NSInteger)addNumber;
+- (void)updateLastReadDateForConversationByUid:(NSString *)uid key:(NSString *)key;
 
 /**
  *  查询所有会话

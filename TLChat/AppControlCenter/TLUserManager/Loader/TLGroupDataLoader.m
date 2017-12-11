@@ -71,13 +71,15 @@
 
 + (void)recreateLocalDialogsForGroups {
     for (TLGroup * group in [TLFriendHelper sharedFriendHelper].groupsData) {
-        [self createCourseDialogWithLatestMessage:group];
-        TLConversation * conversation = [[TLMessageManager sharedInstance].conversationStore conversationByKey:group.groupID];
-        [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation];
+        [self createCourseDialogWithLatestMessage:group completionBlock:^{
+            TLConversation * conversation = [[TLMessageManager sharedInstance].conversationStore conversationByKey:group.groupID];
+            [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation];
+        }];
+        
     }
 }
 
-+ (void)createCourseDialogWithLatestMessage:(TLGroup *)group
++ (void)createCourseDialogWithLatestMessage:(TLGroup *)group completionBlock:(void(^)())completionBlock
 {
     NSString * key = group.groupID;
     PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
@@ -94,18 +96,21 @@
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:key
                                                                                  type:TLConversationTypeGroup
-                                                                                 date:nil
+                                                                                 date:object.createdAt
                                                                          last_message:lastMsg
                                                                             localOnly:YES]; 
         }else{
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:key
                                                                                  type:TLConversationTypeGroup
-                                                                                 date:nil
+                                                                                 date:group.date
                                                                          last_message:@"Welcome"
                                                                             localOnly:YES];
         }
 
+        if (completionBlock) {
+            completionBlock();
+        }
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
     }];
 }
