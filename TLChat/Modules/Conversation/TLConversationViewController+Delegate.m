@@ -29,6 +29,8 @@
     [[TLMessageManager sharedInstance] refreshConversationRecord];
     
     [[TLMessageManager sharedInstance] conversationRecord:^(NSArray *data) {
+        
+        NSInteger totalUnreadCount = 0;
         for (TLConversation *conversation in data) {
             if (conversation.convType == TLConversationTypePersonal) {
                 TLUser *user = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:conversation.partnerID];
@@ -38,10 +40,17 @@
                 TLGroup *group = [[TLFriendHelper sharedFriendHelper] getGroupInfoByGroupID:conversation.partnerID];
                 [conversation updateGroupInfo:group];
             }
+            
+            totalUnreadCount = totalUnreadCount + conversation.unreadCount;
         }
         self.data = [[NSMutableArray alloc] initWithArray:data];
-        [self.tableView reloadData];
         
+        dispatch_async(dispatch_get_main_queue(), ^{
+             [self.tableView reloadData];
+        });
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateTabbarBadgeValueNotifi"
+                                                            object:@{@"unreadMessagesCount":[NSNumber numberWithInteger:totalUnreadCount]}];
 
     }];
 }
@@ -247,26 +256,54 @@
     if (matches.count > 0) {
         TLConversation * conv = matches.firstObject;
         
-        NSInteger idx = [self.data indexOfObject:conv];
-        
-        NSIndexPath * indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
-        
-        
+//        NSInteger idx = [self.data indexOfObject:conv];
+//
+//        NSIndexPath * indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+//
+//
         NSString * content = [TLMessage conversationContentForMessage:message[@"message"]];
 
         NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:[TLMessage conversationContentForMessage:  message[@"message"]] fid:message[@"sender"]];
-        
-        
+//
+//
         conv.content = conv.convType == TLConversationTypeGroup ? lastMsg : content;
-        conv.date = message.createdAt;
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-             [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        });
+//
+//        conv.unreadCount = conv.unreadCount + 1;
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//             [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+//        });
         
      
-        [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID fid:conv.partnerID] ;
+        [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[TLUserHelper sharedHelper].userID
+                                                                              fid:conv.partnerID
+                                                                             type:conv.convType
+                                                                             date:nil
+                                                                     last_message:conv.content
+                                                                        localOnly:YES];
+        
+        [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conv.key] ;
        
+        [self updateConversationData];
+        
+//        [[TLMessageManager sharedInstance] refreshConversationRecord];
+//
+//        [[TLMessageManager sharedInstance] conversationRecord:^(NSArray *data) {
+//
+//            self.data = [[NSMutableArray alloc] initWithArray:data];
+//
+//            NSInteger totalUnreadCount = 0;
+//            for (TLConversation *conversation in data) {
+//
+//
+//                totalUnreadCount = totalUnreadCount + conversation.unreadCount;
+//            }
+//
+//
+//            [[NSNotificationCenter defaultCenter] postNotificationName:@"updateTabbarBadgeValueNotifi"
+//                                                                object:@{@"unreadMessagesCount":[NSNumber numberWithInteger:totalUnreadCount]}];
+//
+//        }];
     }
     
 }

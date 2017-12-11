@@ -17,6 +17,7 @@
 + (UIFont *)fontConversationUsername;
 + (UIFont *)fontConversationDetail;
 + (UIFont *)fontConversationTime;
++ (UIFont *)fontConversationUnreadCount;
 
 #pragma mark - Friends
 + (UIFont *)fontFriendsUsername;

@@ -19,9 +19,9 @@
 /**
  *  更新会话状态（已读）
  */
-- (void)resetUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid;
-- (void)increaseUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid;
-- (void)increaseUnreadNumberForConversationByUid:(NSString *)uid fid:(NSString *)fid addNumber:(NSInteger)addNumber;
+- (void)resetUnreadNumberForConversationByUid:(NSString *)uid key:(NSString *)key;
+- (void)increaseUnreadNumberForConversationByUid:(NSString *)uid key:(NSString *)key;
+- (void)increaseUnreadNumberForConversationByUid:(NSString *)uid key:(NSString *)key addNumber:(NSInteger)addNumber;
 
 /**
  *  查询所有会话
@@ -33,7 +33,7 @@
 /**
  *  未读消息数
  */
-- (NSInteger)unreadMessageByUid:(NSString *)uid fid:(NSString *)fid;
+- (NSInteger)unreadMessageByUid:(NSString *)uid key:(NSString *)key;
 
 /**
  *  删除单条会话

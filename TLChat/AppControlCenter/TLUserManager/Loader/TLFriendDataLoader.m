@@ -97,14 +97,14 @@ static BOOL isLoadingData = NO;
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:friend.userID
                                                                                  type:TLConversationTypePersonal
-                                                                                 date:object.createdAt
+                                                                                 date:nil
                                                                          last_message:[TLMessage conversationContentForMessage: object[@"message"]]
                                                                             localOnly:YES];
         }else{
             [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
                                                                                   fid:friend.userID
                                                                                  type:TLConversationTypePersonal
-                                                                                 date:friend.date
+                                                                                 date:nil
                                                                          last_message:@"Let's start chat"
                                                                             localOnly:YES];
         }

@@ -30,6 +30,13 @@
     return [UIFont systemFontOfSize:12.5f];
 }
 
+
++ (UIFont *) fontConversationUnreadCount
+{
+    return [UIFont systemFontOfSize:10.0f];
+}
+
+
 + (UIFont *) fontFriendsUsername
 {
     return [UIFont systemFontOfSize:17.0f];

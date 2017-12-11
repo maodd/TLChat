@@ -25,7 +25,7 @@
         
         NSLog(@"dbpath: %@", [db databasePath]);
         if(![db tableExists:tableName]){
-            ok = [db executeUpdate:sqlString withArgumentsInArray:nil];
+            ok = [db executeUpdate:sqlString withArgumentsInArray:@[]];
         }
     }];
     return ok;

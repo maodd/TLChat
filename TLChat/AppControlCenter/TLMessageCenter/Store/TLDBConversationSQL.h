@@ -31,7 +31,7 @@
 
 #define     SQL_ADD_CONV                @"REPLACE INTO %@ ( uid, fid, conv_type, date, last_message, key, ext1, ext2, ext3, ext4, ext5) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-#define     SQL_UPDATE_CONV             @"UPDATE %@ SET unread_count = %ld WHERE uid = '%@' AND fid = '%@'"
+#define     SQL_UPDATE_CONV             @"UPDATE %@ SET unread_count = %ld WHERE uid = '%@' AND key = '%@'"
 
 
 #define     SQL_SELECT_CONV_BY_KEY      @"SELECT * FROM %@ WHERE key = '%@'"

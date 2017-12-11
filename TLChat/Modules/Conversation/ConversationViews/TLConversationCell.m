@@ -103,19 +103,19 @@
 - (void)markAsUnread
 {
     if (_conversation) {
-        switch (_conversation.clueType) {
-            case TLClueTypePointWithNumber:
-                
-                break;
-            case TLClueTypePoint:
+//        switch (_conversation.clueType) {
+//            case TLClueTypePointWithNumber:
+//
+//                break;
+//            case TLClueTypePoint:
                 [self.redPointView setHidden:NO];
-                break;
-            case TLClueTypeNone:
-                
-                break;
-            default:
-                break;
-        }
+//                break;
+//            case TLClueTypeNone:
+//
+//                break;
+//            default:
+//                break;
+//        }
     }
 }
 
@@ -125,19 +125,19 @@
 - (void)markAsRead
 {
     if (_conversation) {
-        switch (_conversation.clueType) {
-            case TLClueTypePointWithNumber:
-                
-                break;
-            case TLClueTypePoint:
+//        switch (_conversation.clueType) {
+//            case TLClueTypePointWithNumber:
+//
+//                break;
+//            case TLClueTypePoint:
                 [self.redPointView setHidden:YES];
-                break;
-            case TLClueTypeNone:
-                
-                break;
-            default:
-                break;
-        }
+//                break;
+//            case TLClueTypeNone:
+//
+//                break;
+//            default:
+//                break;
+//        }
     }
 }
 
