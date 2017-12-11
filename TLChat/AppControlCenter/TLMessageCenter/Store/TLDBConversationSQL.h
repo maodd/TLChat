@@ -30,7 +30,7 @@
                                         PRIMARY KEY(uid, fid))"
 
 
-#define     SQL_ADD_CONV                @"REPLACE INTO %@ ( uid, fid, conv_type, date, last_message, key, ext1, ext2, ext3, ext4, ext5) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+#define     SQL_ADD_CONV                @"REPLACE INTO %@ ( uid, fid, conv_type, date, last_read_date, last_message, key, ext1, ext2, ext3, ext4, ext5) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
 #define     SQL_UPDATE_CONV             @"UPDATE %@ SET unread_count = %ld WHERE uid = '%@' AND key = '%@'"
 #define     SQL_UPDATE_CONV_LAST_READ_DATE     @"UPDATE %@ SET last_read_date = '%@' WHERE uid = '%@' AND key = '%@'"
@@ -41,7 +41,7 @@
 #define     SQL_SELECT_CONVS            @"SELECT * FROM %@ WHERE uid = '%@' ORDER BY date DESC"
 #define     SQL_SELECT_CONV_UNREAD      @"SELECT unread_count FROM %@ WHERE uid = '%@' and fid = '%@'"
 
-#define     SQL_SELECT_CONV_DATE        @"SELECT date FROM %@ WHERE uid = '%@' and fid = '%@'"
+#define     SQL_SELECT_CONV_DATE        @"SELECT last_read_date FROM %@ WHERE uid = '%@' and fid = '%@'"
 
 
 #define     SQL_DELETE_CONV             @"DELETE FROM %@ WHERE uid = '%@' and fid = '%@'"

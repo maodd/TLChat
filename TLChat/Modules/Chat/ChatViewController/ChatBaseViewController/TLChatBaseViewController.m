@@ -56,35 +56,50 @@
 
 - (void)setupLiveQuery:(NSDate *)date {
     
-    self.client = [[PFLiveQueryClient alloc] init];
+
     
     self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
     
     
     
     [self.query whereKey:@"dialogKey" equalTo:self.conversationKey]; //livequery doesn't work with pointer
-    
-    [self.query orderByAscending:@"createdAt"];
+    self.query.limit = 100;
+    [self.query orderByDescending:@"createdAt"]; // get recent 1k msgs.
     if (date) {
         [self.query whereKey:@"createdAt" greaterThan:date];
+        
+        DLog(@"setup live query newer than %@", date);
     }
     [self.query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        for (PFObject * message in [objects sortedArrayUsingComparator:^NSComparisonResult(PFObject *  _Nonnull obj1, PFObject *  _Nonnull obj2) {
-            return [obj1[@"createdAt"] isEarlierThanDate:obj2[@"createdAt"]];
-        }]) {
+        // do client side sorting
+        NSArray * sortedMessages = [objects sortedArrayUsingComparator:^NSComparisonResult(PFObject *  _Nonnull obj1, PFObject *  _Nonnull obj2) {
+            return ![obj1[@"createdAt"] isEarlierThanDate:obj2[@"createdAt"]];
+        }];
+        
+        for (PFObject * message in sortedMessages) {
             
             [self processMessageFromServer:message bypassMine:NO];
         }
     }];
     
  
+    if (self.client) {
+        
+        DLog(@"live query already setup");
+        return;
+    }
     
+    
+    self.client = [[PFLiveQueryClient alloc] init];
     
     self.subscription = [self.client  subscribeToQuery:self.query];
     __weak TLChatBaseViewController * weakSelf = self;
     
     self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
         DLog(@"Subscribed to %@", weakSelf.conversationKey);
+        
+        //        [self.navigationItem setTitle:@"聊天"]; //todo: setup offline indicator.
+        
     }];
     
     self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
@@ -189,9 +204,9 @@
 }
 
 - (BOOL)hasDownloaded:(PFObject*)message {
-    if (message[@"messageID"]) {
+    if (message.objectId) {
         
-        NSArray * matches = [self.messageDisplayView.data filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"messageID == %@", message[@"messageID"]]];
+        NSArray * matches = [self.messageDisplayView.data filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"messageID == %@", message.objectId]];
         return (matches.count > 0);
     }
     return NO;
@@ -341,20 +356,20 @@
     [[TLMessageManager sharedInstance] refreshConversationRecord];
     
     [[TLMessageManager sharedInstance] conversationRecord:^(NSArray *data) {
-        NSDate * lastMsgDate = nil;
+        NSDate * lastReadDate = nil;
         for (TLConversation *conversation in data) {
             if ([conversation.partnerID isEqualToString:self.partner.chat_userID]) {
                 
-                lastMsgDate = conversation.date;
+                lastReadDate = conversation.lastReadDate;
                 break;
             }
         }
         
-        [self setupLiveQuery:lastMsgDate];
+        [self setupLiveQuery:lastReadDate];
     }];
     
     [[TLMessageManager sharedInstance].conversationStore resetUnreadNumberForConversationByUid:[self.user chat_userID] key:self.conversationKey];
-    [[TLMessageManager sharedInstance].conversationStore updateLastReadDateForConversationByUid:[self.user chat_userID] key:self.conversationKey];
+    [[TLMessageManager sharedInstance].conversationStore updateLastReadDateForConversationByUid:[self.user chat_userID] key:self.conversationKey];  
     
 }
 

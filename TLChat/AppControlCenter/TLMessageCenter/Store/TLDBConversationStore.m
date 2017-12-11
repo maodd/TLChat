@@ -60,14 +60,14 @@
     }
  
     
- 
+    NSDate * lastReadDate = [self lastReadDateByUid:uid fid:fid];
     NSString *sqlString = [NSString stringWithFormat:SQL_ADD_CONV, CONV_TABLE_NAME];
     NSArray *arrPara = [NSArray arrayWithObjects:
                         uid,
                         fid,
                         [NSNumber numberWithInteger:type],
                         TLTimeStamp(date),
- 
+                        TLTimeStamp(lastReadDate),
                         last_message,
                         dialogKey,
                         

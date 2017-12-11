@@ -214,9 +214,13 @@
     
     self.subscription = [self.client  subscribeToQuery:self.query];
     
-    
+    [self.navigationItem setTitle:@"聊天(未连接)"];
     self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
         DLog(@"Subscribed");
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.navigationItem setTitle:@"聊天"];
+        });
+        
     }];
     
     self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
@@ -278,7 +282,7 @@
         [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[TLUserHelper sharedHelper].userID
                                                                               fid:conv.partnerID
                                                                              type:conv.convType
-                                                                             date:nil
+                                                                             date:message.createdAt
                                                                      last_message:conv.content
                                                                         localOnly:YES];
         
