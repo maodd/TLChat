@@ -11,6 +11,8 @@
 @implementation TLImageMessage
 @synthesize imagePath = _imagePath;
 @synthesize imageURL = _imageURL;
+@synthesize thumbnailImageURL = _thumbnailImageURL;
+@synthesize thumbnailImagePath = _thumbnailImagePath;
 
 - (id)init
 {
@@ -21,6 +23,14 @@
 }
 
 #pragma mark -
+- (NSString *)thumbnailImagePath
+{
+    if (_thumbnailImagePath == nil) {
+        _thumbnailImagePath = [self.content objectForKey:@"path"];
+    }
+    return _thumbnailImagePath;
+}
+
 - (NSString *)imagePath
 {
     if (_imagePath == nil) {
@@ -34,6 +44,8 @@
     [self.content setObject:imagePath forKey:@"path"];
 }
 
+
+
 - (NSString *)imageURL
 {
     if (_imageURL == nil) {
@@ -41,10 +53,25 @@
     }
     return _imageURL;
 }
+
+- (NSString *)thumbnailImageURL
+{
+    if (_thumbnailImageURL == nil) {
+        _thumbnailImageURL = [self.content objectForKey:@"thumbURL"];
+    }
+    
+    return _thumbnailImageURL;
+}
 - (void)setImageURL:(NSString *)imageURL
 {
     _imageURL = imageURL;
     [self.content setObject:imageURL forKey:@"url"];
+}
+
+- (void)setThumbnailImageURL:(NSString *)thumbnailImageURL
+{
+    _thumbnailImageURL = thumbnailImageURL;
+    [self.content setObject:thumbnailImageURL forKey:@"thumbURL"];
 }
 
 - (CGSize)imageSize

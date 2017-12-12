@@ -97,6 +97,7 @@
                 PFFile * thumbnail = [PFFile fileWithData:UIImageJPEGRepresentation(thumbnailImage, 0.5)];
                 msgObject[@"thumbnail"] = thumbnail;
                 
+
                 
                 
             }
@@ -265,7 +266,12 @@
     message.date = [NSDate dateWithTimeIntervalSince1970:dateString.doubleValue];
     message.ownerTyper = [retSet intForColumn:@"own_type"];
     NSString *content = [retSet stringForColumn:@"content"];
-    message.content = [[NSMutableDictionary alloc] initWithDictionary:[content mj_JSONObject]];
+    NSDictionary * json = [content mj_JSONObject];
+    message.content = [[NSMutableDictionary alloc] initWithDictionary:json];
+    if (json[@"path"] && json[@"w"] && json[@"h"]) {
+        TLImageMessage * imageMessage = (TLImageMessage *)message;
+//        imageMessage.thumbnailImageURL =
+    }
     message.sendState = [retSet intForColumn:@"send_status"];
     message.readState = [retSet intForColumn:@"received_status"];
     return message;

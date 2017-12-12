@@ -103,7 +103,9 @@
             [browser setDisplayNavArrows:YES];
             [browser setCurrentPhotoIndex:index];
             UINavigationController *broserNavC = [[UINavigationController alloc] initWithRootViewController:browser];
-            [self presentViewController:broserNavC animated:NO completion:nil];
+            [self presentViewController:broserNavC animated:NO completion:^{
+                 // nothing works here.
+            }];
         }
     }
 }

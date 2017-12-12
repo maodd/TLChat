@@ -10,7 +10,7 @@
 
 @interface TLImageMessage : TLMessage
 
-@property (nonatomic, strong) NSString *thumbnailImageURL;         // 本地图片Path 
+@property (nonatomic, strong) NSString *thumbnailImageURL;          //  
 @property (nonatomic, strong) NSString *thumbnailImagePath;         // 本地图片Path thumnnail
 @property (nonatomic, strong) NSString *imagePath;                  // 本地图片Path
 @property (nonatomic, strong) NSString *imageURL;                   // 网络图片URL
