@@ -14,4 +14,5 @@
 + (void)p_loadFriendsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *friends))completionBlock;
 
 + (void)recreateLocalDialogsForFriends;
++ (void)createFriendDialogWithLatestMessage:(TLUser *)friend completionBlock:(void(^)())completionBlock;
 @end

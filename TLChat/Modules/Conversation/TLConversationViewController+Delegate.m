@@ -213,12 +213,21 @@
 
     
     self.subscription = [self.client  subscribeToQuery:self.query];
-    
-    [self.navigationItem setTitle:@"聊天(未连接)"];
+    __weak TLConversationViewController * weakSelf = self;
+    [self.navigationItem setTitle:@"聊天"];
     self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
         DLog(@"Subscribed");
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.navigationItem setTitle:@"聊天"];
+            [weakSelf.navigationItem setTitle:@"聊天"];
+        });
+        
+    }];
+    
+    self.subscription = [self.subscription addErrorHandler:^(PFQuery<PFObject *> * _Nonnull query, NSError * _Nonnull error) {
+        DLog(@"error occurred! %@", error.localizedDescription);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.navigationItem setTitle:@"聊天(未连接)"];
         });
         
     }];
@@ -239,8 +248,7 @@
         NSLog(@"message deleted: %@ %@",message.createdAt, message.objectId);
     }];
     
-    
-    __weak TLConversationViewController * weakSelf = self;
+
     self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
         
         

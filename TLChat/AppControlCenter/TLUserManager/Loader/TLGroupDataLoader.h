@@ -16,4 +16,6 @@
 + (void)recreateLocalDialogsForGroups;
 
 + (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName;
++ (void)createCourseDialogWithLatestMessage:(TLGroup *)group completionBlock:(void(^)())completionBlock;
+
 @end

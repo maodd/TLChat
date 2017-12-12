@@ -13,6 +13,8 @@
 //#import "TLAppDelegate.h"
 #import "TLFriendHelper.h"
 #import "TLUserHelper.h"
+#import "TLFriendDataLoader.h"
+#import "TLGroupDataLoader.h"
 
 #import "TLMessageManager+ConversationRecord.h"
 
@@ -58,13 +60,51 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_initLiveQuery) name:kAKGroupDataUpdateNotification object:nil];
     
     
-     self.definesPresentationContext = YES;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newChatMessageArrive:) name:@"NewChatMessageReceived" object:nil];
+    
+    self.definesPresentationContext = YES;
 }
+
+- (void)newChatMessageArrive:(NSNotification*)notificaion {
+    
+    
+    __weak TLConversationViewController * weakSelf = self;
+    NSString * conversationKey = notificaion.object;
+    if (conversationKey) {
+        // friends
+        NSArray * users = [conversationKey componentsSeparatedByString:@":"];
+        if (users.count > 1) {
+            NSArray * matches = [users filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != %@", [TLUserHelper sharedHelper].userID]];
+            if (matches.count > 0) {
+                NSString * friendID = matches.firstObject;
+                TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:friendID];
+                
+                [TLFriendDataLoader createFriendDialogWithLatestMessage:friend completionBlock:^{
+                    [weakSelf updateConversationData];
+                }];
+            }
+        }else{
+            
+            // GROUP
+            
+            TLGroup * group = [[TLFriendHelper sharedFriendHelper] getGroupInfoByGroupID:conversationKey];
+            
+            
+            [TLGroupDataLoader createCourseDialogWithLatestMessage:group completionBlock:^{
+               [weakSelf updateConversationData];
+            }];
+        }
+    }
+    
+}
+
+
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
+
     [self updateConversationData]; // should wait for group and friends data download first.
 
     [self p_initLiveQuery];

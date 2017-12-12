@@ -59,8 +59,10 @@
         dialogName = user.nikeName;
     }
  
-    
+    NSInteger unreadCount = [self unreadMessageByUid:uid key:dialogKey];
+
     NSDate * lastReadDate = [self lastReadDateByUid:uid fid:fid];
+    
     NSString *sqlString = [NSString stringWithFormat:SQL_ADD_CONV, CONV_TABLE_NAME];
     NSArray *arrPara = [NSArray arrayWithObjects:
                         uid,
@@ -70,7 +72,7 @@
                         TLTimeStamp(lastReadDate),
                         last_message,
                         dialogKey,
-                        
+                        [NSNumber numberWithInteger:unreadCount],
                         @"", @"", @"", @"", @"", nil];
     BOOL ok = [self excuteSQL:sqlString withArrParameter:arrPara];
     
@@ -100,7 +102,7 @@
 
             dialog[@"name"] = dialogName;
             
-            [dialog saveEventually];
+            [dialog saveInBackground];
         }
     }];
     
@@ -130,7 +132,7 @@
         if (object) {
             
             object[@"lastReadDate"] = [NSDate date];
-            [object saveEventually];
+            [object saveInBackground];
         }
         
     }];

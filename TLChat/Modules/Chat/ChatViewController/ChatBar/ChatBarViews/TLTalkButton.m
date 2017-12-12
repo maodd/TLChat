@@ -26,7 +26,7 @@
     if (self = [super initWithFrame:frame]) {
         [self setNormalTitle:@"按住 说话"];
         [self setHighlightTitle:@"松开 结束"];
-        [self setCancelTitle:@"送开 取消"];
+        [self setCancelTitle:@"松开 取消"];
         [self setHighlightColor:[UIColor colorWithWhite:0.0 alpha:0.1]];
         [self.layer setMasksToBounds:YES];
         [self.layer setCornerRadius:4.0f];

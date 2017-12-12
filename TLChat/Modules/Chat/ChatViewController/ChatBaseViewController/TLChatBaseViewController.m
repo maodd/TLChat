@@ -26,6 +26,7 @@
 @property (nonatomic, strong) PFLiveQueryClient *client;
 @property (nonatomic, strong) PFQuery *query;
 @property (nonatomic, strong) PFLiveQuerySubscription *subscription; // must use property to hold reference.
+@property (nonatomic, strong) TLConversation *converstaion;
 @end
 
 
@@ -50,13 +51,31 @@
     
     [self loadKeyboard];
     
-   
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newChatMessageArrive:) name:@"NewChatMessageReceived" object:nil];
+    
+    
+
     
 }
 
-- (void)setupLiveQuery:(NSDate *)date {
-    
+- (void)appWillBecomeActive:(NSNotification*)notification {
+    [self initLiveQuery];
+}
 
+- (void)appWillResignActive:(NSNotification*)notification {
+    [self cleanupLiveQuery];
+}
+
+- (void)newChatMessageArrive:(NSNotification*)notificaion {
+    if ([notificaion.object isEqualToString:self.conversationKey]) {
+        [self loadMessages];
+    }
+}
+
+- (void)loadMessages {
     
     self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
     
@@ -65,10 +84,10 @@
     [self.query whereKey:@"dialogKey" equalTo:self.conversationKey]; //livequery doesn't work with pointer
     self.query.limit = 100;
     [self.query orderByDescending:@"createdAt"]; // get recent 1k msgs.
-    if (date) {
-        [self.query whereKey:@"createdAt" greaterThan:date];
+    if (self.converstaion.lastReadDate) {
+        [self.query whereKey:@"createdAt" greaterThan:self.converstaion.lastReadDate];
         
-        DLog(@"setup live query newer than %@", date);
+        DLog(@"setup live query newer than %@", self.converstaion.lastReadDate);
     }
     [self.query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         // do client side sorting
@@ -82,6 +101,13 @@
         }
     }];
     
+}
+- (void)setupLiveQuery:(NSDate *)date {
+    
+
+    [self loadMessages];
+
+    
  
     if (self.client) {
         
@@ -89,7 +115,8 @@
         return;
     }
     
-    
+
+    [self.navigationItem setTitle:[NSString stringWithFormat:@"%@(未连接)",[_partner chat_username]]];
     self.client = [[PFLiveQueryClient alloc] init];
     
     self.subscription = [self.client  subscribeToQuery:self.query];
@@ -98,12 +125,24 @@
     self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
         DLog(@"Subscribed to %@", weakSelf.conversationKey);
         
-        //        [self.navigationItem setTitle:@"聊天"]; //todo: setup offline indicator.
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.navigationItem setTitle:[weakSelf.partner chat_username]];
+        });
+        
         
     }];
     
     self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
         NSLog(@"unsubscribed from %@", weakSelf.conversationKey);
+    }];
+    
+    self.subscription = [self.subscription addErrorHandler:^(PFQuery<PFObject *> * _Nonnull query, NSError * _Nonnull error) {
+        DLog(@"error occurred! %@", error.localizedDescription);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.navigationItem setTitle:[NSString stringWithFormat:@"%@(未连接)",[weakSelf.partner chat_username]]];
+        });
+        
     }];
     
     self.subscription = [self.subscription addEnterHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
@@ -353,6 +392,11 @@
     
     [[IQKeyboardManager sharedManager] setEnableAutoToolbar:NO]; // conflict with chat? has to set this to no.
     
+    [self initLiveQuery];
+    
+}
+
+- (void)initLiveQuery {
     [[TLMessageManager sharedInstance] refreshConversationRecord];
     
     [[TLMessageManager sharedInstance] conversationRecord:^(NSArray *data) {
@@ -361,6 +405,7 @@
             if ([conversation.partnerID isEqualToString:self.partner.chat_userID]) {
                 
                 lastReadDate = conversation.lastReadDate;
+                self.converstaion = conversation;
                 break;
             }
         }
@@ -369,10 +414,16 @@
     }];
     
     [[TLMessageManager sharedInstance].conversationStore resetUnreadNumberForConversationByUid:[self.user chat_userID] key:self.conversationKey];
-    [[TLMessageManager sharedInstance].conversationStore updateLastReadDateForConversationByUid:[self.user chat_userID] key:self.conversationKey];  
-    
+    [[TLMessageManager sharedInstance].conversationStore updateLastReadDateForConversationByUid:[self.user chat_userID] key:self.conversationKey];
 }
 
+- (void)cleanupLiveQuery {
+    if (self.client) {
+        [self.client unsubscribeFromQuery:self.query];
+        [self.client disconnect];
+        self.client = nil;
+    }
+}
 
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -383,12 +434,8 @@
     
 //    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:YES];
     
-    if (self.client) {
-        [self.client unsubscribeFromQuery:self.query];
-        [self.client disconnect];
-        self.client = nil;
-    }
-    
+
+    [self cleanupLiveQuery];
 }
 
 - (void)dealloc
@@ -423,6 +470,32 @@
     [self setConversationKey:key];
     
     [self resetChatVC];
+}
+
+- (void)setConversationKey:(NSString *)conversationKey {
+    
+    _conversationKey = conversationKey;
+    
+    if (_partner == nil) {
+        
+        NSArray * users = [conversationKey componentsSeparatedByString:@":"];
+        if (users.count > 1) {
+            NSArray * matches = [users filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != %@", [TLUserHelper sharedHelper].userID]];
+            if (matches.count > 0) {
+                NSString * friendID = matches.firstObject;
+                TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:friendID];
+                
+                self.partner = friend;
+            }
+        }else{
+            
+            // GROUP
+            
+            TLGroup * group = [[TLFriendHelper sharedFriendHelper] getGroupInfoByGroupID:conversationKey];
+            self.partner = group;
+        }
+        
+    }
 }
 
 - (void)setChatMoreKeyboardData:(NSMutableArray *)moreKeyboardData
