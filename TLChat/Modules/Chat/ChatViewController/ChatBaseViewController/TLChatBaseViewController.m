@@ -116,7 +116,7 @@
     }
     
 
-    [self.navigationItem setTitle:[NSString stringWithFormat:@"%@(未连接)",[_partner chat_username]]];
+    [self.navigationItem setTitle:[NSString stringWithFormat:@"%@",[_partner chat_username]]];
     self.client = [[PFLiveQueryClient alloc] init];
     
     self.subscription = [self.client  subscribeToQuery:self.query];
