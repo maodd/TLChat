@@ -49,17 +49,26 @@
  
 - (void)setThumbnailPath:(NSString *)imagePath highDefinitionImageURL:(NSString *)imageURL
 {
+    
+    
     if (imagePath == nil) {
         [self.contentLayer setContents:nil];
     }
     else {
         UIImage *image = [[UIImage imageNamed:imagePath] copy];
         [self.contentLayer setContents:(id)(image.CGImage)];
+ 
     }
+    self.contentLayer.hidden = NO;
+    self.maskLayer.hidden = NO;
+    self.image = nil;
 }
 
 - (void)setThumbnailUrl:(NSString *)imageUrl highDefinitionImageURL:(NSString *)imageURL
 {
+    [self.contentLayer setContents:nil];
+    self.contentLayer.hidden = YES;
+    self.maskLayer.hidden = NO;
     [self tt_setImageWithURL:[NSURL URLWithString:imageUrl]];
     
 }

@@ -114,6 +114,7 @@
         [doubleTapGR setNumberOfTapsRequired:2];
         [_msgImageView addGestureRecognizer:doubleTapGR];
     }
+    
     return _msgImageView;
 }
 
