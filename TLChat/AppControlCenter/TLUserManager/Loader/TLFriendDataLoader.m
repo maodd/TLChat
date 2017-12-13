@@ -14,13 +14,24 @@
 #import "TLMessage.h"
 //#import "TLAppDelegate.h"
 
+
 @implementation TLFriendDataLoader {
  
 }
 
+static TLFriendDataLoader *friendDataLoader = nil;
+
 static BOOL isLoadingData = NO;
 
-+ (void)p_loadFriendsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *friends))completionBlock {
++ (TLFriendDataLoader *)sharedFriendDataLoader {
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        friendDataLoader = [[TLFriendDataLoader alloc] init];
+    });
+    return friendDataLoader;
+}
+
+- (void)p_loadFriendsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *friends))completionBlock {
     
     PFRelation * friendsRelation = [[PFUser currentUser] relationForKey:@"friends"];
     PFQuery * query = [friendsRelation query] ;
@@ -73,8 +84,16 @@ static BOOL isLoadingData = NO;
     }];
 }
 
-+ (void)recreateLocalDialogsForFriends {
+- (void)recreateLocalDialogsForFriendsWithCompletionBlock:(void(^)())completionBlock {
+    
+    dispatch_group_t serviceGroup = dispatch_group_create();
+    
+
+    
     for (TLUser * friend in [TLFriendHelper sharedFriendHelper].friendsData) {
+        
+        dispatch_group_enter(serviceGroup);
+        
         [self createFriendDialogWithLatestMessage:friend completionBlock:^{
         
             DLog(@"friend.userID %@", friend.userID);
@@ -82,24 +101,42 @@ static BOOL isLoadingData = NO;
             
             TLConversation * conversation = [[TLMessageManager sharedInstance].conversationStore conversationByKey:key];
             if (conversation) {
-                [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation];
+                [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation withCompletionBlock:^{
+                    
+                    dispatch_group_leave(serviceGroup);
+                     
+                    
+                }];
             }else{
                 DLog(@"no converstation for friend: %@", friend.userID);
+                
+                dispatch_group_leave(serviceGroup);
             }
             
             
         }];
         
+
+        
     }
+    
+    dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
+        
+        if (completionBlock) {
+            completionBlock();
+        }
+        
+    });
 }
 
-+ (void)createFriendDialogWithLatestMessage:(TLUser *)friend completionBlock:(void(^)())completionBlock
+- (void)createFriendDialogWithLatestMessage:(TLUser *)friend completionBlock:(void(^)())completionBlock
 {
     NSString * key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:friend.userID myId:[PFUser currentUser].objectId];
     PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
     DLog(@"key %@", key);
     [query whereKey:@"dialogKey" equalTo:key];
     [query orderByDescending:@"createdAt"];
+    
     
     [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         
@@ -124,7 +161,7 @@ static BOOL isLoadingData = NO;
             completionBlock();
         }
        
-        [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsDataUpdateNotification object:nil];
+
     }];
 }
 

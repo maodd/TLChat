@@ -213,7 +213,7 @@
 - (TLConversation *)conversationByKey:(NSString *)key
 {
     __block NSMutableArray *data = [[NSMutableArray alloc] init];
-    NSString *sqlString = [NSString stringWithFormat: SQL_SELECT_CONV_BY_KEY, CONV_TABLE_NAME, key];
+    NSString *sqlString = [NSString stringWithFormat: SQL_SELECT_CONV_BY_KEY, CONV_TABLE_NAME, key,  [TLUserHelper sharedHelper].userID];
     
     [self excuteQuerySQL:sqlString resultBlock:^(FMResultSet *retSet) {
         while ([retSet next]) {
@@ -305,7 +305,7 @@
     return _messageStore;
 }
 
-- (void)countUnreadMessages:(TLConversation *)conversation
+- (void)countUnreadMessages:(TLConversation *)conversation withCompletionBlock:(void(^)())completionBlock
 {
     NSString * key = conversation.key;
     PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
@@ -320,7 +320,9 @@
                 
                 [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key addNumber:number];
                 
-                [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
+                if (completionBlock) {
+                    completionBlock();
+                }
             }
             
             
@@ -342,7 +344,11 @@
                         
                         [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key addNumber:number];
                         
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
+                        
+                    }
+                    
+                    if (completionBlock) {
+                        completionBlock();
                     }
                     
                     
@@ -353,9 +359,12 @@
                         
                         [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key addNumber:number];
                         
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
+                        
                     }
                     
+                    if (completionBlock) {
+                        completionBlock();
+                    }
                     
                 }];
             }

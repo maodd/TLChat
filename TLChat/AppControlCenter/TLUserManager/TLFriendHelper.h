@@ -54,4 +54,6 @@
 
 - (NSString *)formatLastMessage:(NSString *)content fid:(NSString *)fid;
 - (NSString *)formatLastMessage:(TLMessage *)message;
+
+- (void)reset; // when user log out.
 @end

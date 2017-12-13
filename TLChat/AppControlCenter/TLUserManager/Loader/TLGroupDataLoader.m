@@ -19,7 +19,17 @@
 #import "DefaultPortraitView.h"
 #import "TLUserHelper.h"
 
+static TLGroupDataLoader *groupDataLoader = nil;
+
 @implementation TLGroupDataLoader
++ (TLGroupDataLoader *)sharedGroupDataLoader
+{
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        groupDataLoader = [[TLGroupDataLoader alloc] init];
+    });
+    return groupDataLoader;
+}
 
 + (void)p_loadGroupsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *groups))completionBlock {
     
@@ -69,17 +79,49 @@
     return key;
 }
 
-+ (void)recreateLocalDialogsForGroups {
+- (void)recreateLocalDialogsForGroupsWithCompletionBlock:(void(^)())completionBlcok {
+    
+    dispatch_group_t serviceGroup = dispatch_group_create();
+    
+ 
+    
+
+   
+    
     for (TLGroup * group in [TLFriendHelper sharedFriendHelper].groupsData) {
+        
+        dispatch_group_enter(serviceGroup);
+        
         [self createCourseDialogWithLatestMessage:group completionBlock:^{
             TLConversation * conversation = [[TLMessageManager sharedInstance].conversationStore conversationByKey:group.groupID];
-            [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation];
+            
+            
+            [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation withCompletionBlock:^{
+            
+                dispatch_group_leave(serviceGroup);
+                
+                
+            }];
+            
+            
+            
+            
+            
+            
         }];
         
     }
+    
+    dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
+        
+        if (completionBlcok) {
+            completionBlcok();
+        }
+        
+    });
 }
 
-+ (void)createCourseDialogWithLatestMessage:(TLGroup *)group completionBlock:(void(^)())completionBlock
+- (void)createCourseDialogWithLatestMessage:(TLGroup *)group completionBlock:(void(^)())completionBlock
 {
     NSString * key = group.groupID;
     PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
@@ -111,7 +153,7 @@
         if (completionBlock) {
             completionBlock();
         }
-        [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupLastMessageUpdateNotification object:nil];
+ 
     }];
 }
 

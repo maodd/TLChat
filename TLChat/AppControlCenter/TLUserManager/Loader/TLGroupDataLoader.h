@@ -10,12 +10,13 @@
 #import "TLGroup.h"
 
 @interface TLGroupDataLoader : NSObject
++ (TLGroupDataLoader *)sharedGroupDataLoader;
 
 + (void)p_loadGroupsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *groups))completionBlock;
 
-+ (void)recreateLocalDialogsForGroups;
+- (void)recreateLocalDialogsForGroupsWithCompletionBlock:(void(^)())completionBlcok;
 
 + (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName;
-+ (void)createCourseDialogWithLatestMessage:(TLGroup *)group completionBlock:(void(^)())completionBlock;
+- (void)createCourseDialogWithLatestMessage:(TLGroup *)group completionBlock:(void(^)())completionBlock;
 
 @end

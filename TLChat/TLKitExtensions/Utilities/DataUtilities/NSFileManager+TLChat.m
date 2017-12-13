@@ -131,7 +131,7 @@
 
 + (NSString *)pathDBCommon
 {
-    NSString *path = [NSString stringWithFormat:@"%@/User/%@/Setting/DB/", [NSFileManager documentsPath], [TLUserHelper sharedHelper].userID];
+    NSString *path = [NSString stringWithFormat:@"%@/Setting/DB/", [NSFileManager documentsPath]];
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         NSError *error;
         [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:&error];
@@ -144,7 +144,7 @@
 
 + (NSString *)pathDBMessage
 {
-    NSString *path = [NSString stringWithFormat:@"%@/User/%@/Chat/DB/", [NSFileManager documentsPath], [TLUserHelper sharedHelper].userID];
+    NSString *path = [NSString stringWithFormat:@"%@/Chat/DB/", [NSFileManager documentsPath]];
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         NSError *error;
         [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:&error];

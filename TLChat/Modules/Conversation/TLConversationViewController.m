@@ -48,18 +48,17 @@
         [TLFriendHelper sharedFriendHelper]; // force a friend data load.
     }
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKFriendsDataUpdateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserverForName:kAppDidLoginSuccessNoti object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        [TLFriendHelper sharedFriendHelper]; // force a friend data load.
+    }];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupDataUpdateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserverForName:kAppDidLogoutSuccessNoti object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        [[TLFriendHelper sharedFriendHelper] reset];
+    }];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKFriendsAndGroupDataUpdateNotification object:nil];
+    
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupLastMessageUpdateNotification object:nil];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKGroupLastMessageUpdateNotification object:nil];
-
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_initLiveQuery) name:kAKGroupDataUpdateNotification object:nil];
-    
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newChatMessageArrive:) name:@"NewChatMessageReceived" object:nil];
     
     self.definesPresentationContext = YES;
@@ -79,7 +78,7 @@
                 NSString * friendID = matches.firstObject;
                 TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:friendID];
                 
-                [TLFriendDataLoader createFriendDialogWithLatestMessage:friend completionBlock:^{
+                [[TLFriendDataLoader sharedFriendDataLoader] createFriendDialogWithLatestMessage:friend completionBlock:^{
                     [weakSelf updateConversationData];
                 }];
             }
@@ -90,7 +89,7 @@
             TLGroup * group = [[TLFriendHelper sharedFriendHelper] getGroupInfoByGroupID:conversationKey];
             
             
-            [TLGroupDataLoader createCourseDialogWithLatestMessage:group completionBlock:^{
+            [[TLGroupDataLoader sharedGroupDataLoader] createCourseDialogWithLatestMessage:group completionBlock:^{
                [weakSelf updateConversationData];
             }];
         }

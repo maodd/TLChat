@@ -46,7 +46,7 @@
  */
 - (BOOL)deleteConversationsByUid:(NSString *)uid;
 
-- (void)countUnreadMessages:(TLConversation *)conversation;
+- (void)countUnreadMessages:(TLConversation *)conversation withCompletionBlock:(void(^)())completionBlock;
 
 
 @end

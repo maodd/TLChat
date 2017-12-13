@@ -38,6 +38,15 @@ static TLFriendHelper *friendHelper = nil;
     return friendHelper;
 }
 
+- (void)reset {
+    self.friendsData = [@[] mutableCopy];
+    self.groupsData = [@[] mutableCopy];
+    _friendStore = nil;
+    _groupsData = nil;
+    [self p_resetFriendData];
+   
+}
+
 - (id)init
 {
     if (self = [super init]) {
@@ -55,15 +64,34 @@ static TLFriendHelper *friendHelper = nil;
         if ([[TLUserHelper sharedHelper] isLogin]) {
             
             // TODO: might need to do queue waitForAll trick here, because load group data needs frienddata loaded first to get user name to display for last messge.
-            [self p_loadFriendsData];
-            [self p_loadGroupsData];
+            
+            [self loadFriendsAndGroupsData];
         }
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_loadFriendsData) name:kAKUserLoggedInNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(p_loadGroupsData) name:kAKUserLoggedInNotification object:nil];
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadFriendsAndGroupsData) name:kAKUserLoggedInNotification object:nil];
+ 
     }
     return self;
+}
+
+- (void)loadFriendsAndGroupsData {
+    dispatch_group_t serviceGroup = dispatch_group_create();
+    
+    dispatch_group_enter(serviceGroup);
+    [self p_loadFriendsDataWithCompleetionBlcok:^{
+        dispatch_group_leave(serviceGroup);
+    }];
+    
+    dispatch_group_enter(serviceGroup);
+    [self p_loadGroupsDataWithCompleetionBlcok:^{
+        dispatch_group_leave(serviceGroup);
+    }];
+    
+    dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
+        
+    });
 }
 
 #pragma mark - Public Methods -
@@ -229,9 +257,9 @@ static TLFriendHelper *friendHelper = nil;
     }
 }
 
-- (void)p_loadFriendsData
+- (void)p_loadFriendsDataWithCompleetionBlcok:(void(^)())completionBlock
 {
-    [TLFriendDataLoader p_loadFriendsDataWithCompletionBlock:^(NSArray<TLUser *> *friends) {
+    [[TLFriendDataLoader sharedFriendDataLoader] p_loadFriendsDataWithCompletionBlock:^(NSArray<TLUser *> *friends) {
         
  
         
@@ -248,17 +276,23 @@ static TLFriendHelper *friendHelper = nil;
         }
  
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsDataUpdateNotification object:nil];
 
-        [TLFriendDataLoader recreateLocalDialogsForFriends];
 
+        [[TLFriendDataLoader sharedFriendDataLoader] recreateLocalDialogsForFriendsWithCompletionBlock:^{
+            
+            if (completionBlock) {
+                completionBlock();
+            }
+        }];
+
+   
 
     
     }];
     
 }
 
-- (void)p_loadGroupsData
+- (void)p_loadGroupsDataWithCompleetionBlcok:(void(^)())completionBlock
 {
     [TLGroupDataLoader p_loadGroupsDataWithCompletionBlock:^(NSArray<TLGroup *> *groups) {
 
@@ -275,9 +309,17 @@ static TLFriendHelper *friendHelper = nil;
             [group createGroupAvatarWithCompleteAction:nil];
         }
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:kAKGroupDataUpdateNotification object:nil];
+ 
 
-        [TLGroupDataLoader recreateLocalDialogsForGroups];
+        [[TLGroupDataLoader sharedGroupDataLoader] recreateLocalDialogsForGroupsWithCompletionBlock:^{
+        
+            if (completionBlock) {
+                completionBlock();
+            }
+            
+        }];
+        
+        
         
     }];
     

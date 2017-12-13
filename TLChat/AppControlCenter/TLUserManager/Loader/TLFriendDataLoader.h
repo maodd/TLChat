@@ -11,8 +11,10 @@
 
 @interface TLFriendDataLoader : NSObject
 
-+ (void)p_loadFriendsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *friends))completionBlock;
++ (TLFriendDataLoader *)sharedFriendDataLoader;
 
-+ (void)recreateLocalDialogsForFriends;
-+ (void)createFriendDialogWithLatestMessage:(TLUser *)friend completionBlock:(void(^)())completionBlock;
+- (void)p_loadFriendsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *friends))completionBlock;
+
+- (void)recreateLocalDialogsForFriendsWithCompletionBlock:(void(^)())completionBlock;
+- (void)createFriendDialogWithLatestMessage:(TLUser *)friend completionBlock:(void(^)())completionBlock;
 @end
