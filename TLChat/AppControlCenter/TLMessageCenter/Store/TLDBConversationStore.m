@@ -283,6 +283,31 @@
 {
     NSString *sqlString = [NSString stringWithFormat:SQL_DELETE_CONV, CONV_TABLE_NAME, uid, fid];
     BOOL ok = [self excuteSQL:sqlString, nil];
+    
+    
+    
+    PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
+    [query whereKey:@"user" equalTo:[PFUser currentUser]];
+    
+    TLGroup *group = [[TLFriendHelper sharedFriendHelper] getGroupInfoByGroupID:fid];
+    NSString * key = group.groupID ? fid : [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:fid myId:uid];
+    
+    key = [key stringByTrimmingCharactersInSet:
+                      [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    key = [key stringByReplacingOccurrencesOfString:@" " withString:@"-"];
+    
+    [query whereKey:@"key" equalTo:key];
+    
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+        if (object) {
+            
+            object[@"localDeletedAt"] = [NSDate date];
+            
+            [object saveInBackground];
+        }
+    }];
+    
     return ok;
 }
 

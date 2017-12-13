@@ -133,16 +133,16 @@
                                                [cell setBottomLineStyle:TLCellLineStyleFill];
                                            }
                                        }];
-    UITableViewRowAction *moreAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault
-                                                                          title:conversation.isRead ? @"标为未读" : @"标为已读"
-                                                                        handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
-                                        {
-                                            TLConversationCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-                                            conversation.isRead ? [cell markAsUnread] : [cell markAsRead];
-                                            [tableView setEditing:NO animated:YES];
-                                        }];
-    moreAction.backgroundColor = [UIColor colorWithRed:0.85 green:0.85 blue:0.85 alpha:1.0];
-    return @[delAction, moreAction];
+//    UITableViewRowAction *moreAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault
+//                                                                          title:conversation.isRead ? @"标为未读" : @"标为已读"
+//                                                                        handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
+//                                        {
+//                                            TLConversationCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+//                                            conversation.isRead ? [cell markAsUnread] : [cell markAsRead];
+//                                            [tableView setEditing:NO animated:YES];
+//                                        }];
+//    moreAction.backgroundColor = [UIColor colorWithRed:0.85 green:0.85 blue:0.85 alpha:1.0];
+    return @[delAction];
 }
 
 //MARK: UISearchBarDelegate

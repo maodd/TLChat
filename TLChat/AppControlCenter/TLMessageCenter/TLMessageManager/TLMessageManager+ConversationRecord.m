@@ -43,6 +43,7 @@
     if (ok) {
         ok = [self.conversationStore deleteConversationByUid:self.userID fid:partnerID];
     }
+
     return ok;
 }
 

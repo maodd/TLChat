@@ -132,36 +132,58 @@ static BOOL isLoadingData = NO;
 - (void)createFriendDialogWithLatestMessage:(TLUser *)friend completionBlock:(void(^)())completionBlock
 {
     NSString * key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:friend.userID myId:[PFUser currentUser].objectId];
-    PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
-    DLog(@"key %@", key);
-    [query whereKey:@"dialogKey" equalTo:key];
-    [query orderByDescending:@"createdAt"];
     
-    
-    [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+    PFQuery * dialogQuery = [PFQuery queryWithClassName:kParseClassNameDialog];
+    [dialogQuery whereKey:@"key" equalTo:key];
+    [dialogQuery whereKey:@"user" greaterThan:[PFUser currentUser]];
+    [dialogQuery orderByDescending:@"updatedAt"];
+    [dialogQuery getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         
-        if (object) {
-            [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
-                                                                                  fid:friend.userID
-                                                                                 type:TLConversationTypePersonal
-                                                                                 date:object.createdAt
-                                                                         last_message:[TLMessage conversationContentForMessage: object[@"message"]]
-                                                                            localOnly:YES];
-            
+        NSDate * localDeleteDate = nil;
+        if (object && object[@"localDeletedAt"]) {
+            localDeleteDate = object[@"localDeletedAt"];
         }else{
-            [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
-                                                                                  fid:friend.userID
-                                                                                 type:TLConversationTypePersonal
-                                                                                 date:friend.date
-                                                                         last_message:@"Let's start chat"
-                                                                            localOnly:YES];
+            
         }
         
-        if (completionBlock) {
-            completionBlock();
+        
+        PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
+        DLog(@"key %@", key);
+        [query whereKey:@"dialogKey" equalTo:key];
+        [query orderByDescending:@"createdAt"];
+        
+        if (localDeleteDate) {
+            [query whereKey:@"createdAt" greaterThan:localDeleteDate];
         }
-       
+        
+        [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+            
+            if (object) {
+                [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
+                                                                                      fid:friend.userID
+                                                                                     type:TLConversationTypePersonal
+                                                                                     date:object.createdAt
+                                                                             last_message:[TLMessage conversationContentForMessage: object[@"message"]]
+                                                                                localOnly:YES];
+                
+            }else{
+                if (localDeleteDate) {
+                }else{
+                    [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
+                                                                                          fid:friend.userID
+                                                                                         type:TLConversationTypePersonal
+                                                                                         date:friend.date
+                                                                                 last_message:@"Let's start chat"
+                                                                                    localOnly:YES];
+                };
+            }
+            
+            if (completionBlock) {
+                completionBlock();
+            }
+           
 
+        }];
     }];
 }
 
