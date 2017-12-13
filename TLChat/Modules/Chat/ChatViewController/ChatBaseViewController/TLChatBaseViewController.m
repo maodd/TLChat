@@ -71,11 +71,13 @@
 
 - (void)newChatMessageArrive:(NSNotification*)notificaion {
     if ([notificaion.object isEqualToString:self.conversationKey]) {
-        [self loadMessages];
+        [self loadMessagesWithCompletionBlock:^{
+            
+        } messageIDToIgnore:nil];
     }
 }
 
-- (void)loadMessages {
+- (void)loadMessagesWithCompletionBlock:(void(^)())completionBlcok messageIDToIgnore:(NSString *)messageIDToIgnore{
     
     self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
     
@@ -84,10 +86,13 @@
     [self.query whereKey:@"dialogKey" equalTo:self.conversationKey]; //livequery doesn't work with pointer
     self.query.limit = 100;
     [self.query orderByDescending:@"createdAt"]; // get recent 1k msgs.
+    if (messageIDToIgnore) {
+        [self.query whereKey:@"objectId" notEqualTo:messageIDToIgnore];
+    }
     if (self.converstaion.lastReadDate) {
         [self.query whereKey:@"createdAt" greaterThan:self.converstaion.lastReadDate];
         
-        DLog(@"setup live query newer than %@", self.converstaion.lastReadDate);
+        DLog(@"load message newer than %@", self.converstaion.lastReadDate);
     }
     [self.query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         // do client side sorting
@@ -99,13 +104,23 @@
             
             [self processMessageFromServer:message bypassMine:NO];
         }
+        
+        [[TLMessageManager sharedInstance].conversationStore resetUnreadNumberForConversationByUid:[self.user chat_userID] key:self.conversationKey];
+        [[TLMessageManager sharedInstance].conversationStore updateLastReadDateForConversationByUid:[self.user chat_userID] key:self.conversationKey];
+        
+        if (completionBlcok) {
+            completionBlcok();
+        }
     }];
+    
     
 }
 - (void)setupLiveQuery:(NSDate *)date {
     
 
-    [self loadMessages];
+    [self loadMessagesWithCompletionBlock:^{
+        
+    } messageIDToIgnore:nil];
 
     
  
@@ -162,7 +177,13 @@
     self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
         
         NSLog(@"new message added: %@", message);
-        [weakSelf processMessageFromServer:message bypassMine:YES];
+        
+        //
+        [weakSelf loadMessagesWithCompletionBlock:^{
+            [weakSelf processMessageFromServer:message bypassMine:YES];
+        } messageIDToIgnore:message.objectId];
+        
+        
         
         
     }];
@@ -413,8 +434,7 @@
         [self setupLiveQuery:lastReadDate];
     }];
     
-    [[TLMessageManager sharedInstance].conversationStore resetUnreadNumberForConversationByUid:[self.user chat_userID] key:self.conversationKey];
-    [[TLMessageManager sharedInstance].conversationStore updateLastReadDateForConversationByUid:[self.user chat_userID] key:self.conversationKey];
+
 }
 
 - (void)cleanupLiveQuery {
