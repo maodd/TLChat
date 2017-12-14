@@ -47,6 +47,7 @@
     return ok;
 }
 
+
 - (BOOL)updateFriendsData:(NSArray *)friendData forUid:(NSString *)uid
 {
     NSArray *oldData = [self friendsDataByUid:uid];

@@ -16,6 +16,7 @@
 //#import "TLAppDelegate.h"
 #import "TLFriendDataLoader.h"
 #import "TLGroupDataLoader.h"
+#import "TLMessageManager+ConversationRecord.h"
 
 static TLFriendHelper *friendHelper = nil;
 
@@ -412,4 +413,12 @@ static TLFriendHelper *friendHelper = nil;
     return _groupStore;
 }
 
+- (void)deleteFriend:(NSString *)fid
+{
+    [self.friendStore deleteFriendByFid:fid forUid:[TLUserHelper sharedHelper].userID];
+    
+    [[TLMessageManager sharedInstance] deleteConversationByPartnerID:fid];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
+}
 @end

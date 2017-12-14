@@ -56,4 +56,6 @@
 - (NSString *)formatLastMessage:(TLMessage *)message;
 
 - (void)reset; // when user log out.
+
+- (void)deleteFriend:(NSString *)fid;
 @end
