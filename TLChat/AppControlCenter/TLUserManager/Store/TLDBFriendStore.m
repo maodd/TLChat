@@ -106,4 +106,11 @@
     return ok;
 }
 
+
+- (BOOL)deleteAllFriendsForUid:(NSString *)uid
+{
+    NSString *sqlString = [NSString stringWithFormat:SQL_DELETE_ALL_FRIENDS, FRIENDS_TABLE_NAME, uid;
+    BOOL ok = [self excuteSQL:sqlString, nil];
+    return ok;
+}
 @end

@@ -20,4 +20,6 @@
 
 - (BOOL)deleteFriendByFid:(NSString *)fid forUid:(NSString *)uid;
 
+- (BOOL)deleteAllFriendsForUid:(NSString *)uid;
+
 @end
