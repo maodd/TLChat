@@ -14,7 +14,7 @@
 #import "NSFileManager+TLChat.h"
 #import "TLFriendHelper.h"
 #import "TLUserHelper.h"
-#import <IQKeyboardManager/IQKeyboardManager.h>
+//#import <IQKeyboardManager/IQKeyboardManager.h>
 #import "TLMessageManager.h"
 #import "TLMessageManager+ConversationRecord.h"
 
@@ -411,7 +411,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardFrameWillChange:) name:UIKeyboardWillChangeFrameNotification object:nil];
     
-    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:NO]; // conflict with chat? has to set this to no.
+//    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:NO]; // conflict with chat? has to set this to no.
     
     [self initLiveQuery];
     

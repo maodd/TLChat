@@ -135,7 +135,7 @@ static BOOL isLoadingData = NO;
     
     PFQuery * dialogQuery = [PFQuery queryWithClassName:kParseClassNameDialog];
     [dialogQuery whereKey:@"key" equalTo:key];
-    [dialogQuery whereKey:@"user" greaterThan:[PFUser currentUser]];
+    [dialogQuery whereKey:@"user" equalTo:[PFUser currentUser]];
     [dialogQuery orderByDescending:@"updatedAt"];
     [dialogQuery getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         
