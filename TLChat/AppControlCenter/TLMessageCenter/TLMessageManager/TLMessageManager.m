@@ -38,6 +38,8 @@ static TLMessageManager *messageManager;
             DDLogError(@"存储Conversation到DB失败");
         }
     }
+    
+    // move server saving code here.
 }
 
 

@@ -124,7 +124,21 @@
         }
         
         msgObject[@"dialogKey"] = dialogKey;
-        [msgObject saveInBackground];
+       [msgObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+           if (error) {
+               NSLog(@"send message fail %@", error.localizedDescription);
+               
+               dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                   UIAlertController * ac = [UIAlertController alertControllerWithTitle:error.localizedDescription message:nil preferredStyle:UIAlertControllerStyleAlert];
+                   [ac addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                   
+                   [[UIApplication sharedApplication].delegate.window.rootViewController presentViewController:ac animated:YES completion:nil];
+               });
+               
+               
+           }
+       }];
        
        // TODO: handel saving result, then update local message sendState
        

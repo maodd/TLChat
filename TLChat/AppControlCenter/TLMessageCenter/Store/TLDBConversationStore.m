@@ -102,7 +102,9 @@
 
             dialog[@"name"] = dialogName;
             
-            [dialog saveInBackground];
+            [dialog saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                
+            }];
         }
     }];
     
@@ -131,6 +133,7 @@
        
         if (object) {
             
+            // TODO: last read count not right for user self sending messages.
             object[@"lastReadDate"] = [NSDate date];
             [object saveInBackground];
         }

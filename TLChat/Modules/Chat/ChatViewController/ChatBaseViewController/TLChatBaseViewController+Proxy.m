@@ -39,9 +39,15 @@
         
     } success:^(TLMessage * message) {
         NSLog(@"send success");
+        
+
+        
+        
     } failure:^(TLMessage * message) {
         NSLog(@"send failure");
     }];
+    
+    [[TLMessageManager sharedInstance].conversationStore updateLastReadDateForConversationByUid:[self.partner chat_userID] key:self.conversationKey];
 }
 
 - (void)receivedMessage:(TLMessage *)message
