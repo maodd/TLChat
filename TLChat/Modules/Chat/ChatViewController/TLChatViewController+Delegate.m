@@ -86,7 +86,7 @@
     HSStudentUserInfo * userInfo = [[HSStudentUserInfo alloc] initWithDict:
                                     @{@"userId":user.userID,
                                       @"name":user.username,
-                                      @"headerIcon":user.avatarURL,
+                                      @"headerIcon":user.avatarURL ?: @"",
                                       @"isFriend":@(YES)
                                       }]; // TODO: handle non-friend chat.
     

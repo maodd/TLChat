@@ -95,6 +95,10 @@
         }
     }
     
+    [self updateConversationData]; // should wait for group and friends data download first.
+    
+    [self p_initLiveQuery];
+    
 }
 
 
@@ -104,9 +108,7 @@
     [super viewWillAppear:animated];
     
 
-    [self updateConversationData]; // should wait for group and friends data download first.
 
-    [self p_initLiveQuery];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -116,13 +118,13 @@
         [self.addMenuView dismiss];
     }
     
-    if (self.client) {
-        [self.client unsubscribeFromQuery:self.query];
-        [self.client disconnect];
-        self.client = nil;
-        
-        _currentKeys = nil;
-    }
+//    if (self.client) {
+//        [self.client unsubscribeFromQuery:self.query];
+//        [self.client disconnect];
+//        self.client = nil;
+//
+//        _currentKeys = nil;
+//    }
 }
 
 #pragma mark - Event Response
