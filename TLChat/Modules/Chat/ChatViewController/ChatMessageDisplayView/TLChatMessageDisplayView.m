@@ -42,6 +42,8 @@
         [self.tableView addGestureRecognizer:tap];
         
         [self.tableView addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onMessageSendingFail:) name:@"MessageSendingFail" object:nil];
     }
     return self;
 }
@@ -125,6 +127,13 @@
         else {
             [TLUIUtility showAlertWithTitle:@"错误" message:@"从数据库中删除消息失败。"];
         }
+    }
+}
+
+- (void)onMessageSendingFail:(NSNotification *)notif
+{
+    if (notif.userInfo && notif.userInfo[@"message"] && [notif.userInfo[@"message"] isKindOfClass:[TLMessage class]]) {
+        [self deleteMessage:notif.userInfo[@"message"]];
     }
 }
 

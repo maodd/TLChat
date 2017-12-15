@@ -31,14 +31,20 @@ static TLMessageManager *messageManager;
     BOOL ok = [self.messageStore addMessage:message];
     if (!ok) {
         DDLogError(@"存储Message到DB失败");
+        
+        failure(message);
+        return;
     }
     else {      // 存储到conversation
         ok = [self addConversationByMessage:message];
         if (!ok) {
             DDLogError(@"存储Conversation到DB失败");
+            failure(message);
+            return;
         }
     }
     
+    success(message);
     // move server saving code here.
 }
 

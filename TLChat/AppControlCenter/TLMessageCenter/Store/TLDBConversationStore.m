@@ -129,6 +129,7 @@
     PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
     [query whereKey:@"user" equalTo:[PFUser currentUser]];
     [query whereKey:@"key" equalTo:key];
+    [query orderByDescending:@"updatedAt"];
     [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
        
         if (object) {

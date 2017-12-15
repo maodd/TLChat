@@ -13,6 +13,7 @@
 #import "TLImageMessage.h"
 #import "TLVoiceMessage.h"
 #import "TLFriendHelper.h"
+#import "TLMessageManager+MessageRecord.h"
 
 @implementation TLDBMessageStore
 
@@ -134,6 +135,8 @@
                    [ac addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
                    
                    [[UIApplication sharedApplication].delegate.window.rootViewController presentViewController:ac animated:YES completion:nil];
+                   
+                   [[NSNotificationCenter defaultCenter] postNotificationName:@"MessageSendingFail" object:nil userInfo:@{@"message": message}];
                });
                
                

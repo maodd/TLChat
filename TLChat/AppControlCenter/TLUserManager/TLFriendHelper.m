@@ -79,17 +79,19 @@ static TLFriendHelper *friendHelper = nil;
     dispatch_group_enter(serviceGroup);
     [self p_loadFriendsDataWithCompleetionBlcok:^{
         dispatch_group_leave(serviceGroup);
+        NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
     }];
     
     dispatch_group_enter(serviceGroup);
     [self p_loadGroupsDataWithCompleetionBlcok:^{
         dispatch_group_leave(serviceGroup);
+        NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
     }];
     
     dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
         
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
-        
+        NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
     });
 }
 
