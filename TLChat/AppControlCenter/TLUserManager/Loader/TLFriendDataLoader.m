@@ -89,11 +89,12 @@ static BOOL isLoadingData = NO;
     dispatch_group_t serviceGroup = dispatch_group_create();
     
 
-    
+    __block NSInteger i = 0;
     for (TLUser * friend in [TLFriendHelper sharedFriendHelper].friendsData) {
         
         dispatch_group_enter(serviceGroup);
-        
+        i = i + 1;
+        DLog(@"group items %ld", (long)i);
         [self createFriendDialogWithLatestMessage:friend completionBlock:^{
         
             DLog(@"friend.userID %@", friend.userID);
@@ -104,13 +105,16 @@ static BOOL isLoadingData = NO;
                 [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation withCompletionBlock:^{
                     
                     dispatch_group_leave(serviceGroup);
-                     
-                    
+                    i = i - 1;
+                    DLog(@"group items %ld", (long)i);
                 }];
             }else{
                 DLog(@"no converstation for friend: %@", friend.userID);
                 
                 dispatch_group_leave(serviceGroup);
+                
+                i = i - 1;
+                DLog(@"group items %ld", (long)i);
             }
             
             
@@ -124,6 +128,7 @@ static BOOL isLoadingData = NO;
         
         if (completionBlock) {
             completionBlock();
+            NSLog(@"recreateLocalDialogsForFriendsWithCompletionBlock done");
         }
         
     });

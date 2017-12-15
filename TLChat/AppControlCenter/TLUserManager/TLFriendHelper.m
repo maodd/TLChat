@@ -28,7 +28,9 @@ static TLFriendHelper *friendHelper = nil;
 
 @end
 
-@implementation TLFriendHelper
+@implementation TLFriendHelper {
+    BOOL _isLoading;
+}
 
 + (TLFriendHelper *)sharedFriendHelper
 {
@@ -74,15 +76,24 @@ static TLFriendHelper *friendHelper = nil;
 }
 
 - (void)loadFriendsAndGroupsData {
+    
+    if (_isLoading) {
+        return;
+    }
+    
+    _isLoading = YES;
+    
     dispatch_group_t serviceGroup = dispatch_group_create();
     
     dispatch_group_enter(serviceGroup);
+    NSLog(@"p_loadFriendsDataWithCompleetionBlcok started");
     [self p_loadFriendsDataWithCompleetionBlcok:^{
         dispatch_group_leave(serviceGroup);
         NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
     }];
     
     dispatch_group_enter(serviceGroup);
+    NSLog(@"p_loadGroupsDataWithCompleetionBlcok started");
     [self p_loadGroupsDataWithCompleetionBlcok:^{
         dispatch_group_leave(serviceGroup);
         NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
@@ -92,6 +103,8 @@ static TLFriendHelper *friendHelper = nil;
         
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
         NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
+        
+        _isLoading = NO;
     });
 }
 

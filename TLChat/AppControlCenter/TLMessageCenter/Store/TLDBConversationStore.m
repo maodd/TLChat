@@ -91,8 +91,8 @@
     
     _isQueryingDialog = YES;
     [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
-        _isQueryingDialog = NO;
-        if (number == 0) {
+        
+        if (number == 0 && error == nil) {
             PFObject * dialog = [PFObject objectWithClassName:kParseClassNameDialog];
             
             dialog[@"type"] = @(type);
@@ -103,8 +103,10 @@
             dialog[@"name"] = dialogName;
             
             [dialog saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                
+                _isQueryingDialog = NO;
             }];
+        }else{
+            _isQueryingDialog = NO;
         }
     }];
     
@@ -349,11 +351,12 @@
                 
                 [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key addNumber:number];
                 
-                if (completionBlock) {
-                    completionBlock();
-                }
+               
             }
             
+            if (completionBlock) {
+                completionBlock();
+            }
             
         }];
         

@@ -107,7 +107,7 @@
 {
     [super viewWillAppear:animated];
     
-    [self updateConversationData];
+//    [self updateConversationData];
 
 }
 
