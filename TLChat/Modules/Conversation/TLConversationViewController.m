@@ -107,7 +107,7 @@
 {
     [super viewWillAppear:animated];
     
-//    [self updateConversationData];
+    [self updateConversationData];  // to update conversation lastes message whenver back to this screen
 
 }
 
@@ -199,7 +199,7 @@
 - (UIImageView *)scrollTopView
 {
     if (_scrollTopView == nil) {
-        _scrollTopView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"conv_wechat_icon"]];
+        _scrollTopView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"nav_menu_radar"]];
     }
     return _scrollTopView;
 }

@@ -198,7 +198,10 @@
 {
     [self.addButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.and.top.and.bottom.mas_equalTo(self);
-        make.width.mas_equalTo(WIDTH_EMOJIGROUP_CELL);
+//        make.width.mas_equalTo(WIDTH_EMOJIGROUP_CELL);
+        
+        // TODO: implement it after fix all bugs in it like downlaoding
+        make.width.mas_equalTo(0);
     }];
     
     [self.sendButton mas_makeConstraints:^(MASConstraintMaker *make) {
