@@ -44,10 +44,14 @@
 - (void)setMessageType:(TLMessageType)messageType
 {
     UIMenuItem *copy = [[UIMenuItem alloc] initWithTitle:@"复制" action:@selector(copyButtonDown:)];
-    UIMenuItem *transmit = [[UIMenuItem alloc] initWithTitle:@"转发" action:@selector(transmitButtonDown:)];
-    UIMenuItem *collect = [[UIMenuItem alloc] initWithTitle:@"收藏" action:@selector(collectButtonDown:)];
+    
+    // TODO: future features.
+//    UIMenuItem *transmit = [[UIMenuItem alloc] initWithTitle:@"转发" action:@selector(transmitButtonDown:)];
+//    UIMenuItem *collect = [[UIMenuItem alloc] initWithTitle:@"收藏" action:@selector(collectButtonDown:)];
     UIMenuItem *del = [[UIMenuItem alloc] initWithTitle:@"删除" action:@selector(deleteButtonDown:)];
-    [self.menuController setMenuItems:@[copy, transmit, collect, del]];
+    
+    // TODO: depend on sendState, set menu to 'retry'
+    [self.menuController setMenuItems:@[copy, del]];
 }
 
 - (void)dismiss

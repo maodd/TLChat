@@ -268,10 +268,7 @@
     NSString *content = [retSet stringForColumn:@"content"];
     NSDictionary * json = [content mj_JSONObject];
     message.content = [[NSMutableDictionary alloc] initWithDictionary:json];
-    if (json[@"path"] && json[@"w"] && json[@"h"]) {
-        TLImageMessage * imageMessage = (TLImageMessage *)message;
-//        imageMessage.thumbnailImageURL =
-    }
+    
     message.sendState = [retSet intForColumn:@"send_status"];
     message.readState = [retSet intForColumn:@"received_status"];
     return message;
