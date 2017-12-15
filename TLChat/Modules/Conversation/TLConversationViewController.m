@@ -95,9 +95,9 @@
         }
     }
     
-    [self updateConversationData]; // should wait for group and friends data download first.
+    [self updateConversationData]; 
     
-    [self p_initLiveQuery];
+    
     
 }
 

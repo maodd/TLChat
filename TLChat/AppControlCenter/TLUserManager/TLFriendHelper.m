@@ -64,8 +64,6 @@ static TLFriendHelper *friendHelper = nil;
         
         if ([[TLUserHelper sharedHelper] isLogin]) {
             
-            // TODO: might need to do queue waitForAll trick here, because load group data needs frienddata loaded first to get user name to display for last messge.
-            
             [self loadFriendsAndGroupsData];
         }
         

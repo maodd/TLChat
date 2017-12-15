@@ -53,6 +53,8 @@
                                                             object:@{@"unreadMessagesCount":[NSNumber numberWithInteger:totalUnreadCount]}];
 
     }];
+    
+    [self p_initLiveQuery];
 }
 
 //MARK: UITableViewDataSource
