@@ -419,6 +419,17 @@ static TLFriendHelper *friendHelper = nil;
     
     [[TLMessageManager sharedInstance] deleteConversationByPartnerID:fid];
     
+    NSString * key = [self makeDialogNameForFriend:fid myId:[TLUserHelper sharedHelper].userID];
+    PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
+    [query whereKey:@"key" equalTo:key];
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+        if (objects) {
+            [PFObject deleteAllInBackground:objects];
+        }
+    }];
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
+   
+    
 }
 @end
