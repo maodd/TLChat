@@ -345,7 +345,7 @@
     if (conversation.lastReadDate && ![conversation.lastReadDate isEqualToDate:[NSDate dateWithTimeIntervalSince1970:0]]) {
         DLog(@"conversation.lastReadDate: %@", conversation.lastReadDate);
         [query whereKey:@"createdAt" greaterThan:conversation.lastReadDate];
-        
+        [query whereKey:@"sender" notEqualTo:[TLUserHelper sharedHelper].userID];
         [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
             if (number > 0) {
                 
