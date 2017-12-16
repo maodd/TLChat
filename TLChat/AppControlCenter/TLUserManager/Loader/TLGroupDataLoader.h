@@ -16,7 +16,7 @@
 
 - (void)recreateLocalDialogsForGroupsWithCompletionBlock:(void(^)())completionBlcok;
 
-+ (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName;
+- (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName;
 - (void)createCourseDialogWithLatestMessage:(TLGroup *)group completionBlock:(void(^)())completionBlock;
 
 @end
