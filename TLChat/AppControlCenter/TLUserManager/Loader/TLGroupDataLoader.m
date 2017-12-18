@@ -189,7 +189,7 @@ static TLGroupDataLoader *groupDataLoader = nil;
 
 
 
-+ (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName {
+- (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName {
     return [UIImage imageNamed:DEFAULT_AVATAR_PATH];
 //    DefaultPortraitView *defaultPortrait = [[DefaultPortraitView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
 //    [defaultPortrait setColorAndLabel:groupID Nickname:groupName];

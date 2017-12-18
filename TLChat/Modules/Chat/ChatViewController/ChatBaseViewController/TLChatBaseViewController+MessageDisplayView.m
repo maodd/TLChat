@@ -10,7 +10,7 @@
 #import "TLChatBaseViewController+ChatBar.h"
 #import "TLTextDisplayView.h"
 #import "TLUserHelper.h"
-
+#import "TLFriendHelper.h"
 @implementation TLChatBaseViewController (MessageDisplayView)
 
 #pragma mark - # Public Methods
