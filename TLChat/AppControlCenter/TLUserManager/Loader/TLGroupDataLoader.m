@@ -16,7 +16,7 @@
 //#import "TLAppDelegate.h"
 #import "TLFriendHelper.h"
 #import "TLUser.h"
-#import "DefaultPortraitView.h"
+//#import "DefaultPortraitView.h"
 #import "TLUserHelper.h"
 
 static TLGroupDataLoader *groupDataLoader = nil;
@@ -190,10 +190,11 @@ static TLGroupDataLoader *groupDataLoader = nil;
 
 
 + (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName {
-    DefaultPortraitView *defaultPortrait = [[DefaultPortraitView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-    [defaultPortrait setColorAndLabel:groupID Nickname:groupName];
-    UIImage *portrait = [defaultPortrait imageFromView];
-    return portrait;
+    return [UIImage imageNamed:DEFAULT_AVATAR_PATH];
+//    DefaultPortraitView *defaultPortrait = [[DefaultPortraitView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+//    [defaultPortrait setColorAndLabel:groupID Nickname:groupName];
+//    UIImage *portrait = [defaultPortrait imageFromView];
+//    return portrait;
 }
     
 

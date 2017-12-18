@@ -12,7 +12,7 @@
 #import "TLFriendDetailViewController.h"
 #import <MWPhotoBrowser/MWPhotoBrowser.h>
 #import "NSFileManager+TLChat.h"
-#import "HSUIManager.h"
+#import "TLUIManager.h"
 
 @interface TLChatViewController ()
 
@@ -83,14 +83,14 @@
 //    self.headerIcon = [dict stringForKey:@"headerIcon"];
 //    self.friendState =[dict integerForKey:@"isFriend"];
     
-    HSStudentUserInfo * userInfo = [[HSStudentUserInfo alloc] initWithDict:
-                                    @{@"userId":user.userID,
-                                      @"name":user.username,
-                                      @"headerIcon":user.avatarURL ?: @"",
-                                      @"isFriend":@(YES)
-                                      }]; // TODO: handle non-friend chat.
+//    HSStudentUserInfo * userInfo = [[HSStudentUserInfo alloc] initWithDict:
+//                                    @{@"userId":user.userID,
+//                                      @"name":user.username,
+//                                      @"headerIcon":user.avatarURL ?: @"",
+//                                      @"isFriend":@(YES)
+//                                      }]; // TODO: handle non-friend chat.
     
-    [HSUIManager openUserDetails:userInfo navigationController:self.navigationController];
+    [[TLUIManager sharedUIManager]  openUserDetails:user navigationController:self.navigationController];
     
 }
 

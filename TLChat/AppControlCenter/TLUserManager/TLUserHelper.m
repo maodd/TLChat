@@ -9,6 +9,8 @@
 #import "TLUserHelper.h"
 #import "TLDBUserStore.h"
 
+@import Parse;
+
 @implementation TLUserHelper
 @synthesize user = _user;
 

@@ -8,9 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-extern NSString * const kAKUserLoggedInNotification;
-extern NSString * const kAKFriendsDataUpdateNotification;
-extern NSString * const kAKGroupDataUpdateNotification;
 
 @interface TLAppDelegate : UIResponder <UIApplicationDelegate>
 

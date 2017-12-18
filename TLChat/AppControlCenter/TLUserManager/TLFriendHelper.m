@@ -18,6 +18,8 @@
 #import "TLGroupDataLoader.h"
 #import "TLMessageManager+ConversationRecord.h"
 
+@import Parse;
+
 static TLFriendHelper *friendHelper = nil;
 
 @interface TLFriendHelper ()

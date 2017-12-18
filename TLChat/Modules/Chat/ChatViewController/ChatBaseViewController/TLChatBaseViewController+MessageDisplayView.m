@@ -9,6 +9,7 @@
 #import "TLChatBaseViewController+MessageDisplayView.h"
 #import "TLChatBaseViewController+ChatBar.h"
 #import "TLTextDisplayView.h"
+#import "TLFriendHelper.h"
 
 @implementation TLChatBaseViewController (MessageDisplayView)
 
