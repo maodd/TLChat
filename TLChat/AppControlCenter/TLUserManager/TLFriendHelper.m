@@ -26,6 +26,8 @@ static TLFriendHelper *friendHelper = nil;
 
 @property (nonatomic, strong) TLDBGroupStore *groupStore;
 
+@property (nonatomic, strong) NSArray<PFObject*> * users;
+
 @end
 
 @implementation TLFriendHelper {
@@ -37,6 +39,11 @@ static TLFriendHelper *friendHelper = nil;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         friendHelper = [[TLFriendHelper alloc] init];
+        
+        PFQuery * query = [PFUser query];
+        [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+            friendHelper.users = objects;
+        }];
     });
     return friendHelper;
 }
@@ -145,6 +152,25 @@ static TLFriendHelper *friendHelper = nil;
     }
     
     // TODO: persisent to db.
+    NSArray * matches = [self.users filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"objectId == %@", userID]];
+    if (matches.count > 0) {
+        PFUser * userObject = matches.firstObject;
+        
+        TLUser * user = [TLUser new];
+        user.userID = userObject.objectId;
+        DLog(@"user name: %@", userObject.username);
+        user.username = userObject.username;
+        user.nikeName = userObject.username;
+        
+        PFFile * file = userObject[@"headerImage1"];
+        if (file) {
+            user.avatarURL = file.url;
+        }
+        
+        
+        return user;
+    }
+    
     PFQuery * query = [PFUser query];
     query.cachePolicy = kPFCachePolicyCacheElseNetwork;
     [query whereKey:@"objectId" equalTo:userID];

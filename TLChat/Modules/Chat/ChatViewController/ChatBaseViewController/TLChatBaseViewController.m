@@ -225,22 +225,17 @@
     message1.SavedOnServer = YES;
     message1.messageID = message.objectId;
     message1.date = message.createdAt;
-    if ([[self.user chat_userID] isEqualToString: message[@"sender"]]) {
-        message1.fromUser = weakSelf.user;
+    
+    TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:message[@"sender"]];
+    message1.fromUser = friend;
+    
+    if ([friend.userID isEqualToString: [TLUserHelper sharedHelper].userID]) {
         message1.ownerTyper = TLMessageOwnerTypeSelf;
-        
     }else{
-        if ([self.partner isKindOfClass:[TLGroup class]]) {
-            TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:message[@"sender"]];
-            message1.fromUser = friend;
-        }else{
-            message1.fromUser = self.partner;
-        }
-        
         message1.ownerTyper = TLMessageOwnerTypeFriend;
     }
     
-    message1.userID = message[@"sender"];
+    message1.userID = [TLUserHelper sharedHelper].userID;
     message1.text = dict[@"text"];
     if (bypassMine && message1.ownerTyper == TLMessageOwnerTypeSelf) {
         
@@ -281,21 +276,17 @@
     message1.SavedOnServer = YES;
     message1.messageID = message.objectId;
     message1.date = message.createdAt;
-    if ([[self.user chat_userID]  isEqualToString: message[@"sender"]]) {
-        message1.fromUser = weakSelf.user;
+    
+    TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:message[@"sender"]];
+    message1.fromUser = friend;
+    
+    if ([friend.userID isEqualToString: [TLUserHelper sharedHelper].userID]) {
         message1.ownerTyper = TLMessageOwnerTypeSelf;
-        
     }else{
-        if ([self.partner isKindOfClass:[TLGroup class]]) {
-            TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:message[@"sender"]];
-            message1.fromUser = friend;
-        }else{
-            message1.fromUser = self.partner;
-        }
-
         message1.ownerTyper = TLMessageOwnerTypeFriend;
     }
-    message1.userID = message[@"sender"];
+    
+    message1.userID = [TLUserHelper sharedHelper].userID;
     
     PFFile * file = message[@"thumbnail"];
     if (dict[@"w"] && dict[@"h"]) {
@@ -348,23 +339,17 @@
     message1.SavedOnServer = YES;
     message1.messageID = message.objectId;
     message1.date = message.createdAt;
-    if ([[self.user chat_userID]  isEqualToString: message[@"sender"]]) {
-        message1.fromUser = weakSelf.user;
-        message1.ownerTyper = TLMessageOwnerTypeSelf;
-        
-    }else{
-        
-        if ([self.partner isKindOfClass:[TLGroup class]]) {
-            TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:message[@"sender"]];
-            message1.fromUser = friend;
-        }else{
-            message1.fromUser = self.partner;
-        }
-        
 
+    TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:message[@"sender"]];
+    message1.fromUser = friend;
+    
+    if ([friend.userID isEqualToString: [TLUserHelper sharedHelper].userID]) {
+        message1.ownerTyper = TLMessageOwnerTypeSelf;
+    }else{
         message1.ownerTyper = TLMessageOwnerTypeFriend;
     }
-    message1.userID = message[@"sender"];
+    
+    message1.userID = [TLUserHelper sharedHelper].userID;
     NSString *fileName = dict[@"path"];
     NSString *filePath = [NSFileManager pathUserChatVoice:fileName];
 
