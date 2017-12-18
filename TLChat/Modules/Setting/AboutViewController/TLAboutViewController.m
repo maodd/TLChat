@@ -9,7 +9,8 @@
 #import "TLAboutViewController.h"
 #import "TLAppConfig.h"
 #import "TLAboutHeaderView.h"
-
+#import "TLMacros.h"
+#import <TLKit/TLKit.h>
 #define     HEIGHT_TOPVIEW      100.0f
 
 @interface TLAboutViewController ()

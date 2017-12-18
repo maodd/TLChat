@@ -10,7 +10,8 @@
 #import "TLSettingHeaderTitleView.h"
 #import "TLSettingFooterTitleView.h"
 #import "TLSettingButtonCell.h"
-
+#import "TLMacros.h"
+#import "UIColor+TLChat.h"
 @interface TLSettingViewController ()
 
 @end

@@ -8,6 +8,7 @@
 
 #import "TLMomentsProxy.h"
 #import "TLMoment.h"
+#import <MJExtension/MJExtension.h>
 
 @implementation TLMomentsProxy
 

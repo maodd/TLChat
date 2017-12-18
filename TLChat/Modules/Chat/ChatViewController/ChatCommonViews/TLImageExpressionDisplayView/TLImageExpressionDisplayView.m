@@ -8,6 +8,7 @@
 
 #import "TLImageExpressionDisplayView.h"
 #import "UIImage+GIF.h"
+#import "TLMacros.h"
 
 #define     WIDTH_TIPS      150
 #define     HEIGHT_TIPS     162

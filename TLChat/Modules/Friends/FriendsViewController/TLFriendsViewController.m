@@ -12,6 +12,8 @@
 #import "TLFriendHelper.h"
 
 #import "TLAddFriendViewController.h"
+#import "TLMacros.h"
+#import "UIColor+TLChat.h"
 
 @interface TLFriendsViewController ()
 

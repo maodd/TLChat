@@ -10,6 +10,11 @@
 #import "TLExpressionHelper.h"
 #import "TLExpressionProxy.h"
 #import "MJRefresh.h"
+#import <Masonry/Masonry.h>
+#import <TLKit/TLKit.h>
+#import "UIColor+TLChat.h"
+#import "UIFont+TLChat.h"
+#import "TLMacros.h"
 
 @implementation TLExpressionPublicViewController (Proxy)
 

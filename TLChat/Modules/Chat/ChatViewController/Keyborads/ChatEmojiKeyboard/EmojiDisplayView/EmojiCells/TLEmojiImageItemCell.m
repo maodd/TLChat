@@ -7,6 +7,8 @@
 //
 
 #import "TLEmojiImageItemCell.h"
+#import <TLKit/TLKit.h>
+#import <Masonry/Masonry.h>
 
 @interface TLEmojiImageItemCell ()
 

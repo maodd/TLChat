@@ -8,6 +8,7 @@
 
 #import "NSFileManager+TLChat.h"
 #import "TLUserHelper.h"
+#import "TLMacros.h"
 
 @implementation NSFileManager (TLChat)
 

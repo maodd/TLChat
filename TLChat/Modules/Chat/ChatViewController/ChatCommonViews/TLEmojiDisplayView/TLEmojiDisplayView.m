@@ -7,6 +7,8 @@
 //
 
 #import "TLEmojiDisplayView.h"
+#import <TLKit/TLKit.h>
+#import <Masonry/Masonry.h>
 
 #define     SIZE_TIPS    CGSizeMake(55, 100)
 

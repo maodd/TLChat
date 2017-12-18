@@ -8,6 +8,9 @@
 
 #import "TLMoreKeyboardCell.h"
 #import "UIImage+Color.h"
+#import <Masonry/Masonry.h>
+#import "TLShortcutMacros.h"
+#import "UIColor+TLChat.h"
 
 @interface TLMoreKeyboardCell()
 

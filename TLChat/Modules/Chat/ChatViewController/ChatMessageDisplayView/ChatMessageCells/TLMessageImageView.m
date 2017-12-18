@@ -7,6 +7,8 @@
 //
 
 #import "TLMessageImageView.h"
+#import <TLKit/TLKit.h>
+#import "TLMacros.h"
 
 @interface TLMessageImageView ()
 

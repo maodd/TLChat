@@ -8,6 +8,7 @@
 
 #import "TLUserHelper.h"
 #import "TLDBUserStore.h"
+#import "TLMacros.h"
 
 @import Parse;
 

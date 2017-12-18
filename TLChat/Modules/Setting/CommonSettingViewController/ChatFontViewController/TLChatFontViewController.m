@@ -12,6 +12,7 @@
 #import "TLUser+ChatModel.h"
 #import "NSFileManager+TLChat.h"
 #import "TLUserHelper.h"
+#import <Masonry/Masonry.h>
 
 @interface TLChatFontViewController ()
 

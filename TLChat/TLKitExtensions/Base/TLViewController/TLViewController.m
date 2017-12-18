@@ -7,6 +7,7 @@
 //
 
 #import "TLViewController.h"
+#import "UIColor+TLChat.h"
 
 @implementation TLViewController
 

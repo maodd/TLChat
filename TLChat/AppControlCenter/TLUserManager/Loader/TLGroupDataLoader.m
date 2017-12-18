@@ -18,6 +18,7 @@
 #import "TLUser.h"
 //#import "DefaultPortraitView.h"
 #import "TLUserHelper.h"
+#import "TLMacros.h"
 
 static TLGroupDataLoader *groupDataLoader = nil;
 

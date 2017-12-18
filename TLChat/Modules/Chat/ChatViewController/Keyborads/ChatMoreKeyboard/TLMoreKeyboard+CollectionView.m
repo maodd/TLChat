@@ -8,6 +8,7 @@
 
 #import "TLMoreKeyboard+CollectionView.h"
 #import "TLMoreKeyboardCell.h"
+#import <TLKit/TLKit.h>
 
 #define     SPACE_TOP        15
 #define     WIDTH_CELL       60

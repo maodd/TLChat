@@ -14,6 +14,7 @@
 #import "TLEmojiKBHelper.h"
 #import "TLUserHelper.h"
 #import "TLChatNotificationKey.h"
+#import "TLMacros.h"
 
 static TLChatViewController *chatVC;
 

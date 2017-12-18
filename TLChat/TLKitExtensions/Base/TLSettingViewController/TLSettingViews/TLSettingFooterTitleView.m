@@ -7,6 +7,7 @@
 //
 
 #import "TLSettingFooterTitleView.h"
+#import <Masonry/Masonry.h>
 
 @implementation TLSettingFooterTitleView
 

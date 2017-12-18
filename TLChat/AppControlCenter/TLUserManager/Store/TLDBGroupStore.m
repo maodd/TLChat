@@ -9,6 +9,7 @@
 #import "TLDBGroupStore.h"
 #import "TLDBGroupSQL.h"
 #import "TLGroup.h"
+#import "TLMacros.h"
 
 @implementation TLDBGroupStore
 

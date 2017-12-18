@@ -7,6 +7,8 @@
 //
 
 #import "TLTextDisplayView.h"
+#import <Masonry/Masonry.h>
+#import <TLKit/TLKit.h>
 
 #define     WIDTH_TEXTVIEW          self.width * 0.94
 

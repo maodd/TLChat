@@ -8,6 +8,7 @@
 
 #import "TLExpressionBannerCell.h"
 #import "TLPictureCarouselView.h"
+#import <Masonry/Masonry.h>
 
 @interface TLExpressionBannerCell () <TLPictureCarouselDelegate>
 

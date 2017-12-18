@@ -7,7 +7,7 @@
 //
 
 #import "NSDate+TLChat.h"
-
+#import <TLKit/TLKit.h>
 @implementation NSDate (TLChat)
 
 - (NSString *)chatTimeInfo

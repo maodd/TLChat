@@ -9,6 +9,7 @@
 #import "TLDBManager.h"
 #import "TLUserHelper.h"
 #import "NSFileManager+TLChat.h"
+#import "TLMacros.h"
 
 static TLDBManager *manager;
 

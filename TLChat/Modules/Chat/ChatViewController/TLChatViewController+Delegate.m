@@ -13,6 +13,7 @@
 #import <MWPhotoBrowser/MWPhotoBrowser.h>
 #import "NSFileManager+TLChat.h"
 #import "TLUIManager.h"
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
 @interface TLChatViewController ()
 

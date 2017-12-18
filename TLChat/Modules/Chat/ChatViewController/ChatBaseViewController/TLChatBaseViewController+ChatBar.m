@@ -13,6 +13,8 @@
 #import "TLAudioPlayer.h"
 #import "TLUserHelper.h"
 #import "NSFileManager+TLChat.h"
+#import <Masonry/Masonry.h>
+#import "TLMacros.h"
 
 @implementation TLChatBaseViewController (ChatBar)
 

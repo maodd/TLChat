@@ -196,7 +196,7 @@
                               @"headers": headers};
         NSString *path = [NSFileManager pathContactsData];
         if(![NSKeyedArchiver archiveRootObject:dic toFile:path]){
-            DDLogError(@"缓存联系人数据失败");
+//            DDLogError(@"缓存联系人数据失败");
         }
     });
 }

@@ -17,6 +17,8 @@
 #import "TLFriendDataLoader.h"
 #import "TLGroupDataLoader.h"
 #import "TLMessageManager+ConversationRecord.h"
+#import "TLMacros.h"
+#import <MJExtension/MJExtension.h>
 
 @import Parse;
 

@@ -7,6 +7,7 @@
 //
 
 #import "TLChatFontSettingView.h"
+#import <Masonry/Masonry.h>
 
 @interface TLChatFontSettingView ()
 

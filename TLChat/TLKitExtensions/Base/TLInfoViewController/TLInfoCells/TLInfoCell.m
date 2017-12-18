@@ -8,6 +8,8 @@
 
 #import "TLInfoCell.h"
 #import "TLInfoMacros.h"
+#import <Masonry/Masonry.h>
+#import "TLMacros.h"
 
 @interface TLInfoCell ()
 

@@ -18,6 +18,7 @@
 
 #import "TLUserGroup.h"
 #import "TLFriendHelper.h"
+#import <TLKit/TLKit.h>
 
 @implementation TLFriendsViewController (Delegate)
 

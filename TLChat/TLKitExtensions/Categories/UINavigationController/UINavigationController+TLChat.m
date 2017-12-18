@@ -7,7 +7,8 @@
 //
 
 #import "UINavigationController+TLChat.h"
-
+#import "UIFont+TLChat.h"
+#import "TLMacros.h"
 @implementation UINavigationController (TLChat)
 
 + (void)load

@@ -7,6 +7,7 @@
 //
 
 #import "TLInfoHeaderFooterView.h"
+#import "UIColor+TLChat.h"
 
 @implementation TLInfoHeaderFooterView
 

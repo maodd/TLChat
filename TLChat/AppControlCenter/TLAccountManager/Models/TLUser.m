@@ -9,6 +9,7 @@
 
 #import "TLUser.h"
 #import "NSString+PinYin.h"
+#import <MJExtension/MJExtension.h>
 
 @implementation TLUser
 

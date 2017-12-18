@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "TLSettingItem.h"
+#import <UIKit/UIKit.h>
 
 #define     TLCreateSettingGroup(Header, Footer, Items)  [TLSettingGroup createGroupWithHeaderTitle:Header footerTitle:Footer items:[NSMutableArray arrayWithArray:Items]]
 

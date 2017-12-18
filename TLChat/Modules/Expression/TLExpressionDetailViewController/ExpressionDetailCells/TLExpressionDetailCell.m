@@ -7,6 +7,7 @@
 //
 
 #import "TLExpressionDetailCell.h"
+#import "TLMacros.h"
 
 @interface TLExpressionDetailCell ()
 

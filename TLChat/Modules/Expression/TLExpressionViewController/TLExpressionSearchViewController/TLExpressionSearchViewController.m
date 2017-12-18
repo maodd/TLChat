@@ -11,6 +11,7 @@
 #import "TLExpressionProxy.h"
 #import "TLExpressionHelper.h"
 #import "TLExpressionCell.h"
+#import "TLMacros.h"
 
 #define         HEGIHT_EXPCELL      80
 

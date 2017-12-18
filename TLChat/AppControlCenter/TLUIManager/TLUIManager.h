@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <TLKit/TLKit.h>
+
 @class TLUser;
 
 @interface TLUIManager : NSObject

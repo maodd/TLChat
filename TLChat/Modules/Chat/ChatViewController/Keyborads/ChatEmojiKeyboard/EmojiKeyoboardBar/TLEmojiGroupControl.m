@@ -8,6 +8,9 @@
 
 #import "TLEmojiGroupControl.h"
 #import "TLEmojiGroupCell.h"
+#import <Masonry/Masonry.h>
+#import <TLKit/TLKit.h>
+#import "UIColor+TLChat.h"
 
 #define     WIDTH_EMOJIGROUP_CELL       46
 #define     WIDTH_SENDBUTTON            60

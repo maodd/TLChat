@@ -7,6 +7,8 @@
 //
 
 #import "TLAddMenuCell.h"
+#import <Masonry/Masonry.h>
+#import "UIColor+TLChat.h"
 
 @interface TLAddMenuCell()
 

@@ -7,6 +7,9 @@
 //
 
 #import "TLEmojiGroupCell.h"
+#import <Masonry/Masonry.h>
+#import "UIColor+TLChat.h"
+#import <TLKit/TLKit.h>
 
 @interface TLEmojiGroupCell ()
 

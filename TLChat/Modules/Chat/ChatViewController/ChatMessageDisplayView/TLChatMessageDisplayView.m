@@ -11,6 +11,7 @@
 #import <MJRefresh/MJRefresh.h>
 #import "TLMessageBaseCell.h"
 #import "TLChatEventStatistics.h"
+#import <Masonry/Masonry.h>
 
 #define     PAGE_MESSAGE_COUNT      15
 

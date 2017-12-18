@@ -9,6 +9,8 @@
 #import "TLUserGroupCell.h"
 #import "TLUserGroupItemCell.h"
 #import "TLUser.h"
+#import <Masonry/Masonry.h>
+#import "TLMacros.h"
 
 #define     USER_CELL_WIDTH         57
 #define     USER_CELL_HEIGHT        75

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #define     TLCreateInfo(t, st) [TLInfo createInfoWithTitle:t subTitle:st]
 

@@ -9,6 +9,7 @@
 #import "TLExpressionPublicViewController+CollectionView.h"
 #import "TLExpressionDetailViewController.h"
 #import "TLExpressionPublicCell.h"
+#import "TLMacros.h"
 
 #define         EDGE                20.0
 #define         SPACE_CELL          EDGE

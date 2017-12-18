@@ -8,6 +8,8 @@
 
 #import "TLMomentMultiImageView.h"
 #import "UIView+Extensions.h"
+#import "TLMacros.h"
+#import <Masonry/Masonry.h>
 
 #define     WIDTH_IMAGE_ONE     (SCREEN_WIDTH - 70) * 0.6
 #define     WIDTH_IMAGE         (SCREEN_WIDTH - 70) * 0.31

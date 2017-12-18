@@ -8,6 +8,7 @@
 
 #import "TLVoiceMessageCell.h"
 #import "TLVoiceImageView.h"
+#import <Masonry/Masonry.h>
 
 @interface TLVoiceMessageCell ()
 

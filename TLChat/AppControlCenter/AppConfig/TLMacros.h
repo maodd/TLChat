@@ -9,6 +9,21 @@
 #ifndef TLMacros_h
 #define TLMacros_h
 
+#import <UIKit/UIKit.h>
+#import <Masonry/Masonry.h>
+
+#import <TLKit/TLKit.h>
+#import "UIColor+TLChat.h"      // 颜色
+#import "UIFont+TLChat.h"       // 字体
+
+#import "TLNetwork.h"           // 网络请求
+
+#import <MJExtension/MJExtension.h>
+#import <ReactiveCocoa/ReactiveCocoa.h>
+#import <CocoaLumberjack/CocoaLumberjack.h>
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
+
+ 
 
 // 网络请求成功回调
 typedef void(^TLBlockRequestSuccessWithDatas)(id datas);
@@ -36,5 +51,20 @@ typedef void(^TLBlockRequestFailureWithErrorMessage)(NSString *errMsg);
 #define mark - # Default
 // 默认头像
 #define     DEFAULT_AVATAR_PATH         @"default_head"
+
+
+#define kParseClassNameDialog @"ChatDialog"
+#define kParseClassNameMessage @"ChatMessage"
+
+
+#define     kAKUserLoggedInNotification @"kAppDidLoginSuccessNoti"
+#define     kAKUserLoggedOutNotification @"kAppDidLogoutSuccessNoti"
+#define     kAKFriendsAndGroupDataUpdateNotification    @"kAKFriendsAndGroupDataUpdateNotification"
+
+#ifdef DEBUG
+#   define DLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__)
+#else
+#   define DLog(...)
+#endif
 
 #endif /* TLMacros_h */

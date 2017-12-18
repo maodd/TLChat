@@ -9,6 +9,7 @@
 #import "TLMessageBaseCell.h"
 #import "NSDate+TLChat.h"
 #import "NSFileManager+TLChat.h"
+#import "TLMacros.h"
 
 #define     TIMELABEL_HEIGHT    20.0f
 #define     TIMELABEL_SPACE_Y   10.0f

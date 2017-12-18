@@ -7,6 +7,7 @@
 //
 
 #import "TLMomentComment.h"
+#import <MJExtension/MJExtension.h>
 
 @implementation TLMomentComment
 

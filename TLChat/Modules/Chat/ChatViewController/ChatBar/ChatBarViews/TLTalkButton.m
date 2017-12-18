@@ -9,6 +9,8 @@
 
 #import "TLTalkButton.h"
 #import "UIImage+Color.h"
+#import <Masonry/Masonry.h>
+#import <TLKit/TLKit.h>
 
 @interface TLTalkButton ()
 

@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TLMacros.h"
+
 
 @interface TLRootProxy : NSObject
 

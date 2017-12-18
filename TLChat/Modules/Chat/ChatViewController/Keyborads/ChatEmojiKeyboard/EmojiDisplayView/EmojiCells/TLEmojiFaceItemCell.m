@@ -8,6 +8,7 @@
 //
 
 #import "TLEmojiFaceItemCell.h"
+#import <Masonry/Masonry.h>
 
 @interface TLEmojiFaceItemCell ()
 

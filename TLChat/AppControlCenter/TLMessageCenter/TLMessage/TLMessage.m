@@ -7,6 +7,7 @@
 //
 
 #import "TLMessage.h"
+#import <MJExtension/MJExtension.h>
 
 @implementation TLMessage
 

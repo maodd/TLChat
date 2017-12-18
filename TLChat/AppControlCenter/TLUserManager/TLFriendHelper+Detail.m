@@ -10,6 +10,7 @@
 #import "TLSettingGroup.h"
 #import "TLInfo.h"
 #import "TLUserHelper.h"
+#import "UIColor+TLChat.h"
 
 @implementation TLFriendHelper (Detail)
 

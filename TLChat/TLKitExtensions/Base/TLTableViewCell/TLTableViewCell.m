@@ -7,6 +7,7 @@
 //
 
 #import "TLTableViewCell.h"
+#import "TLMacros.h"
 
 @implementation TLTableViewCell
 

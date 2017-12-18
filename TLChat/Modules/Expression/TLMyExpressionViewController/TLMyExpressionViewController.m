@@ -10,6 +10,8 @@
 #import "TLExpressionDetailViewController.h"
 #import "TLExpressionHelper.h"
 #import "TLMyExpressionCell.h"
+#import <TLKit/TLKit.h>
+#import "TLMacros.h"
 
 @interface TLMyExpressionViewController () <TLMyExpressionCellDelegate>
 

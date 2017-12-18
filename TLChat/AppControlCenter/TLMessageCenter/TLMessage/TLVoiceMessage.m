@@ -8,6 +8,7 @@
 
 #import "TLVoiceMessage.h"
 #import "NSFileManager+TLChat.h"
+#import "TLMacros.h"
 
 @implementation TLVoiceMessage
 @synthesize recFileName = _recFileName;

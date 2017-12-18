@@ -10,6 +10,8 @@
 #import "TLMomentsViewController+TableView.h"
 #import "TLMomentsViewController+Proxy.h"
 
+@import TLKit;
+
 @interface TLMomentsViewController ()
 
 @end

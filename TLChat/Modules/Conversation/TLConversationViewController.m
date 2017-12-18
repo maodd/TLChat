@@ -17,6 +17,7 @@
 #import "TLGroupDataLoader.h"
 
 #import "TLMessageManager+ConversationRecord.h"
+#import "TLMacros.h"
 
 
 

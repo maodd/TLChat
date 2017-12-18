@@ -10,6 +10,9 @@
 #import "TLEmojiKeyboard+DisplayView.h"
 #import "TLEmojiKeyboard+EmojiGroupControl.h"
 #import "TLChatMacros.h"
+#import <Masonry/Masonry.h>
+#import "UIColor+TLChat.h"
+#import "TLMacros.h"
 
 static TLEmojiKeyboard *emojiKB;
 
