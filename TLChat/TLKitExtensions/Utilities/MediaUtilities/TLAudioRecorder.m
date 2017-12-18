@@ -24,7 +24,9 @@
 
 @end
 
-@implementation TLAudioRecorder
+@implementation TLAudioRecorder {
+    double _audioMonitorResults;
+}
 
 + (TLAudioRecorder *)sharedRecorder
 {
@@ -55,9 +57,11 @@
     __weak typeof(self) weakSelf = self;
     self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5 block:^(NSTimer *timer) {
         [weakSelf.recorder updateMeters];
+        const double ALPHA = 0.05;
         float peakPower = pow(10, (0.05 * [weakSelf.recorder peakPowerForChannel:0]));
+        _audioMonitorResults = ALPHA * peakPower + (1.0 - ALPHA) * _audioMonitorResults;
         if (weakSelf && weakSelf.volumeChangedBlock) {
-            weakSelf.volumeChangedBlock(peakPower);
+            weakSelf.volumeChangedBlock(_audioMonitorResults);
         }
     } repeats:YES];
 }
