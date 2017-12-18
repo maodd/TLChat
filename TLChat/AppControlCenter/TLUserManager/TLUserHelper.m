@@ -20,6 +20,10 @@
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         helper = [[TLUserHelper alloc] init];
+        
+        [[NSNotificationCenter defaultCenter] addObserverForName:kAKUserLoggedOutNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+            helper.user = nil;
+        }];
     });
     return helper;
 }
@@ -78,6 +82,8 @@
             
             [self setUser:_user];
         }
+    
+    
     }
     return _user;
 }

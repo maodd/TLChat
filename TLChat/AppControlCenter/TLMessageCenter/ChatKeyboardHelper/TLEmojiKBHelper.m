@@ -64,7 +64,7 @@ static TLEmojiKBHelper *helper;
         }
         
         // 系统设置
-        [emojiGroupData addObject:self.systemEditGroup];
+//        [emojiGroupData addObject:self.systemEditGroup];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             complete(emojiGroupData);

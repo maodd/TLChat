@@ -65,7 +65,7 @@
     }
     else if (conversation.convType == TLConversationTypeGroup){
   
-        [self.avatarImageView setImage:[TLGroupDataLoader generateGroupName:conversation.partnerID groupName:conversation.partnerName]];
+        [self.avatarImageView setImage:[[TLGroupDataLoader sharedGroupDataLoader] generateGroupName:conversation.partnerID groupName:conversation.partnerName]];
         
     }else{
         [self.avatarImageView setImage:[UIImage imageNamed:DEFAULT_AVATAR_PATH]]; //should be group avatar

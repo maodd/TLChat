@@ -9,7 +9,7 @@
 #import "TLChatBaseViewController+MessageDisplayView.h"
 #import "TLChatBaseViewController+ChatBar.h"
 #import "TLTextDisplayView.h"
-#import "TLFriendHelper.h"
+#import "TLUserHelper.h"
 
 @implementation TLChatBaseViewController (MessageDisplayView)
 
@@ -62,7 +62,7 @@
                     message.showTime = YES;
                 }
                 if (message.ownerTyper == TLMessageOwnerTypeSelf) {
-                    message.fromUser = weakself.user;
+                    message.fromUser = [TLUserHelper sharedHelper].user;
                 }
                 else {
                     if ([weakself.partner chat_userType] == TLChatUserTypeUser) {

@@ -42,13 +42,12 @@
     }
     
     NSString *fid = @"";
-    NSString *subfid;
+    NSString *subfid = [message.fromUser chat_userID]; //sender
     if (message.partnerType == TLPartnerTypeUser) {
         fid = message.friendID;
     }
     else {
         fid = message.groupID;
-        subfid = message.friendID;
     }
     
     NSString *sqlString = [NSString stringWithFormat:SQL_ADD_MESSAGE, MESSAGE_TABLE_NAME];
@@ -164,7 +163,7 @@
     NSString *sqlString = [NSString stringWithFormat:
                         SQL_SELECT_MESSAGES_PAGE,
                         MESSAGE_TABLE_NAME,
-//                        userID,
+                        userID,
                         partnerID,
                         [NSString stringWithFormat:@"%lf", date.timeIntervalSince1970],
                         (long)(count + 1)];
