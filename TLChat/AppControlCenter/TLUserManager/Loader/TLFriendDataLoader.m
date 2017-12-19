@@ -94,7 +94,7 @@ static BOOL isLoadingData = NO;
         
         dispatch_group_enter(serviceGroup);
         i = i + 1;
-        DLog(@"group items %ld", (long)i);
+        DLog(@"friends items %ld", (long)i);
         [self createFriendDialogWithLatestMessage:friend completionBlock:^{
         
             DLog(@"friend.userID %@", friend.userID);
@@ -102,11 +102,12 @@ static BOOL isLoadingData = NO;
             
             TLConversation * conversation = [[TLMessageManager sharedInstance].conversationStore conversationByKey:key];
             if (conversation) {
-                [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation withCompletionBlock:^{
+                [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation withCompletionBlock:^(NSInteger count) {
+                    
                     
                     dispatch_group_leave(serviceGroup);
                     i = i - 1;
-                    DLog(@"group items %ld", (long)i);
+                    DLog(@"friends item %@ unreadmessages: %ld", conversation.key, (long)count);
                 }];
             }else{
                 DLog(@"no converstation for friend: %@", friend.userID);
@@ -114,7 +115,7 @@ static BOOL isLoadingData = NO;
                 dispatch_group_leave(serviceGroup);
                 
                 i = i - 1;
-                DLog(@"group items %ld", (long)i);
+                DLog(@"friends items %ld", (long)i);
             }
             
             

@@ -162,7 +162,7 @@ static TLFriendHelper *friendHelper = nil;
         
         TLUser * user = [TLUser new];
         user.userID = userObject.objectId;
-        DLog(@"user name: %@", userObject.username);
+//        DLog(@"user name: %@", userObject.username);
         user.username = userObject.username;
         user.nikeName = userObject.username;
         

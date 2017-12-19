@@ -55,6 +55,7 @@
              [self.tableView reloadData];
         });
         
+        DLog(@"calculated totle unread count: %ld", totalUnreadCount);
         [[NSNotificationCenter defaultCenter] postNotificationName:@"updateTabbarBadgeValueNotifi"
                                                             object:@{@"unreadMessagesCount":[NSNumber numberWithInteger:totalUnreadCount]}];
 

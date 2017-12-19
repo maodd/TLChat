@@ -23,7 +23,8 @@
 - (void)increaseUnreadNumberForConversationByUid:(NSString *)uid key:(NSString *)key;
 - (void)increaseUnreadNumberForConversationByUid:(NSString *)uid key:(NSString *)key addNumber:(NSInteger)addNumber;
 - (void)updateLastReadDateForConversationByUid:(NSString *)uid key:(NSString *)key;
-
+- (void)setUnreadNumberForConversationByUid:(NSString *)uid key:(NSString *)key newUnreadCount:(NSInteger)newUnreadCount;
+    
 /**
  *  查询所有会话
  */
@@ -46,7 +47,7 @@
  */
 - (BOOL)deleteConversationsByUid:(NSString *)uid;
 
-- (void)countUnreadMessages:(TLConversation *)conversation withCompletionBlock:(void(^)())completionBlock;
+- (void)countUnreadMessages:(TLConversation *)conversation withCompletionBlock:(void(^)(NSInteger))completionBlock;
 
 
 @end

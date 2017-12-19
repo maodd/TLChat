@@ -163,6 +163,13 @@
     
     return;
 }
+    
+- (void)setUnreadNumberForConversationByUid:(NSString *)uid key:(NSString *)key newUnreadCount:(NSInteger)newUnreadCount
+{
+    [self updateConversationByUid:uid key:key unreadCount:newUnreadCount];
+    
+    return;
+}
 
 - (void)increaseUnreadNumberForConversationByUid:(NSString *)uid key:(NSString *)key addNumber:(NSInteger)addNumber
 {
@@ -336,7 +343,7 @@
     return _messageStore;
 }
 
-- (void)countUnreadMessages:(TLConversation *)conversation withCompletionBlock:(void(^)())completionBlock
+- (void)countUnreadMessages:(TLConversation *)conversation withCompletionBlock:(void(^)(NSInteger))completionBlock
 {
     NSString * key = conversation.key;
     PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
@@ -347,15 +354,13 @@
         [query whereKey:@"createdAt" greaterThan:conversation.lastReadDate];
         [query whereKey:@"sender" notEqualTo:[TLUserHelper sharedHelper].userID];
         [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
-            if (number > 0) {
+           
                 
-                [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key addNumber:number];
-                
-               
-            }
+            [self setUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key newUnreadCount:number];
+            
             
             if (completionBlock) {
-                completionBlock();
+                completionBlock(number);
             }
             
         }];
@@ -372,30 +377,20 @@
                 [query whereKey:@"createdAt" greaterThan:object[@"lastReadDate"]];
                 
                 [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
-                    if (number > 0) {
-                        
-                        [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key addNumber:number];
-                        
-                        
-                    }
+                    [self setUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key newUnreadCount:number];
                     
                     if (completionBlock) {
-                        completionBlock();
+                        completionBlock(number);
                     }
                     
                     
                 }];
             }else{
                 [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
-                    if (number > 0) {
-                        
-                        [self increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key addNumber:number];
-                        
-                        
-                    }
+                    [self setUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key newUnreadCount:number];
                     
                     if (completionBlock) {
-                        completionBlock();
+                        completionBlock(number);
                     }
                     
                 }];
