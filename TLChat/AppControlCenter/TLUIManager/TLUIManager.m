@@ -23,22 +23,32 @@ static TLUIManager *uiManager = nil;
     return uiManager;
 }
 
+- (void)openChatDialogWithUser:(NSString *)userId fromNavigationController:(UINavigationController *)navigationController {
+    TLChatViewController * chatVC = [navigationController findViewController:@"TLChatViewController"];
+    if (chatVC) {
+        if ([userId isEqualToString:[chatVC.partner chat_userID]]) {
+            [navigationController popToViewControllerWithClassName:@"TLChatViewController" animated:YES];
+            return;
+        }
+        
+    }
+    
+    TLChatViewController * vc = [TLChatViewController new];
+    TLUser * partner = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:userId];
+    vc.partner = (id<TLChatUserProtocol>)partner;
+    
+    [navigationController pushViewController:vc animated:YES];
+}
 
-- (void)openChatDialog:(NSString *)dialogKey {
-    
-    UINavigationController * containerVC = (UINavigationController*)[UIApplication sharedApplication].delegate.window.rootViewController;
-//    MMDrawerController * mainDrawer = (MMDrawerController *)containerVC.viewControllers.firstObject;
-//    UITabBarController * tabbarVC = (UITabBarController *)mainDrawer.centerViewController;
-    UITabBarController * tabbarVC = (UITabBarController *)containerVC;
-    tabbarVC.selectedIndex = 1;
-
-    UINavigationController * nVC = (UINavigationController*) tabbarVC.viewControllers[0];
+- (void)openChatDialog:(NSString *)dialogKey navigationController:(UINavigationController*)navigationController {
     
     
-    TLChatViewController * chatVC = [nVC findViewController:@"TLChatViewController"];
+    
+    
+    TLChatViewController * chatVC = [navigationController findViewController:@"TLChatViewController"];
     if (chatVC) {
         if ([dialogKey isEqualToString:chatVC.conversationKey]) {
-            [nVC popToViewControllerWithClassName:@"TLChatViewController" animated:YES];
+            [navigationController popToViewControllerWithClassName:@"TLChatViewController" animated:YES];
             return;
         }
         
@@ -48,7 +58,7 @@ static TLUIManager *uiManager = nil;
     
     vc.conversationKey = dialogKey;
     
-    [nVC pushViewController:vc animated:YES];
+    [navigationController pushViewController:vc animated:YES];
  
 }
 
