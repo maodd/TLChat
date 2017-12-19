@@ -87,7 +87,7 @@ static TLGroupDataLoader *groupDataLoader = nil;
     return key;
 }
 
-- (void)recreateLocalDialogsForGroupsWithCompletionBlock:(void(^)())completionBlcok {
+- (void)recreateLocalDialogsForGroupsWithCompletionBlock:(void(^)(void))completionBlcok {
     
     dispatch_group_t serviceGroup = dispatch_group_create();
     
@@ -106,8 +106,8 @@ static TLGroupDataLoader *groupDataLoader = nil;
             if (conversation) {
                 
             
-                [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation withCompletionBlock:^{
-                
+                [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation withCompletionBlock:^(NSInteger count) {
+                    
                     dispatch_group_leave(serviceGroup);
                     
                     

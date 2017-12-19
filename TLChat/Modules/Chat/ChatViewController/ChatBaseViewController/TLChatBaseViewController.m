@@ -20,8 +20,9 @@
 #import <Masonry/Masonry.h>
 #import "TLMacros.h"
 
+#import "ParseLiveQuery-Swift.h"
 @import Parse;
-@import ParseLiveQuery;
+//@import ParseLiveQuery;
 @import Parse.PFQuery;
 
 @interface TLChatBaseViewController() <PFLiveQuerySubscriptionHandling>
@@ -79,7 +80,7 @@
     }
 }
 
-- (void)loadMessagesWithCompletionBlock:(void(^)())completionBlcok messageIDToIgnore:(NSString *)messageIDToIgnore{
+- (void)loadMessagesWithCompletionBlock:(void(^)(void))completionBlcok messageIDToIgnore:(NSString *)messageIDToIgnore{
     
     self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
     
@@ -136,7 +137,7 @@
     [self.navigationItem setTitle:[NSString stringWithFormat:@"%@",[_partner chat_username]]];
     self.client = [[PFLiveQueryClient alloc] init];
     
-    self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
+    self.subscription = (PFLiveQuerySubscription*)[self.client subscribeToQuery:self.query withHandler:self];
     
     
 //    __weak TLChatBaseViewController * weakSelf = self;

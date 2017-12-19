@@ -9,6 +9,7 @@
 #import "TLUIManager.h"
 #import "TLChatViewController.h"
 #import "TLFriendDetailViewController.h"
+#import "TLFriendHelper.h"
 
 @implementation TLUIManager
 
