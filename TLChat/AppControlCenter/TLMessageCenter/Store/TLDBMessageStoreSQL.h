@@ -31,6 +31,12 @@
                                             ext5 TEXT,\
                                             PRIMARY KEY(uid, msgid, fid, subfid))"
 
+// TODO: support anonymous chat. either 1) add dialog key into message or 2) just use the new parter_type (4) to indicate it's anonymous friend chat.
+// 1. will need to change table schema
+// 2. no need to change table schema, but seems old app won't be able to talk to newer app via chat.
+//
+// will wait to see version 2.7 approval status.
+// considering still not too many users for app. maybe either one is ok.
 
 #define     SQL_ADD_MESSAGE                 @"REPLACE INTO %@ ( msgid, uid, fid, subfid, date, partner_type, own_type, msg_type, content, send_status, received_status, ext1, ext2, ext3, ext4, ext5) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
