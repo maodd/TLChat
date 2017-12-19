@@ -168,9 +168,10 @@
         make.centerX.mas_equalTo(self.tableView);
         make.bottom.mas_equalTo(self.tableView.mas_top).mas_offset(-35);
     }];
-    
-    UIBarButtonItem *rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"nav_add"] style:UIBarButtonItemStyleDone target:self action:@selector(rightBarButtonDown:)];
-    [self.navigationItem setRightBarButtonItem:rightBarButtonItem];
+
+    // TODO: fututure features
+//    UIBarButtonItem *rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"nav_add"] style:UIBarButtonItemStyleDone target:self action:@selector(rightBarButtonDown:)];
+//    [self.navigationItem setRightBarButtonItem:rightBarButtonItem];
 }
 
 
