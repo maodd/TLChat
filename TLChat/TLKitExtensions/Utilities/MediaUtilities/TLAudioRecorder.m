@@ -9,6 +9,7 @@
 
 #import "TLAudioRecorder.h"
 #import <AVFoundation/AVFoundation.h>
+#import "TLMacros.h"
 
 #define     PATH_RECFILE        [[NSFileManager cachesPath] stringByAppendingString:@"/rec.caf"]
 

@@ -7,6 +7,7 @@
 //
 
 #import "TLAboutHeaderView.h"
+#import <Masonry/Masonry.h>
 
 @interface TLAboutHeaderView ()
 

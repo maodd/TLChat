@@ -7,9 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <TLKit/TLKit.h>
+
+@class TLUser;
 
 @interface TLUIManager : NSObject
++ (TLUIManager *)sharedUIManager;
 
 - (void)openChatDialog:(NSString *)dialogKey;
+- (void)openUserDetails:(TLUser *)user navigationController:(UINavigationController*)navigationController;
 
 @end

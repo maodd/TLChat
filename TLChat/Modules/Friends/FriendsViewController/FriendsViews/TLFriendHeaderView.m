@@ -7,7 +7,11 @@
 //
 
 #import "TLFriendHeaderView.h"
-
+#import <Masonry/Masonry.h>
+#import <TLKit/TLKit.h>
+#import "UIColor+TLChat.h"
+#import "UIFont+TLChat.h"
+#import "TLMacros.h"
 @interface TLFriendHeaderView ()
 
 @property (nonatomic, strong) UILabel *titleLabel;

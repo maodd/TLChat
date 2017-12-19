@@ -10,6 +10,7 @@
 #import "TLExpressionDetailViewController.h"
 #import "TLExpressionHelper.h"
 #import "TLExpressionProxy.h"
+#import <TLKit/TLKit.h>
 
 @implementation TLExpressionChosenViewController (TableView)
 

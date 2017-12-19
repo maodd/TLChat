@@ -15,6 +15,7 @@
 #import "TLMyExpressionViewController.h"
 
 #import "TLChatNotificationKey.h"
+#import <TLKit/TLKit.h>
 
 @implementation TLCommonSettingViewController
 

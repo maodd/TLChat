@@ -9,6 +9,9 @@
 #import "TLAddThirdPartFriendCell.h"
 #import "TLAddThirdPartFriendItem.h"
 #import "UIView+Extensions.h"
+#import <Masonry/Masonry.h>
+#import "UIColor+TLChat.h"
+#import <TLKit/TLKit.h>
 
 @interface TLAddThirdPartFriendCell ()
 

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "TLUser.h"
+#import <UIKit/UIKit.h>
 
 @interface TLMomentCommentFrame : NSObject
 

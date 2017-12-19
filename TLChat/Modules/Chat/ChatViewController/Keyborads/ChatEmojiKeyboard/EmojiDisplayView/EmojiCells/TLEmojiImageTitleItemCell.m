@@ -8,6 +8,8 @@
 
 #import "TLEmojiImageTitleItemCell.h"
 #import "UIImage+Color.h"
+#import <TLKit/TLKit.h>
+#import <Masonry/Masonry.h>
 
 @interface TLEmojiImageTitleItemCell ()
 

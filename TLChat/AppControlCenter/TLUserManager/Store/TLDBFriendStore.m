@@ -10,6 +10,7 @@
 #import "TLDBFriendSQL.h"
 #import "TLDBManager.h"
 #import "TLUser.h"
+#import "TLMacros.h"
 
 @implementation TLDBFriendStore
 

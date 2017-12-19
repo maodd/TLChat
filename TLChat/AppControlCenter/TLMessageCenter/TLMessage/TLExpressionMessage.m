@@ -7,6 +7,7 @@
 //
 
 #import "TLExpressionMessage.h"
+#import "TLMacros.h"
 
 @implementation TLExpressionMessage
 @synthesize emoji = _emoji;

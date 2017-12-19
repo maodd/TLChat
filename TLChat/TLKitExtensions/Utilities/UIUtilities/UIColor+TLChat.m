@@ -7,6 +7,7 @@
 //
 
 #import "UIColor+TLChat.h"
+#import "TLMacros.h"
 
 @implementation UIColor (TLChat)
 

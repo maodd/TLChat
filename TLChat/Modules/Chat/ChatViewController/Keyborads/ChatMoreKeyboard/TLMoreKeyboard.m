@@ -9,6 +9,10 @@
 #import "TLMoreKeyboard.h"
 #import "TLMoreKeyboard+CollectionView.h"
 #import "TLChatMacros.h"
+#import <TLKit/TLKit.h>
+#import <Masonry/Masonry.h>
+#import "UIFont+TLChat.h"
+#import "UIColor+TLChat.h"
 
 static TLMoreKeyboard *moreKB;
 

@@ -7,6 +7,7 @@
 //
 
 #import "TLTagCell.h"
+#import <Masonry/Masonry.h>
 
 @interface TLTagCell()
 

@@ -10,6 +10,7 @@
 #import <AFNetworking/AFNetworkReachabilityManager.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
+#import <TLKit/TLKit.h>
 
 @interface TLNetworkStatusManager ()
 

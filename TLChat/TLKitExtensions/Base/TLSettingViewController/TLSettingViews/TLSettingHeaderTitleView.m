@@ -7,6 +7,8 @@
 //
 
 #import "TLSettingHeaderTitleView.h"
+#import <Masonry/Masonry.h>
+#import "UIFont+TLChat.h"
 
 @implementation TLSettingHeaderTitleView
 

@@ -7,6 +7,7 @@
 //
 
 #import "TLRecorderIndicatorView.h"
+#import <Masonry/Masonry.h>
 
 #define     STR_RECORDING       @"手指上滑，取消发送"
 #define     STR_CANCEL          @"手指松开，取消发送"

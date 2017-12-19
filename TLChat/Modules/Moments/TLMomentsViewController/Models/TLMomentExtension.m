@@ -8,6 +8,8 @@
 
 #import "TLMomentExtension.h"
 
+@import MJExtension;
+
 #define     EDGE_MOMENT_EXTENSION       5.0f
 
 @implementation TLMomentExtension

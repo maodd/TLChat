@@ -9,6 +9,7 @@
 #import "TLSearchController.h"
 #import "UIImage+Color.h"
 #import "UIView+Extensions.h"
+#import "TLMacros.h"
 
 @implementation TLSearchController
 

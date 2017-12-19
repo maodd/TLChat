@@ -13,7 +13,7 @@
 //#import "TLAppDelegate.h"
 #import <ParseUI/ParseUI.h>
 #import <Parse/Parse.h>
-
+#import "TLMacros.h"
 
 #define     HEIGHT_BUTTON       50
 #define     EDGE_BUTTON         35

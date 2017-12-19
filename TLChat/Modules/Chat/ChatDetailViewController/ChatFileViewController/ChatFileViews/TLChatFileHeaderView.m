@@ -7,6 +7,9 @@
 //
 
 #import "TLChatFileHeaderView.h"
+#import <Masonry/Masonry.h>
+#import "UIFont+TLChat.h"
+#import "UIColor+TLChat.h"
 
 @interface TLChatFileHeaderView ()
 

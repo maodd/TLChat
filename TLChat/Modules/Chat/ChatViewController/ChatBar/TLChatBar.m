@@ -9,6 +9,9 @@
 #import "TLChatBar.h"
 #import "TLChatMacros.h"
 #import "TLTalkButton.h"
+#import "UIColor+TLChat.h"
+#import <TLKit/TLKit.h>
+#import "TLMacros.h"
 
 @interface TLChatBar () <UITextViewDelegate>
 {

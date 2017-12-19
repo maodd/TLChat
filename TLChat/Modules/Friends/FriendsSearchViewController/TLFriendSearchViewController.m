@@ -13,6 +13,7 @@
 #import "TLTagsViewController.h"
 #import "TLPublicServerViewController.h"
 #import "TLFriendDetailViewController.h"
+#import <TLKit/TLKit.h>
 
 @interface TLFriendSearchViewController ()
 

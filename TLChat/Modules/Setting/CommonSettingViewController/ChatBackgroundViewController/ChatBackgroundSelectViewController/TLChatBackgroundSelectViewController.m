@@ -9,6 +9,9 @@
 #import "TLChatBackgroundSelectViewController.h"
 #import "TLChatBackgroundSelectViewController+CollectionView.h"
 #import "TLChatBackgroundSelectViewController+Proxy.h"
+#import "UIColor+TLChat.h"
+#import <Masonry/Masonry.h>
+#import "TLMacros.h"
 
 #define     SPACE_EDGE                      10
 #define     WIDTH_COLLECTIONVIEW_CELL       (SCREEN_WIDTH - SPACE_EDGE * 2) / 3 * 0.98

@@ -9,6 +9,7 @@
 #import "TLMessageManager.h"
 #import "TLMessageManager+ConversationRecord.h"
 #import "TLUserHelper.h"
+#import "TLMacros.h"
 
 static TLMessageManager *messageManager;
 

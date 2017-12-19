@@ -8,6 +8,7 @@
 
 #import "TLMomentDetailImagesView.h"
 #import "TLMomentMultiImageView.h"
+#import <Masonry/Masonry.h>
 
 @interface TLMomentDetailImagesView ()
 

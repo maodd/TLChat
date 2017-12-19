@@ -7,6 +7,7 @@
 //
 
 #import "TLMomentDetail.h"
+#import "TLMacros.h"
 
 #define     WIDTH_MOMENT_CONTENT        (SCREEN_WIDTH - 70.0f)
 

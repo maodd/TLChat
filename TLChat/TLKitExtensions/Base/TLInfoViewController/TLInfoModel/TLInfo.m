@@ -7,6 +7,7 @@
 //
 
 #import "TLInfo.h"
+#import "UIColor+TLChat.h"
 
 @implementation TLInfo
 

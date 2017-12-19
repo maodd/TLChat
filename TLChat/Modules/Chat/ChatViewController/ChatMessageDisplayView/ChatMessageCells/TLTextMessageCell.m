@@ -7,6 +7,8 @@
 //
 
 #import "TLTextMessageCell.h"
+#import <Masonry/Masonry.h>
+#import "UIFont+TLChat.h"
 
 #define     MSG_SPACE_TOP       14
 #define     MSG_SPACE_BTM       20

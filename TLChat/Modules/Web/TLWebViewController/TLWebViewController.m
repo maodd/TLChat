@@ -9,6 +9,8 @@
 #import "TLWebViewController.h"
 #import "UIBarButtonItem+Back.h"
 #import "WKWebView+Post.h"
+#import "TLShortcutMacros.h"
+#import <TLKit/TLKit.h>
 
 #define     WEBVIEW_NAVBAR_ITEMS_FIXED_SPACE        9
 

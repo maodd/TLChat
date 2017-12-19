@@ -13,6 +13,7 @@
 #import "TLCommonSettingViewController.h"
 #import "TLHelpAndFeedbackViewController.h"
 #import "TLAboutViewController.h"
+#import <TLKit/TLKit.h>
 
 @interface TLMineSettingViewController () <TLActionSheetDelegate>
 

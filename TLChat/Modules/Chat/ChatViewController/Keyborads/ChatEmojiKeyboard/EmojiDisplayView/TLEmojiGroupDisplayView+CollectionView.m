@@ -10,6 +10,10 @@
 #import "TLEmojiFaceItemCell.h"
 #import "TLEmojiImageItemCell.h"
 #import "TLEmojiImageTitleItemCell.h"
+#import <Masonry/Masonry.h>
+#import <TLKit/TLKit.h>
+#import "UIColor+TLChat.h"
+#import "UIFont+TLChat.h"
 
 @implementation TLEmojiGroupDisplayView (CollectionView)
 

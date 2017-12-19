@@ -8,15 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import "TLGroup.h"
+#import <UIKit/UIKit.h>
 
 @interface TLGroupDataLoader : NSObject
 + (TLGroupDataLoader *)sharedGroupDataLoader;
 
 + (void)p_loadGroupsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *groups))completionBlock;
 
-- (void)recreateLocalDialogsForGroupsWithCompletionBlock:(void(^)())completionBlcok;
+- (void)recreateLocalDialogsForGroupsWithCompletionBlock:(void(^)(void))completionBlcok;
 
 - (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName;
-- (void)createCourseDialogWithLatestMessage:(TLGroup *)group completionBlock:(void(^)())completionBlock;
+- (void)createCourseDialogWithLatestMessage:(TLGroup *)group completionBlock:(void(^)(void))completionBlock;
 
 @end

@@ -17,12 +17,14 @@
 //#import <IQKeyboardManager/IQKeyboardManager.h>
 #import "TLMessageManager.h"
 #import "TLMessageManager+ConversationRecord.h"
+#import <Masonry/Masonry.h>
+#import "TLMacros.h"
 
 @import Parse;
 @import ParseLiveQuery;
 @import Parse.PFQuery;
 
-@interface TLChatBaseViewController()
+@interface TLChatBaseViewController() <PFLiveQuerySubscriptionHandling>
 @property (nonatomic, strong) PFLiveQueryClient *client;
 @property (nonatomic, strong) PFQuery *query;
 @property (nonatomic, strong) PFLiveQuerySubscription *subscription; // must use property to hold reference.
@@ -134,68 +136,105 @@
     [self.navigationItem setTitle:[NSString stringWithFormat:@"%@",[_partner chat_username]]];
     self.client = [[PFLiveQueryClient alloc] init];
     
-    self.subscription = [self.client  subscribeToQuery:self.query];
-    __weak TLChatBaseViewController * weakSelf = self;
-    
-    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
-        DLog(@"Subscribed to %@", weakSelf.conversationKey);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.navigationItem setTitle:[weakSelf.partner chat_username]];
-        });
-        
-        
-    }];
-    
-    self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
-        NSLog(@"unsubscribed from %@", weakSelf.conversationKey);
-    }];
-    
-    self.subscription = [self.subscription addErrorHandler:^(PFQuery<PFObject *> * _Nonnull query, NSError * _Nonnull error) {
-        DLog(@"error occurred! %@", error.localizedDescription);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.navigationItem setTitle:[NSString stringWithFormat:@"%@(未连接)",[weakSelf.partner chat_username]]];
-        });
-        
-    }];
-    
-    self.subscription = [self.subscription addEnterHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
-        NSLog(@"enter");
-    }];
-    
-    self.subscription = [self.subscription addEventHandler:^(PFQuery<PFObject *> * _Nonnull query, PFLiveQueryEvent * _Nonnull event) {
-        NSLog(@"event: %ld %@", (long)event.type, event.object[@"message"]);
-    }];
-    
-    self.subscription = [self.subscription addDeleteHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
-        NSLog(@"message deleted: %@ %@",message.createdAt, message.objectId);
-    }];
+    self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
     
     
+//    __weak TLChatBaseViewController * weakSelf = self;
     
-    self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
-        
+
+    
+//    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+//        DLog(@"Subscribed to %@", weakSelf.conversationKey);
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [weakSelf.navigationItem setTitle:[weakSelf.partner chat_username]];
+//        });
+//
+//
+//    }];
+    
+//    self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+//        NSLog(@"unsubscribed from %@", weakSelf.conversationKey);
+//    }];
+    
+//    self.subscription = [self.subscription addErrorHandler:^(PFQuery<PFObject *> * _Nonnull query, NSError * _Nonnull error) {
+//        DLog(@"error occurred! %@", error.localizedDescription);
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [weakSelf.navigationItem setTitle:[NSString stringWithFormat:@"%@(未连接)",[weakSelf.partner chat_username]]];
+//        });
+//
+//    }];
+    
+//    self.subscription = [self.subscription addEnterHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
+//        NSLog(@"enter");
+//    }];
+//
+//    self.subscription = [self.subscription addEventHandler:^(PFQuery<PFObject *> * _Nonnull query, PFLiveQueryEvent * _Nonnull event) {
+//        NSLog(@"event: %ld %@", (long)event.type, event.object[@"message"]);
+//    }];
+//
+//    self.subscription = [self.subscription addDeleteHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
+//        NSLog(@"message deleted: %@ %@",message.createdAt, message.objectId);
+//    }];
+    
+    
+    
+//    self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
+//
+//        NSLog(@"new message added: %@", message);
+//
+//        //
+//        [weakSelf loadMessagesWithCompletionBlock:^{
+//            [weakSelf processMessageFromServer:message bypassMine:YES];
+//        } messageIDToIgnore:message.objectId];
+//
+//
+//
+//
+//    }];
+    
+//    self.subscription = [self.subscription addErrorHandler:^(PFQuery<PFObject *> * _Nonnull query, NSError * _Nonnull error) {
+//        NSLog(@"error: %@", error.localizedDescription);
+//
+//        [weakSelf.client reconnect];
+//    }];
+}
+
+# pragma mark - PFLiveQuerySubscriptionHandling
+- (void)liveQuery:(PFQuery<PFObject *> *)query didSubscribeInClient:(PFLiveQueryClient *)client {
+    DLog(@"Subscribed to %@", self.conversationKey);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationItem setTitle:[self.partner chat_username]];
+    });
+}
+
+- (void)liveQuery:(PFQuery<PFObject *> *)query didRecieveEvent:(PFLiveQueryEvent *)event inClient:(PFLiveQueryClient *)client {
+    if (event.type == PFLiveQueryEventTypeCreated) {
+        PFObject * message = event.object;
         NSLog(@"new message added: %@", message);
         
         //
-        [weakSelf loadMessagesWithCompletionBlock:^{
-            [weakSelf processMessageFromServer:message bypassMine:YES];
+        [self loadMessagesWithCompletionBlock:^{
+            [self processMessageFromServer:message bypassMine:YES];
         } messageIDToIgnore:message.objectId];
         
+    }else if (event.type == PFLiveQueryEventTypeCreated) {
         
-        
-        
-    }];
-    
-    self.subscription = [self.subscription addErrorHandler:^(PFQuery<PFObject *> * _Nonnull query, NSError * _Nonnull error) {
-        NSLog(@"error: %@", error.localizedDescription);
-        
-        [weakSelf.client reconnect];
-    }];
+    }
 }
 
+- (void)liveQuery:(PFQuery<PFObject *> *)query didUnsubscribeInClient:(PFLiveQueryClient *)client {
+    
+    
+}
 
+- (void)liveQuery:(PFQuery<PFObject *> *)query didEncounterError:(NSError *)error inClient:(PFLiveQueryClient *)client {
+    NSLog(@"error: %@", error.localizedDescription);
+    
+//    [self.client reconnect];
+}
 
 - (void)processMessageFromServer:(PFObject *)message bypassMine:(BOOL)bypassMine{
     
@@ -425,7 +464,7 @@
 - (void)cleanupLiveQuery {
     if (self.client) {
         [self.client unsubscribeFromQuery:self.query];
-        [self.client disconnect];
+//        [self.client disconnect];
         self.client = nil;
     }
 }

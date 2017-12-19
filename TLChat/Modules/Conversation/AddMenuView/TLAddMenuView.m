@@ -9,6 +9,8 @@
 #import "TLAddMenuView.h"
 #import "TLAddMenuCell.h"
 #import "TLAppConfig.h"
+#import <TLKit/TLKit.h>
+#import "TLMacros.h"
 
 #define     WIDTH_TABLEVIEW             140.0f
 #define     HEIGHT_TABLEVIEW_CELL       45.0f

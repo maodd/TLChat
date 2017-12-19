@@ -7,7 +7,7 @@
 //
 
 #import "TLAddThirdPartFriendItem.h"
-
+#import "TLMacros.h"
 @interface TLAddThirdPartFriendItem ()
 
 @property (nonatomic, strong) UIImageView *iconImageView;

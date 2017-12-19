@@ -8,7 +8,11 @@
 
 #import "TLAudioPlayer.h"
 #import <AVFoundation/AVFoundation.h>
-
+#import <Masonry/Masonry.h>
+#import <TLKit/TLKit.h>
+#import "UIColor+TLChat.h"
+#import "UIFont+TLChat.h"
+#import "TLMacros.h"
 @interface TLAudioPlayer() <AVAudioPlayerDelegate>
 
 @property (nonatomic, strong) void (^ completeBlock)(BOOL finished);

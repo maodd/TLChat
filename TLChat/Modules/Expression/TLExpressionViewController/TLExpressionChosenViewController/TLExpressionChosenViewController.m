@@ -12,6 +12,7 @@
 #import "TLExpressionSearchViewController.h"
 #import "TLSearchController.h"
 #import <MJRefresh/MJRefresh.h>
+#import "TLMacros.h"
 
 @interface TLExpressionChosenViewController () <UISearchBarDelegate>
 

@@ -8,7 +8,8 @@
 
 #import "TLMomentImagesCell.h"
 #import "TLMomentImageView.h"
-
+#import <TLKit/TLKit.h>
+#import <Masonry/Masonry.h>
 @interface TLMomentImagesCell ()
 
 @property (nonatomic, strong) TLMomentImageView *momentView;

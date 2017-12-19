@@ -7,7 +7,11 @@
 //
 
 #import "TLMomentDetailTextView.h"
-
+#import <Masonry/Masonry.h>
+#import <TLKit/TLKit.h>
+#import "UIColor+TLChat.h"
+#import "UIFont+TLChat.h"
+#import "TLMacros.h"
 @implementation TLMomentDetailTextView
 
 - (id)initWithFrame:(CGRect)frame

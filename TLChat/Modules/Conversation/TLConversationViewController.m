@@ -17,6 +17,7 @@
 #import "TLGroupDataLoader.h"
 
 #import "TLMessageManager+ConversationRecord.h"
+#import "TLMacros.h"
 
 
 
@@ -48,11 +49,11 @@
         [TLFriendHelper sharedFriendHelper]; // force a friend data load.
     }
     
-    [[NSNotificationCenter defaultCenter] addObserverForName:kAppDidLoginSuccessNoti object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+    [[NSNotificationCenter defaultCenter] addObserverForName:kAKUserLoggedInNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         [TLFriendHelper sharedFriendHelper]; // force a friend data load.
     }];
     
-    [[NSNotificationCenter defaultCenter] addObserverForName:kAppDidLogoutSuccessNoti object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+    [[NSNotificationCenter defaultCenter] addObserverForName:kAKUserLoggedOutNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         [[TLFriendHelper sharedFriendHelper] reset];
     }];
     

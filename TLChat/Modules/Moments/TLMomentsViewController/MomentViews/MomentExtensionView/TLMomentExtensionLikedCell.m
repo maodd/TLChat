@@ -9,6 +9,8 @@
 
 #import "TLMomentExtensionLikedCell.h"
 #import "TLUser.h"
+#import <Masonry/Masonry.h>
+#import "UIColor+TLChat.h"
 
 @interface TLMomentExtensionLikedCell ()
 

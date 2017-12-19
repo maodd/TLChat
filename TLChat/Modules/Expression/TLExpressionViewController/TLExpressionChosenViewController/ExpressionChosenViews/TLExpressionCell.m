@@ -7,6 +7,10 @@
 //
 
 #import "TLExpressionCell.h"
+#import <TLKit/TLKit.h>
+#import "UIColor+TLChat.h"
+#import <Masonry/Masonry.h>
+#import "TLMacros.h"
 
 #define         EDGE_TOP        10.0f
 #define         EDGE_LEFT       15.0f

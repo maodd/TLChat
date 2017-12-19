@@ -10,6 +10,7 @@
 #import "TLExpressionChosenViewController.h"
 #import "TLExpressionPublicViewController.h"
 #import "TLMyExpressionViewController.h"
+#import <TLKit/TLKit.h>
 
 #define     WIDTH_EXPRESSION_SEGMENT    SCREEN_WIDTH * 0.55
 

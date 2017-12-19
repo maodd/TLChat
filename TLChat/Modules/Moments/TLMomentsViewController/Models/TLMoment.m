@@ -7,6 +7,7 @@
 //
 
 #import "TLMoment.h"
+#import <MJExtension/MJExtension.h>
 
 #define     HEIGHT_MOMENT_DEFAULT       76.0f
 

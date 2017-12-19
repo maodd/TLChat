@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0CE752DB282CB0615FCC8540 /* Pods_TLChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A274DBE4E261E83A41A376E /* Pods_TLChat.framework */; };
+		697BE1BD1FE47F0B00DE4444 /* TLUIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 697BE1BB1FE47F0B00DE4444 /* TLUIManager.m */; };
 		69C396FF1FD7042400B5A7BE /* TLFriendDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 69C396FE1FD7042400B5A7BE /* TLFriendDataLoader.m */; };
 		69C397021FD709E700B5A7BE /* TLGroupDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 69C397011FD709E700B5A7BE /* TLGroupDataLoader.m */; };
 		C2097EE81C52326500163B5C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C2097EE71C52326500163B5C /* main.m */; };
@@ -299,6 +300,8 @@
 
 /* Begin PBXFileReference section */
 		28C098D007CC6D63F81358AB /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		697BE1BB1FE47F0B00DE4444 /* TLUIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TLUIManager.m; sourceTree = "<group>"; };
+		697BE1BC1FE47F0B00DE4444 /* TLUIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TLUIManager.h; sourceTree = "<group>"; };
 		69C396FD1FD7042400B5A7BE /* TLFriendDataLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLFriendDataLoader.h; sourceTree = "<group>"; };
 		69C396FE1FD7042400B5A7BE /* TLFriendDataLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TLFriendDataLoader.m; sourceTree = "<group>"; };
 		69C397001FD709E700B5A7BE /* TLGroupDataLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLGroupDataLoader.h; sourceTree = "<group>"; };
@@ -894,6 +897,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		697BE1BA1FE47F0B00DE4444 /* TLUIManager */ = {
+			isa = PBXGroup;
+			children = (
+				697BE1BB1FE47F0B00DE4444 /* TLUIManager.m */,
+				697BE1BC1FE47F0B00DE4444 /* TLUIManager.h */,
+			);
+			path = TLUIManager;
+			sourceTree = "<group>";
+		};
 		69C396FC1FD703ED00B5A7BE /* Loader */ = {
 			isa = PBXGroup;
 			children = (
@@ -1341,6 +1353,7 @@
 		C2D7C8851F72107D00648CED /* AppControlCenter */ = {
 			isa = PBXGroup;
 			children = (
+				697BE1BA1FE47F0B00DE4444 /* TLUIManager */,
 				C2D7CC601F72844200648CED /* TLDBManager */,
 				C2D7C8861F7210AD00648CED /* AppConfig */,
 				C2D7CBD81F72497900648CED /* TLAccountManager */,
@@ -3101,6 +3114,7 @@
 				C2D7CB3E1F72470400648CED /* TLEmojiKeyboard+EmojiGroupControl.m in Sources */,
 				C2D7CBC11F72470500648CED /* TLChatBackgroundSelectViewController.m in Sources */,
 				69C397021FD709E700B5A7BE /* TLGroupDataLoader.m in Sources */,
+				697BE1BD1FE47F0B00DE4444 /* TLUIManager.m in Sources */,
 				C23EE4711F7392540069885F /* TLExpressionBannerCell.m in Sources */,
 				C2D7CC541F7281D200648CED /* TLMessage.m in Sources */,
 				C2D7CBBE1F72470500648CED /* TLChatBackgroundSelectCell.m in Sources */,

@@ -8,6 +8,7 @@
 
 #import "TLContactsSearchViewController.h"
 #import "TLContactCell.h"
+#import <TLKit/TLKit.h>
 
 @interface TLContactsSearchViewController ()
 

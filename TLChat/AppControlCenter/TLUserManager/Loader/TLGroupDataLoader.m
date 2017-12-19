@@ -16,18 +16,11 @@
 //#import "TLAppDelegate.h"
 #import "TLFriendHelper.h"
 #import "TLUser.h"
-#import "DefaultPortraitView.h"
+//#import "DefaultPortraitView.h"
 #import "TLUserHelper.h"
-#import "UIColor+Hex.h"
-
-@interface TLGroupDataLoader ()
-
-@property(nonatomic, strong) NSArray<PFObject*> *courses;
-
-@end
+#import "TLMacros.h"
 
 static TLGroupDataLoader *groupDataLoader = nil;
-
 
 @implementation TLGroupDataLoader
 + (TLGroupDataLoader *)sharedGroupDataLoader
@@ -35,17 +28,6 @@ static TLGroupDataLoader *groupDataLoader = nil;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         groupDataLoader = [[TLGroupDataLoader alloc] init];
-        
- 
-        PFQuery * query = [PFQuery queryWithClassName:@"Course"];
-        [query whereKey:@"user" equalTo:[PFUser currentUser]];
-        [query includeKey:@"term"];
-        query.cachePolicy = kPFCachePolicyCacheElseNetwork;
-        [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-            groupDataLoader.courses = objects;
-   
-        }];
-        
     });
     return groupDataLoader;
 }
@@ -209,35 +191,11 @@ static TLGroupDataLoader *groupDataLoader = nil;
 
 
 - (UIImage *)generateGroupName:(NSString*)groupID groupName:(NSString *)groupName {
-    
-    NSNumber * colorHex = nil;
-    for (PFObject * course in self.courses) {
-        NSString * key = [NSString stringWithFormat:@"%@ (%@)", course[@"summary"], course[@"term"][@"name"]];
-        if ([groupName isEqualToString:key]) {
-            colorHex = course[@"colorHex"];
-            break;
-        }
-    }
-    
-    if (colorHex) {
-        
-        UIColor * bgColor = [UIColor colorWithHex:colorHex.integerValue];
-        
-        DefaultPortraitView *defaultPortrait = [[DefaultPortraitView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-        [defaultPortrait setColorAndName:bgColor Nickname:groupName];
-        UIImage *portrait = [defaultPortrait imageFromView];
-        return portrait;
-        
-        
-    }else{
-    
-    
-        DefaultPortraitView *defaultPortrait = [[DefaultPortraitView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-        [defaultPortrait setColorAndLabel:groupID Nickname:groupName];
-        UIImage *portrait = [defaultPortrait imageFromView];
-        return portrait;
-        
-    }
+    return [UIImage imageNamed:DEFAULT_AVATAR_PATH];
+//    DefaultPortraitView *defaultPortrait = [[DefaultPortraitView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+//    [defaultPortrait setColorAndLabel:groupID Nickname:groupName];
+//    UIImage *portrait = [defaultPortrait imageFromView];
+//    return portrait;
 }
     
 

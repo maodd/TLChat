@@ -9,6 +9,8 @@
 #import "TLEmojiGroupDisplayView.h"
 #import "TLEmojiGroupDisplayView+CollectionView.h"
 #import "TLEmojiGroupDisplayView+Gesture.h"
+#import <Masonry/Masonry.h>
+#import <TLKit/TLKit.h>
 
 @implementation TLEmojiGroupDisplayView
 

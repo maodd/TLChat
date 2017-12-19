@@ -7,6 +7,7 @@
 //
 
 #import "UITabBarController+TLLaunchExtension.h"
+#import <TLKit/TLKit.h>
 
 @implementation UITabBarController (TLLaunchExtension)
 

@@ -9,6 +9,8 @@
 
 #import "TLGroupQRCodeViewController.h"
 #import "TLQRCodeViewController.h"
+#import <TLKit/TLKit.h>
+#import "UIColor+TLChat.h"
 
 @interface TLGroupQRCodeViewController () <TLActionSheetDelegate>
 

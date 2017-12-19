@@ -8,6 +8,8 @@
 
 #import "TLInfoButtonCell.h"
 #import "UIImage+Color.h"
+#import "TLMacros.h"
+#import <Masonry/Masonry.h>
 
 @interface TLInfoButtonCell ()
 

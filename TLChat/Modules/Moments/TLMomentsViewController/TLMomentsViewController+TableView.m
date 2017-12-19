@@ -12,6 +12,7 @@
 #import "TLMomentHeaderCell.h"
 #import "TLMomentImagesCell.h"
 #import "TLUserHelper.h"
+#import "TLMacros.h"
 
 @implementation TLMomentsViewController (TableView)
 

@@ -9,7 +9,7 @@
 #import "TLImageDownloader.h"
 #import <SDWebImage/SDWebImageDownloader.h>
 #import <SDWebImage/SDImageCache.h>
-
+#import "TLMacros.h"
 
 #pragma mark - ## TLImageDownloaderTask
 typedef NS_ENUM(NSInteger, TLImageDownloadState) {

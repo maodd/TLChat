@@ -9,6 +9,8 @@
 #import "TLExpressionDetailViewController+CollectionView.h"
 #import "TLExpressionHelper.h"
 #import "TLExpressionItemCell.h"
+#import <TLKit/TLKit.h>
+#import "TLMacros.h"
 
 #define         EDGE                20.0
 #define         SPACE_CELL          15.0

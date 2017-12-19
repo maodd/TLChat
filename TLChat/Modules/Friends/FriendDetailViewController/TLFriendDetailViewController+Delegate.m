@@ -15,6 +15,7 @@
 #import "NSFileManager+TLChat.h"
 #import "TLFriendHelper.h"
 #import "TLUserHelper.h"
+#import "TLMacros.h"
 
 @implementation TLFriendDetailViewController (Delegate)
 

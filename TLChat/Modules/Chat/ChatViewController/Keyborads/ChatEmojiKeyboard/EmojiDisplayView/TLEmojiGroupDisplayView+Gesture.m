@@ -10,6 +10,8 @@
 #import "TLEmojiGroupDisplayView+CollectionView.h"
 #import "TLEmojiBaseCell.h"
 
+@import TLKit;
+
 @implementation TLEmojiGroupDisplayView (Gesture)
 
 #pragma mark - # Public Methods

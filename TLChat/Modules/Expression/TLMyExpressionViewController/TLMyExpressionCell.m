@@ -8,6 +8,8 @@
 
 #import "TLMyExpressionCell.h"
 #import "UIImage+Color.h"
+#import <Masonry/Masonry.h>
+#import "TLMacros.h"
 
 @interface TLMyExpressionCell()
 

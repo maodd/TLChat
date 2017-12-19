@@ -8,6 +8,7 @@
 
 #import "TLMomentBaseView.h"
 #import "TLMomentExtensionView.h"
+#import "TLMacros.h"
 
 #define         EDGE_LEFT       10.0f
 #define         EDGE_TOP        15.0f

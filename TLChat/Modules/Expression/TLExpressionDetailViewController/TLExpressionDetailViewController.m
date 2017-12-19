@@ -9,6 +9,7 @@
 #import "TLExpressionDetailViewController.h"
 #import "TLExpressionDetailViewController+CollectionView.h"
 #import "TLExpressionProxy.h"
+#import <TLKit/TLKit.h>
 
 @interface TLExpressionDetailViewController ()
 {

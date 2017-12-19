@@ -11,6 +11,8 @@
 #import "TLEmojiKBHelper.h"
 #import "TLUserHelper.h"
 #import "NSFileManager+TLChat.h"
+#import "TLMacros.h"
+
 
 @interface TLExpressionHelper ()
 

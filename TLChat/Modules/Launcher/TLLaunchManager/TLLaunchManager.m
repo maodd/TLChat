@@ -15,6 +15,8 @@
 #import "TLFriendsViewController.h"
 //#import "TLDiscoverViewController.h"
 //#import "TLMineViewController.h"
+#import <TLKit/TLKit.h>
+#import "UIColor+TLChat.h"
 
 #import "TLUserHelper.h"
 

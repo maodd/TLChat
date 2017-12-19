@@ -11,6 +11,7 @@
 #import <AFNetworking/AFNetworking.h>
 //#import <JSPatchPlatform/JSPatch.h>
 #import "TLSDKConfigKey.h"
+#import "TLMacros.h"
 
 @implementation TLSDKManager
 

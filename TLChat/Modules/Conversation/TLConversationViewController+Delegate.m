@@ -13,7 +13,13 @@
 #import "TLMessage.h"
 #import "TLUserHelper.h"
 #import "TLMessageManager.h"
+#import <TLKit/TLKit.h>
+#import "TLMacros.h"
 
+
+@interface TLConversationViewController (Delegate) <PFLiveQuerySubscriptionHandling>
+
+@end
 @implementation TLConversationViewController (Delegate)
 
 #pragma mark - Public Methods -
@@ -200,7 +206,7 @@
     
     if (self.client) {
         [self.client unsubscribeFromQuery:self.query];
-        [self.client disconnect];
+//        [self.client disconnect];
         self.client = nil;
     }
     DLog(@"subscribed keys: %@", keys);
@@ -214,52 +220,74 @@
     [self.query whereKey:@"dialogKey" containedIn:keys];
 
     
-    self.subscription = [self.client  subscribeToQuery:self.query];
+    self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
     __weak TLConversationViewController * weakSelf = self;
     [self.navigationItem setTitle:@"聊天"];
-    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
-        DLog(@"Subscribed");
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.navigationItem setTitle:@"聊天"];
-        });
-        
-    }];
-    
-    self.subscription = [self.subscription addErrorHandler:^(PFQuery<PFObject *> * _Nonnull query, NSError * _Nonnull error) {
-        DLog(@"error occurred! %@", error.localizedDescription);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.navigationItem setTitle:@"聊天(未连接)"];
-        });
-        
-    }];
-    
-    self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
-        NSLog(@"unsubscribed");
-    }];
-    
-    self.subscription = [self.subscription addEnterHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
-        NSLog(@"enter");
-    }];
-    
-    self.subscription = [self.subscription addEventHandler:^(PFQuery<PFObject *> * _Nonnull query, PFLiveQueryEvent * _Nonnull event) {
-        NSLog(@"event: %@", event);
-    }];
-    
-    self.subscription = [self.subscription addDeleteHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
-        NSLog(@"message deleted: %@ %@",message.createdAt, message.objectId);
-    }];
-    
-
-    self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
-        
-        
-        [weakSelf processMessageFromServer:message bypassMine:YES];
-        
-        
-    }];
+//    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+//        DLog(@"Subscribed");
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [weakSelf.navigationItem setTitle:@"聊天"];
+//        });
+//
+//    }];
+//
+//    self.subscription = [self.subscription addErrorHandler:^(PFQuery<PFObject *> * _Nonnull query, NSError * _Nonnull error) {
+//        DLog(@"error occurred! %@", error.localizedDescription);
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [weakSelf.navigationItem setTitle:@"聊天(未连接)"];
+//        });
+//
+//    }];
+//
+//    self.subscription = [self.subscription addUnsubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+//        NSLog(@"unsubscribed");
+//    }];
+//
+//    self.subscription = [self.subscription addEnterHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
+//        NSLog(@"enter");
+//    }];
+//
+//    self.subscription = [self.subscription addEventHandler:^(PFQuery<PFObject *> * _Nonnull query, PFLiveQueryEvent * _Nonnull event) {
+//        NSLog(@"event: %@", event);
+//    }];
+//
+//    self.subscription = [self.subscription addDeleteHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
+//        NSLog(@"message deleted: %@ %@",message.createdAt, message.objectId);
+//    }];
+//
+//
+//    self.subscription = [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull message) {
+//
+//
+//        [weakSelf processMessageFromServer:message bypassMine:YES];
+//
+//
+//    }];
 }
 
+# pragma mark - PFLiveQuerySubscriptionHandling
+- (void)liveQuery:(PFQuery<PFObject *> *)query didSubscribeInClient:(PFLiveQueryClient *)client {
+    DLog(@"Subscribed");
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationItem setTitle:@"聊天"];
+    });
+}
+
+- (void)liveQuery:(PFQuery<PFObject *> *)query didUnsubscribeInClient:(PFLiveQueryClient *)client {
+    
+}
+
+- (void)liveQuery:(PFQuery<PFObject *> *)query didRecieveEvent:(PFLiveQueryEvent *)event inClient:(PFLiveQueryClient *)client {
+    if (event.type == PFLiveQueryEventTypeCreated) {
+        PFObject * message = event.object;
+        [self processMessageFromServer:message bypassMine:YES];
+    }
+}
+
+- (void)liveQuery:(PFQuery<PFObject *> *)query didEncounterError:(NSError *)error inClient:(PFLiveQueryClient *)client {
+    
+}
 
 - (void)processMessageFromServer:(PFObject *)message bypassMine:(BOOL)bypassMine{
     

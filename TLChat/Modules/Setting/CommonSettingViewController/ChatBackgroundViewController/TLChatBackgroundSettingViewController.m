@@ -12,6 +12,8 @@
 
 #import "TLChatNotificationKey.h"
 #import "NSFileManager+TLChat.h"
+#import <TLKit/TLKit.h>
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
 @interface TLChatBackgroundSettingViewController () <TLActionSheetDelegate>
 

@@ -8,6 +8,7 @@
 
 #import "TLInfoViewController.h"
 #import "TLInfoHeaderFooterView.h"
+#import "TLMacros.h"
 
 @implementation TLInfoViewController
 

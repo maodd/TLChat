@@ -12,6 +12,8 @@
 #import "TLFriendHelper+Contacts.h"
 #import "TLUserGroup.h"
 #import "TLFriendEventStatistics.h"
+#import "TLMacros.h"
+#import "UIColor+TLChat.h"
 
 @interface TLContactsViewController () <UISearchBarDelegate>
 

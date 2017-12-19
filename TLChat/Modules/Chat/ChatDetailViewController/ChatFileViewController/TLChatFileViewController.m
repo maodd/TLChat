@@ -13,6 +13,9 @@
 #import "TLMessageManager+MessageRecord.h"
 #import <MWPhotoBrowser/MWPhotoBrowser.h>
 #import "NSFileManager+TLChat.h"
+#import <Masonry/Masonry.h>
+#import "UIColor+TLChat.h"
+#import "TLMacros.h"
 
 #define     HEIGHT_COLLECTIONVIEW_HEADER    28
 #define     WIDTH_COLLECTIONVIEW_CELL       SCREEN_WIDTH / 4 * 0.98

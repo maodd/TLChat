@@ -7,6 +7,8 @@
 //
 
 #import "TLMomentExtensionCommentCell.h"
+#import <Masonry/Masonry.h>
+#import <TLKit/TLKit.h>
 
 @interface TLMomentExtensionCommentCell ()
 

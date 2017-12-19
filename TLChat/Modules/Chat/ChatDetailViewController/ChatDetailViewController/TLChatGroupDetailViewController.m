@@ -19,6 +19,7 @@
 #import "TLChatBackgroundSettingViewController.h"
 
 #import "TLChatNotificationKey.h"
+#import <TLKit/TLKit.h>
 
 #define     TAG_EMPTY_CHAT_REC      1001
 
