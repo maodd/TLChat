@@ -46,13 +46,20 @@ static TLGroupDataLoader *groupDataLoader = nil;
         NSLog(@"fetched %lu groups from server", objects.count);
         
         for (PFObject * course in objects) {
-            TLGroup * model = [TLGroup new];
-            model.groupID = [self makeCourseDialogKey:course];
             PFObject * term = (PFObject*)course[@"term"];
             NSString * name = [NSString stringWithFormat:@"%@ (%@)", course[@"summary"], term[@"name"]];
-            model.groupName = [name stringByTrimmingCharactersInSet:
+            NSString * groupName = [name stringByTrimmingCharactersInSet:
                               [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            
+            if ([[groups valueForKeyPath:@"groupName"] containsObject:groupName]) {
+                continue;
+            }
+            
+            TLGroup * model = [TLGroup new];
+            model.groupID = [self makeCourseDialogKey:course];
+            model.groupName = groupName;
             model.date = course.createdAt;
+            
             model.groupAvatarPath = @"";
             
             [groups addObject:model];
