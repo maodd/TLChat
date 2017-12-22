@@ -133,8 +133,9 @@
         return;
     }
     
-
-    [self.navigationItem setTitle:[NSString stringWithFormat:@"%@",[_partner chat_username]]];
+//    if (self.title == nil) {
+//        [self.navigationItem setTitle:[NSString stringWithFormat:@"%@",[_partner chat_username]]];
+//    }
     self.client = [[PFLiveQueryClient alloc] init];
     
     self.subscription = (PFLiveQuerySubscription*)[self.client subscribeToQuery:self.query withHandler:self];
@@ -207,7 +208,7 @@
     DLog(@"Subscribed to %@", self.conversationKey);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationItem setTitle:[self.partner chat_username]];
+//        [self.navigationItem setTitle:[self.partner chat_username]];
     });
 }
 
@@ -503,7 +504,11 @@
         return;
     }
     _partner = partner;
-    [self.navigationItem setTitle:[_partner chat_username]];
+    
+    if (self.title == nil) {
+        [self.navigationItem setTitle:[NSString stringWithFormat:@"%@",[_partner chat_username]]];
+    }
+    
     
 
     NSString * key = @"";
@@ -530,14 +535,14 @@
                 NSString * friendID = matches.firstObject;
                 TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:friendID];
                 
-                self.partner = friend;
+                self.partner = (id<TLChatUserProtocol>)friend;
             }
         }else{
             
             // GROUP
             
             TLGroup * group = [[TLFriendHelper sharedFriendHelper] getGroupInfoByGroupID:conversationKey];
-            self.partner = group;
+            self.partner = (id<TLChatUserProtocol>)group;
         }
         
     }

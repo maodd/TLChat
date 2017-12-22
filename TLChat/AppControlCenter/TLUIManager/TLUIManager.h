@@ -16,5 +16,5 @@
 
 - (void)openChatDialog:(NSString *)dialogKey navigationController:(UINavigationController*)navigationController;
 - (void)openUserDetails:(TLUser *)user navigationController:(UINavigationController*)navigationController;
-- (void)openChatDialogWithUser:(NSString *)userId fromNavigationController:(UINavigationController *)navigationController;
+- (void)openChatDialogWithUser:(NSString *)userId fromNavigationController:(UINavigationController *)navigationController context:(NSString*)context;
 @end
