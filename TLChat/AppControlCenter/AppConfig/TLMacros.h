@@ -55,6 +55,8 @@ typedef void(^TLBlockRequestFailureWithErrorMessage)(NSString *errMsg);
 
 #define kParseClassNameDialog @"ChatDialog"
 #define kParseClassNameMessage @"ChatMessage"
+#define kParseUserClassAttributeAvatar @"photo"
+#define kParseUserClassAttributeNickname @"nickname"
 
 
 #define     kAKUserLoggedInNotification @"kAppDidLoginSuccessNoti"

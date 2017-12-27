@@ -66,20 +66,21 @@
         if (self.userID.length > 0) {
             TLDBUserStore *userStore = [[TLDBUserStore alloc] init];
             _user = [userStore userByID:self.userID];
-            if (!_user) {
+//            if (!_user) {
  
-                
+                [[PFUser currentUser] fetch];
+            
                 _user = [TLUser new];
                 _user.userID = self.userID;
-                _user.username = [PFUser currentUser].username;
-                _user.nikeName = [PFUser currentUser].username;
-                PFFile * file = [PFUser currentUser][@"headerImage1"];
+                _user.username = [PFUser currentUser][kParseUserClassAttributeNickname];
+                _user.nikeName = [PFUser currentUser][kParseUserClassAttributeNickname];
+                PFFile * file = [PFUser currentUser][kParseUserClassAttributeAvatar];
                 if (file) {
                     _user.avatarURL = file.url;
                 }
 
                 // TODO: subscribe for user avatar change notification.
-            }
+//            }
             
             [self setUser:_user];
         }

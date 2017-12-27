@@ -163,10 +163,10 @@ static TLFriendHelper *friendHelper = nil;
         TLUser * user = [TLUser new];
         user.userID = userObject.objectId;
 //        DLog(@"user name: %@", userObject.username);
-        user.username = userObject.username;
-        user.nikeName = userObject.username;
+        user.username = userObject[kParseUserClassAttributeNickname];
+        user.nikeName = userObject[kParseUserClassAttributeNickname];
         
-        PFFile * file = userObject[@"headerImage1"];
+        PFFile * file = userObject[kParseUserClassAttributeAvatar];
         if (file) {
             user.avatarURL = file.url;
         }
@@ -176,17 +176,17 @@ static TLFriendHelper *friendHelper = nil;
     }
     
     PFQuery * query = [PFUser query];
-    query.cachePolicy = kPFCachePolicyCacheElseNetwork;
+    query.cachePolicy = kPFCachePolicyNetworkOnly;
     [query whereKey:@"objectId" equalTo:userID];
     PFUser * userObject = [query getFirstObject];
     
     TLUser * user = [TLUser new];
     user.userID = userObject.objectId;
-    DLog(@"user name: %@", userObject.username);
-    user.username = userObject.username;
-    user.nikeName = userObject.username;
+    DLog(@"user name: %@", userObject[kParseUserClassAttributeNickname]);
+    user.username = userObject[kParseUserClassAttributeNickname];
+    user.nikeName = userObject[kParseUserClassAttributeNickname];
     
-    PFFile * file = userObject[@"headerImage1"];
+    PFFile * file = userObject[kParseUserClassAttributeAvatar];
     if (file) {
         user.avatarURL = file.url;
     }
