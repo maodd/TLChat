@@ -90,40 +90,61 @@ static BOOL isLoadingData = NO;
     
 
     __block NSInteger i = 0;
-    for (TLUser * friend in [TLFriendHelper sharedFriendHelper].friendsData) {
-        
-        dispatch_group_enter(serviceGroup);
-        i = i + 1;
-        DLog(@"friends items %ld", (long)i);
-        [self createFriendDialogWithLatestMessage:friend completionBlock:^{
-        
-            DLog(@"friend.userID %@", friend.userID);
-            NSString * key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:friend.userID myId:[PFUser currentUser].objectId];
-            
-            TLConversation * conversation = [[TLMessageManager sharedInstance].conversationStore conversationByKey:key];
-            if (conversation) {
-                [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation withCompletionBlock:^(NSInteger count) {
+//    for (TLUser * friend in [TLFriendHelper sharedFriendHelper].friendsData)
+    PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
+//    [query whereKey:@"user" equalTo:[PFUser currentUser]];
+    [query whereKey:@"key" containsString:[PFUser currentUser].objectId];
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+        for (PFObject * object in objects) {
+            NSArray * userIds = [object[@"key"] componentsSeparatedByString:@":"];
+            if ([userIds count] > 0 ) {
+                NSArray * matches = [userIds filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != %@", [PFUser currentUser].objectId]];
+                if (matches.count > 0) {
+                    NSString * friendId = matches.firstObject;
                     
+                    TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:friendId];
                     
-                    dispatch_group_leave(serviceGroup);
-                    i = i - 1;
-                    DLog(@"friends item %@ unreadmessages: %ld", conversation.key, (long)count);
-                }];
-            }else{
-                DLog(@"no converstation for friend: %@", friend.userID);
-                
-                dispatch_group_leave(serviceGroup);
-                
-                i = i - 1;
-                DLog(@"friends items %ld", (long)i);
+                    {
+                        
+                        dispatch_group_enter(serviceGroup);
+                        i = i + 1;
+                        DLog(@"friends items %ld", (long)i);
+                        [self createFriendDialogWithLatestMessage:friend completionBlock:^{
+                            
+                            DLog(@"friend.userID %@", friend.userID);
+                            NSString * key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:friend.userID myId:[PFUser currentUser].objectId];
+                            
+                            TLConversation * conversation = [[TLMessageManager sharedInstance].conversationStore conversationByKey:key];
+                            if (conversation) {
+                                [[TLMessageManager sharedInstance].conversationStore countUnreadMessages:conversation withCompletionBlock:^(NSInteger count) {
+                                    
+                                    
+                                    dispatch_group_leave(serviceGroup);
+                                    i = i - 1;
+                                    DLog(@"friends item %@ unreadmessages: %ld", conversation.key, (long)count);
+                                }];
+                            }else{
+                                DLog(@"no converstation for friend: %@", friend.userID);
+                                
+                                dispatch_group_leave(serviceGroup);
+                                
+                                i = i - 1;
+                                DLog(@"friends items %ld", (long)i);
+                            }
+                            
+                            
+                        }];
+                        
+                        
+                        
+                    }
+                }
             }
-            
-            
-        }];
+        }
         
-
-        
-    }
+    }];
+    
+    
     
     dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
         

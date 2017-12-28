@@ -163,8 +163,8 @@ static TLFriendHelper *friendHelper = nil;
         TLUser * user = [TLUser new];
         user.userID = userObject.objectId;
 //        DLog(@"user name: %@", userObject.username);
-        user.username = userObject[kParseUserClassAttributeNickname];
-        user.nikeName = userObject[kParseUserClassAttributeNickname];
+        user.username = userObject.username;
+        user.nikeName = userObject[kParseUserClassAttributeNickname] ?: user.username ;
         
         PFFile * file = userObject[kParseUserClassAttributeAvatar];
         if (file) {
@@ -183,8 +183,8 @@ static TLFriendHelper *friendHelper = nil;
     TLUser * user = [TLUser new];
     user.userID = userObject.objectId;
     DLog(@"user name: %@", userObject[kParseUserClassAttributeNickname]);
-    user.username = userObject[kParseUserClassAttributeNickname];
-    user.nikeName = userObject[kParseUserClassAttributeNickname];
+    user.username = userObject.username;
+    user.nikeName = userObject[kParseUserClassAttributeNickname] ?: user.username;
     
     PFFile * file = userObject[kParseUserClassAttributeAvatar];
     if (file) {

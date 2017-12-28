@@ -72,8 +72,8 @@
             
                 _user = [TLUser new];
                 _user.userID = self.userID;
-                _user.username = [PFUser currentUser][kParseUserClassAttributeNickname];
-                _user.nikeName = [PFUser currentUser][kParseUserClassAttributeNickname];
+                _user.username = [PFUser currentUser].username;
+            _user.nikeName = [PFUser currentUser][kParseUserClassAttributeNickname] ?: _user.username;
                 PFFile * file = [PFUser currentUser][kParseUserClassAttributeAvatar];
                 if (file) {
                     _user.avatarURL = file.url;
