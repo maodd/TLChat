@@ -69,10 +69,10 @@ static TLUIManager *uiManager = nil;
 
     // TODO: find better way to allow app use different style to open user details.
     
-//    TLFriendDetailViewController *detailVC = [[TLFriendDetailViewController alloc] init];
-//    [detailVC setUser:user];
-//    [detailVC setHidesBottomBarWhenPushed:YES];
-//    [navigationController pushViewController:detailVC animated:YES];
+    TLFriendDetailViewController *detailVC = [[TLFriendDetailViewController alloc] init];
+    [detailVC setUser:user];
+    [detailVC setHidesBottomBarWhenPushed:YES];
+    [navigationController pushViewController:detailVC animated:YES];
 }
 
 @end
