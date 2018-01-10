@@ -39,7 +39,7 @@
 
 - (void)loadView {
     [super loadView];
-    self.statusBarStyle = UIStatusBarStyleDefault;
+//    self.statusBarStyle = UIStatusBarStyleDefault;
     
     [self.view addSubview:self.scrollView];
     [self.view addSubview:self.cancelButton];

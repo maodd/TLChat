@@ -30,9 +30,9 @@
     [super viewWillAppear:animated];
     
 //    [MobClick beginLogPageView:self.analyzeTitle];
-    if ([UIApplication sharedApplication].statusBarStyle != self.statusBarStyle) {
-        [UIApplication sharedApplication].statusBarStyle = self.statusBarStyle;
-    }
+//    if ([UIApplication sharedApplication].statusBarStyle != self.statusBarStyle) {
+//        [UIApplication sharedApplication].statusBarStyle = self.statusBarStyle;
+//    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated

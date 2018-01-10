@@ -48,8 +48,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.edgesForExtendedLayout = UIRectEdgeNone;
+  
+//    self.edgesForExtendedLayout = UIRectEdgeNone; //tempory fix for black gap on top when toggling emoji keyboard.
     self.hidesBottomBarWhenPushed = YES;
     
     [self loadKeyboard];
