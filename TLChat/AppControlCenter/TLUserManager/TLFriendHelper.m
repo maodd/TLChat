@@ -86,6 +86,10 @@ static TLFriendHelper *friendHelper = nil;
     return self;
 }
 
+- (void)reloadGroupData {
+    [self p_loadGroupsDataWithCompleetionBlcok:nil];
+}
+
 - (void)loadFriendsAndGroupsData {
     
     if (_isLoading) {

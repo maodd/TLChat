@@ -58,4 +58,7 @@
 - (void)reset; // when user log out.
 
 - (void)deleteFriend:(NSString *)fid;
+
+- (void)reloadGroupData;
+}
 @end
