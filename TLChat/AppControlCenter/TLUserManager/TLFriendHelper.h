@@ -60,5 +60,5 @@
 - (void)deleteFriend:(NSString *)fid;
 
 - (void)reloadGroupData;
-}
+
 @end
