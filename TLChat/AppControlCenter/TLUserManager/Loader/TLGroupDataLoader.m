@@ -170,6 +170,7 @@ static TLGroupDataLoader *groupDataLoader = nil;
                                                                                      type:TLConversationTypeGroup
                                                                                      date:object.createdAt
                                                                              last_message:lastMsg
+                                                                     last_message_context:object[@"context"] ?: @""
                                                                                 localOnly:YES];
             }else{
                 
@@ -180,6 +181,7 @@ static TLGroupDataLoader *groupDataLoader = nil;
                                                                                          type:TLConversationTypeGroup
                                                                                          date:group.date
                                                                                  last_message:@"Welcome"
+                                                                         last_message_context:@"" 
                                                                                     localOnly:YES];
                 }
             }

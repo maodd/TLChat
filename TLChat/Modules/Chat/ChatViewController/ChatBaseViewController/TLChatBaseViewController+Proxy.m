@@ -19,6 +19,8 @@
     message.fromUser = (id<TLChatUserProtocol>)[TLUserHelper sharedHelper].user;
     message.date = [NSDate date];
     
+    message.context = self.title;
+    
     if ([self.partner chat_userType] == TLChatUserTypeUser) {
         message.partnerType = TLPartnerTypeUser;
         message.friendID = [self.partner chat_userID];

@@ -66,7 +66,7 @@
                         [message.content mj_JSONString],
                         [NSNumber numberWithInteger:message.sendState],
                         [NSNumber numberWithInteger:message.readState],
-                        @"", @"", @"", @"", @"", nil];
+                        message.context, @"", @"", @"", @"", nil];
      ok = [self excuteSQL:sqlString withArrParameter:arrPara];
     
    if (!message.SavedOnServer) {
@@ -77,6 +77,8 @@
     //    msgObject[@"readAt"] = @(message.readState);
         msgObject[@"sender"] = [PFUser currentUser].objectId; // quick way to set pointer
         msgObject[@"localID"] = message.messageID;
+       
+       msgObject[@"context"] = message.context ?: @"";
        
         if ([message isKindOfClass:[TLImageMessage class]]) {
             TLImageMessage * imageMessage = (TLImageMessage*)message;

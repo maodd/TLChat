@@ -20,6 +20,11 @@
     return [UIFont systemFontOfSize:17.0f];
 }
 
++ (UIFont *) fontConversationContext
+{
+    return [UIFont systemFontOfSize:17.0f];
+}
+
 + (UIFont *) fontConversationDetail
 {
     return [UIFont systemFontOfSize:14.0f];

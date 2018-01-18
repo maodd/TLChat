@@ -83,6 +83,9 @@
 //MARK: UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatShowContextInConversationCell"] boolValue]) {
+        return HEIGHT_CONVERSATION_CELL + 20.0;
+    }
     return HEIGHT_CONVERSATION_CELL;
 }
 
@@ -113,6 +116,10 @@
             return;
         }
         [chatVC setPartner:group];
+    }
+    
+    if ([conversation.context length] > 0) {
+        chatVC.title = conversation.context;
     }
     [self setHidesBottomBarWhenPushed:YES];
     [self.navigationController pushViewController:chatVC animated:YES];
@@ -331,6 +338,7 @@
                                                                              type:conv.convType
                                                                              date:message.createdAt
                                                                      last_message:conv.content
+                                                             last_message_context:message[@"context"]
                                                                         localOnly:YES];
         
         [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conv.key] ;

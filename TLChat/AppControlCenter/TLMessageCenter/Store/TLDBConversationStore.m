@@ -44,7 +44,9 @@
     return [self createTable:CONV_TABLE_NAME withSQL:sqlString];
 }
 
-- (BOOL)addConversationByUid:(NSString *)uid fid:(NSString *)fid type:(NSInteger)type date:(NSDate *)date last_message:(NSString*)last_message localOnly:(BOOL)localOnly;
+- (BOOL)addConversationByUid:(NSString *)uid fid:(NSString *)fid type:(NSInteger)type date:(NSDate *)date last_message:(NSString*)last_message
+last_message_context:(NSString*)last_message_context
+                   localOnly:(BOOL)localOnly;
 {
     NSString * dialogKey = @"";
     NSString * dialogName = @"";
@@ -73,7 +75,7 @@
                         last_message,
                         dialogKey,
                         [NSNumber numberWithInteger:unreadCount],
-                        @"", @"", @"", @"", @"", nil];
+                        last_message_context, @"", @"", @"", @"", nil];
     BOOL ok = [self excuteSQL:sqlString withArrParameter:arrPara];
     
     
@@ -99,6 +101,7 @@
             dialog[@"key"] = dialogKey;
             dialog[@"user"] = [PFUser currentUser];
             
+            dialog[@"context"] = last_message_context;
 
             dialog[@"name"] = dialogName;
             
@@ -206,6 +209,7 @@
             conversation.unreadCount = [retSet intForColumn:@"unread_count"];
             conversation.content = [retSet stringForColumn:@"last_message"];
             conversation.key = [retSet stringForColumn:@"key"];
+            conversation.context = [retSet stringForColumn:@"ext1"];
             [data addObject:conversation];
         }
         [retSet close];
@@ -241,6 +245,7 @@
             
             conversation.unreadCount = [retSet intForColumn:@"unread_count"];
             conversation.content = [retSet stringForColumn:@"last_message"];
+            conversation.context = [retSet stringForColumn:@"ext1"];
             conversation.key = [retSet stringForColumn:@"key"];
             [data addObject:conversation];
         }

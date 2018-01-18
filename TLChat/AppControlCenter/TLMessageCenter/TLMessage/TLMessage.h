@@ -58,6 +58,8 @@ typedef NS_ENUM(NSInteger, TLMessageReadState) {
 @property (nonatomic, strong) NSString *friendID;                   // 接收者ID
 @property (nonatomic, strong) NSString *groupID;                    // 讨论组ID（无则为nil）
 
+@property (nonatomic, strong) NSString *context;                    // title or subject of message.
+
 @property (nonatomic, strong) NSDate *date;                         // 发送时间
 
 @property (nonatomic, strong) id<TLChatUserProtocol> fromUser;      // 发送者

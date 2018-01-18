@@ -191,6 +191,7 @@ static BOOL isLoadingData = NO;
                                                                                      type:TLConversationTypePersonal
                                                                                      date:object.createdAt
                                                                              last_message:[TLMessage conversationContentForMessage: object[@"message"]]
+                                                                     last_message_context:object[@"context"] ?: @""
                                                                                 localOnly:YES];
                 
             }else{
@@ -201,6 +202,7 @@ static BOOL isLoadingData = NO;
                                                                                          type:TLConversationTypePersonal
                                                                                          date:friend.date
                                                                                  last_message:@"Let's start chat"
+                                                                         last_message_context:object[@"context"] ?: @""
                                                                                     localOnly:YES];
                 };
             }
