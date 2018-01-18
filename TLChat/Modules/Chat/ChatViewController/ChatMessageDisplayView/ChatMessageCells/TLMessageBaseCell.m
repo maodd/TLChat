@@ -142,6 +142,15 @@
     }];
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatAvatarInRoundShape"] boolValue]) {
+        [self.avatarButton.layer setCornerRadius:self.avatarButton.size.height / 2.0];
+    }
+}
+
+
 #pragma mark - Event Response -
 - (void)avatarButtonDown:(UIButton *)sender
 {
