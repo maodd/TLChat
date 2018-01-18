@@ -41,6 +41,8 @@
     [self p_initUI];        // 初始化界面UI
     [self registerCellClass];
     
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+    
     [[TLMessageManager sharedInstance] setConversationDelegate:self];
    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkStatusChange:) name:AFNetworkingReachabilityDidChangeNotification object:nil];
