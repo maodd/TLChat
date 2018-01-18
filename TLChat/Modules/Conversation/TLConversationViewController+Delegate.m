@@ -223,7 +223,7 @@
     
     self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
     __weak TLConversationViewController * weakSelf = self;
-    [self.navigationItem setTitle:@"聊天"];
+//    [self.navigationItem setTitle:@"聊天"];
 //    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
 //        DLog(@"Subscribed");
 //        dispatch_async(dispatch_get_main_queue(), ^{
@@ -271,7 +271,7 @@
 - (void)liveQuery:(PFQuery<PFObject *> *)query didSubscribeInClient:(PFLiveQueryClient *)client {
     DLog(@"Subscribed");
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationItem setTitle:@"聊天"];
+//        [self.navigationItem setTitle:@"聊天"];
     });
 }
 
