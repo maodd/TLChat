@@ -215,13 +215,21 @@
     
     self.client = [[PFLiveQueryClient alloc] init];
     
-    self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
+ 
     
-
-    [self.query whereKey:@"dialogKey" containedIn:keys];
+    PFQuery * query1 = [PFQuery queryWithClassName:kParseClassNameMessage];
+    [query1 whereKey:@"dialogKey" containedIn:keys];
+    
+    
+    PFQuery * query2 = [PFQuery queryWithClassName:kParseClassNameMessage];
+    [query2 whereKey:@"dialogKey" containsString:[TLUserHelper sharedHelper].userID];
+    
+    self.query = query2; //[PFQuery orQueryWithSubqueries:@[query1, query2]];
 
     
     self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
+    
+    self.subscription1 = [self.client  subscribeToQuery:query1 withHandler:self];
     __weak TLConversationViewController * weakSelf = self;
 //    [self.navigationItem setTitle:@"聊天"];
 //    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
