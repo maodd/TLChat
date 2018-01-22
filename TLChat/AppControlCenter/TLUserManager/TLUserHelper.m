@@ -66,21 +66,26 @@
         if (self.userID.length > 0) {
             TLDBUserStore *userStore = [[TLDBUserStore alloc] init];
             _user = [userStore userByID:self.userID];
-//            if (!_user) {
  
-                [[PFUser currentUser] fetch];
-            
-                _user = [TLUser new];
-                _user.userID = self.userID;
-                _user.username = [PFUser currentUser].username;
+ 
+            [[PFUser currentUser] fetch];
+        
+            _user = [TLUser new];
+            _user.userID = self.userID;
+            _user.username = [PFUser currentUser].username;
             _user.nikeName = [PFUser currentUser][kParseUserClassAttributeNickname] ?: _user.username;
-                PFFile * file = [PFUser currentUser][kParseUserClassAttributeAvatar];
-                if (file) {
-                    _user.avatarURL = file.url;
-                }
+            
+            
+            NSString * avatarKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserAvatarFieldName"];
+            
+            NSString * avatarFieldName = avatarKey ?: kParseUserClassAttributeAvatar;
+            
+            PFFile * file = [PFUser currentUser][avatarFieldName];
+            if (file) {
+                _user.avatarURL = file.url;
+            }
 
-                // TODO: subscribe for user avatar change notification.
-//            }
+            
             
             [self setUser:_user];
         }

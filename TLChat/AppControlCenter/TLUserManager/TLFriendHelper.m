@@ -170,7 +170,11 @@ static TLFriendHelper *friendHelper = nil;
         user.username = userObject.username;
         user.nikeName = userObject[kParseUserClassAttributeNickname] ?: user.username ;
         
-        PFFile * file = userObject[kParseUserClassAttributeAvatar];
+        NSString * avatarKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserAvatarFieldName"];
+        
+        NSString * avatarFieldName = avatarKey ?: kParseUserClassAttributeAvatar;
+        
+        PFFile * file = userObject[avatarFieldName];
         if (file) {
             user.avatarURL = file.url;
         }
