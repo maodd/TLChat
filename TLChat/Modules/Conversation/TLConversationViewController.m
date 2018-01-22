@@ -109,8 +109,9 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    [self updateConversationData];  // to update conversation lastes message whenver back to this screen
+    if ([TLUserHelper sharedHelper].isLogin) {
+        [self updateConversationData];  // to update conversation lastes message whenver back to this screen
+    }
 
 }
 
