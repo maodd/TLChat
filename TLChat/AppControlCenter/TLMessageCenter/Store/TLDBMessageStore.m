@@ -66,7 +66,7 @@
                         [message.content mj_JSONString],
                         [NSNumber numberWithInteger:message.sendState],
                         [NSNumber numberWithInteger:message.readState],
-                        message.context, @"", @"", @"", @"", nil];
+                        message.context ?: @"", @"", @"", @"", @"", nil];
      ok = [self excuteSQL:sqlString withArrParameter:arrPara];
     
    if (!message.SavedOnServer) {
