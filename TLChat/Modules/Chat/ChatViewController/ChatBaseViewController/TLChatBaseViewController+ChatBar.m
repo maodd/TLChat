@@ -78,6 +78,7 @@
         return;
     }
     [self.chatBar mas_updateConstraints:^(MASConstraintMaker *make) {
+        
         make.bottom.mas_equalTo(self.view).mas_offset(-keyboardFrame.size.height);
     }];
     [self.view layoutIfNeeded];
@@ -93,7 +94,12 @@
         return;
     }
     [self.chatBar mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(self.view);
+        CGFloat bottomPadding = 0;
+        if (@available(iOS 11.0, *)) {
+            UIWindow *window = UIApplication.sharedApplication.keyWindow;
+            bottomPadding = window.safeAreaInsets.bottom;
+        }
+        make.bottom.mas_equalTo(self.view).mas_offset( - bottomPadding);
     }];
     [self.view layoutIfNeeded];
 }

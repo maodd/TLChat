@@ -621,7 +621,14 @@
         make.bottom.mas_equalTo(self.chatBar.mas_top);
     }];
     [self.chatBar mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.and.right.and.bottom.mas_equalTo(self.view);
+        make.left.and.right.mas_equalTo(self.view);
+
+        CGFloat bottomPadding = 0;
+        if (@available(iOS 11.0, *)) {
+            UIWindow *window = UIApplication.sharedApplication.keyWindow;
+            bottomPadding = window.safeAreaInsets.bottom;
+        }
+        make.bottom.mas_equalTo(self.view).offset(-bottomPadding);
         make.height.mas_greaterThanOrEqualTo(TABBAR_HEIGHT);
     }];
     [self.view layoutIfNeeded];
