@@ -75,7 +75,7 @@ last_message_context:(NSString*)last_message_context
                         last_message,
                         dialogKey,
                         [NSNumber numberWithInteger:unreadCount],
-                        last_message_context, @"", @"", @"", @"", nil];
+                        last_message_context ?: @"", @"", @"", @"", @"", nil];
     BOOL ok = [self excuteSQL:sqlString withArrParameter:arrPara];
     
     

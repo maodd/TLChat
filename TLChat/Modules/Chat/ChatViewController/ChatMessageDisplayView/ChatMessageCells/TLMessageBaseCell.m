@@ -57,6 +57,10 @@
  
         [self.avatarButton setImage:[UIImage imageNamed:path] forState:UIControlStateNormal];
         
+        if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatAvatarInRoundShape"] boolValue]) {
+            [self.avatarButton.layer setCornerRadius:self.avatarButton.size.height / 2.0];
+        }
+        
     }
     else if ([message.fromUser chat_avatarURL].length > 0) {
         [self.avatarButton tt_setImageWithURL:TLURL([message.fromUser chat_avatarURL]) forState:UIControlStateNormal];
