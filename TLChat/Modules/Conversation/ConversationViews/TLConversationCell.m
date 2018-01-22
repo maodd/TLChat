@@ -21,6 +21,7 @@
 @property (nonatomic, strong) UIImageView *avatarImageView;
 
 @property (nonatomic, strong) UILabel *usernameLabel;
+@property (nonatomic, strong) UILabel *contextLabel;
 
 @property (nonatomic, strong) UILabel *detailLabel;
 
@@ -32,7 +33,9 @@
 
 @end
 
-@implementation TLConversationCell
+@implementation TLConversationCell {
+ 
+}
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -41,12 +44,15 @@
         
         [self.contentView addSubview:self.avatarImageView];
         [self.contentView addSubview:self.usernameLabel];
+        [self.contentView addSubview:self.contextLabel];
         [self.contentView addSubview:self.detailLabel];
         [self.contentView addSubview:self.timeLabel];
         [self.contentView addSubview:self.remindImageView];
         [self.contentView addSubview:self.redPointView];
         
         [self p_addMasonry];
+ 
+        
     }
     return self;
 }
@@ -73,6 +79,9 @@
     [self.usernameLabel setText:conversation.partnerName];
     [self.detailLabel setText:conversation.content];
     [self.timeLabel setText:conversation.date.conversaionTimeInfo];
+    
+    [self.contextLabel setText:conversation.context];
+    
     switch (conversation.remindType) {
         case TLMessageRemindTypeNormal:
             [self.remindImageView setHidden:YES];
@@ -151,16 +160,29 @@
         make.width.mas_equalTo(self.avatarImageView.mas_height);
     }];
     
+
     [self.usernameLabel setContentCompressionResistancePriority:100 forAxis:UILayoutConstraintAxisHorizontal];
     [self.usernameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.avatarImageView.mas_right).mas_offset(CONV_SPACE_X);
-        make.top.mas_equalTo(self.avatarImageView).mas_offset(2.0);
+        make.top.mas_equalTo(self.contentView).mas_offset(10.0);
         make.right.mas_lessThanOrEqualTo(self.timeLabel.mas_left).mas_offset(-5);
     }];
     
+    if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatShowContextInConversationCell"] boolValue]) {
+        [self.contextLabel setContentCompressionResistancePriority:105 forAxis:UILayoutConstraintAxisHorizontal];
+        [self.contextLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo(self.usernameLabel.mas_bottom).mas_offset(3.0);
+            make.left.mas_equalTo(self.usernameLabel);
+            make.right.mas_equalTo(self.contentView).mas_offset(-CONV_SPACE_X);
+        }];
+        
+    }else{
+ 
+    }
+    
     [self.detailLabel setContentCompressionResistancePriority:110 forAxis:UILayoutConstraintAxisHorizontal];
     [self.detailLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(self.avatarImageView).mas_offset(-2.0);
+        make.bottom.mas_equalTo(self.contentView).mas_offset(-10.0);
         make.left.mas_equalTo(self.usernameLabel);
         make.right.mas_lessThanOrEqualTo(self.remindImageView.mas_left);
     }];
@@ -184,6 +206,14 @@
     }];
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatAvatarInRoundShape"] boolValue]) {
+        [_avatarImageView.layer setCornerRadius:_avatarImageView.size.height / 2.0];
+    }
+}
+
 #pragma mark - Getter
 - (UIImageView *)avatarImageView
 {
@@ -202,6 +232,15 @@
         [_usernameLabel setFont:[UIFont fontConversationUsername]];
     }
     return _usernameLabel;
+}
+
+- (UILabel *)contextLabel
+{
+    if (_contextLabel == nil) {
+        _contextLabel = [[UILabel alloc] init];
+        [_contextLabel setFont:[UIFont fontConversationContext]];
+    }
+    return _contextLabel;
 }
 
 - (UILabel *)detailLabel

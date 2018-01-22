@@ -26,7 +26,9 @@
     
     NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:message];
     
-    BOOL ok = [self.conversationStore addConversationByUid:[TLUserHelper sharedHelper].userID fid:partnerID type:type date:message.date last_message:lastMsg localOnly:NO];
+    BOOL ok = [self.conversationStore addConversationByUid:[TLUserHelper sharedHelper].userID fid:partnerID type:type date:message.date last_message:lastMsg
+               last_message_context:message.context
+                                                 localOnly:NO];
     
     return ok;
 }

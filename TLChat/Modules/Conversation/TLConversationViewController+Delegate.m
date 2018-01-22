@@ -83,6 +83,9 @@
 //MARK: UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatShowContextInConversationCell"] boolValue]) {
+        return HEIGHT_CONVERSATION_CELL + 20.0;
+    }
     return HEIGHT_CONVERSATION_CELL;
 }
 
@@ -113,6 +116,10 @@
             return;
         }
         [chatVC setPartner:group];
+    }
+    
+    if ([conversation.context length] > 0) {
+        chatVC.title = conversation.context;
     }
     [self setHidesBottomBarWhenPushed:YES];
     [self.navigationController pushViewController:chatVC animated:YES];
@@ -215,15 +222,23 @@
     
     self.client = [[PFLiveQueryClient alloc] init];
     
-    self.query = [PFQuery queryWithClassName:kParseClassNameMessage];
+ 
     
-
-    [self.query whereKey:@"dialogKey" containedIn:keys];
+    PFQuery * query1 = [PFQuery queryWithClassName:kParseClassNameMessage];
+    [query1 whereKey:@"dialogKey" containedIn:keys];
+    
+    
+    PFQuery * query2 = [PFQuery queryWithClassName:kParseClassNameMessage];
+    [query2 whereKey:@"dialogKey" containsString:[TLUserHelper sharedHelper].userID];
+    
+    self.query = query2; //[PFQuery orQueryWithSubqueries:@[query1, query2]];
 
     
     self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
+    
+    self.subscription1 = [self.client  subscribeToQuery:query1 withHandler:self];
     __weak TLConversationViewController * weakSelf = self;
-    [self.navigationItem setTitle:@"聊天"];
+//    [self.navigationItem setTitle:@"聊天"];
 //    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
 //        DLog(@"Subscribed");
 //        dispatch_async(dispatch_get_main_queue(), ^{
@@ -271,7 +286,7 @@
 - (void)liveQuery:(PFQuery<PFObject *> *)query didSubscribeInClient:(PFLiveQueryClient *)client {
     DLog(@"Subscribed");
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationItem setTitle:@"聊天"];
+//        [self.navigationItem setTitle:@"聊天"];
     });
 }
 
@@ -323,6 +338,7 @@
                                                                              type:conv.convType
                                                                              date:message.createdAt
                                                                      last_message:conv.content
+                                                             last_message_context:message[@"context"]
                                                                         localOnly:YES];
         
         [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conv.key] ;

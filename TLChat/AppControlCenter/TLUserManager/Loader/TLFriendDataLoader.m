@@ -108,7 +108,7 @@ static BOOL isLoadingData = NO;
                         
                         dispatch_group_enter(serviceGroup);
                         i = i + 1;
-                        DLog(@"friends items %ld", (long)i);
+//                        DLog(@"friends items %ld", (long)i);
                         [self createFriendDialogWithLatestMessage:friend completionBlock:^{
                             
                             DLog(@"friend.userID %@", friend.userID);
@@ -129,7 +129,7 @@ static BOOL isLoadingData = NO;
                                 dispatch_group_leave(serviceGroup);
                                 
                                 i = i - 1;
-                                DLog(@"friends items %ld", (long)i);
+//                                DLog(@"friends items %ld", (long)i);
                             }
                             
                             
@@ -191,6 +191,7 @@ static BOOL isLoadingData = NO;
                                                                                      type:TLConversationTypePersonal
                                                                                      date:object.createdAt
                                                                              last_message:[TLMessage conversationContentForMessage: object[@"message"]]
+                                                                     last_message_context:object[@"context"] ?: @""
                                                                                 localOnly:YES];
                 
             }else{
@@ -201,6 +202,7 @@ static BOOL isLoadingData = NO;
                                                                                          type:TLConversationTypePersonal
                                                                                          date:friend.date
                                                                                  last_message:@"Let's start chat"
+                                                                         last_message_context:object[@"context"] ?: @""
                                                                                     localOnly:YES];
                 };
             }

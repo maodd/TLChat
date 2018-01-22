@@ -78,6 +78,7 @@ typedef NS_ENUM(NSInteger, TLMessageRemindType) {
  *  消息展示内容
  */
 @property (nonatomic, strong) NSString *content;
+@property (nonatomic, strong) NSString *context;
 
 /**
  *  提示红点类型

@@ -36,10 +36,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.navigationItem setTitle:@"聊天"];
+//    [self.navigationItem setTitle:@"聊天"];
     
     [self p_initUI];        // 初始化界面UI
     [self registerCellClass];
+    
+    self.edgesForExtendedLayout = UIRectEdgeNone;
     
     [[TLMessageManager sharedInstance] setConversationDelegate:self];
    
@@ -147,10 +149,10 @@
         case AFNetworkReachabilityStatusReachableViaWiFi:
         case AFNetworkReachabilityStatusReachableViaWWAN:
         case AFNetworkReachabilityStatusUnknown:
-            [self.navigationItem setTitle:@"聊天"];
+//            [self.navigationItem setTitle:@"聊天"];
             break;
         case AFNetworkReachabilityStatusNotReachable:
-            [self.navigationItem setTitle:@"聊天(未连接)"];
+//            [self.navigationItem setTitle:@"聊天(未连接)"];
             break;
         default:
             break;
