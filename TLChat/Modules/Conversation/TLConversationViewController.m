@@ -57,6 +57,9 @@
     
     [[NSNotificationCenter defaultCenter] addObserverForName:kAKUserLoggedOutNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         [[TLFriendHelper sharedFriendHelper] reset];
+        [self updateConversationData];
+        
+      
     }];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKFriendsAndGroupDataUpdateNotification object:nil];
