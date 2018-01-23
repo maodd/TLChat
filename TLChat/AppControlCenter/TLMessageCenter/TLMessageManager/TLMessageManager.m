@@ -10,6 +10,7 @@
 #import "TLMessageManager+ConversationRecord.h"
 #import "TLUserHelper.h"
 #import "TLMacros.h"
+#import "TLTextMessage.h"
 
 static TLMessageManager *messageManager;
 
@@ -72,4 +73,37 @@ static TLMessageManager *messageManager;
     return [TLUserHelper sharedHelper].userID;
 }
 
+
+# pragma mark - send message to the other user in background
+
+- (void)sendTextMessageToUser:(NSString *)userId messageContent:(NSString *)messageContent context:(NSString *)context
+{
+    TLTextMessage * message = [[TLTextMessage alloc] init];
+    message.ownerTyper = TLMessageOwnerTypeSelf;
+    message.userID = [TLUserHelper sharedHelper].userID;
+    message.fromUser = (id<TLChatUserProtocol>)[TLUserHelper sharedHelper].user;
+    message.date = [NSDate date];
+    message.text = messageContent;
+    message.context = context;
+    
+    
+    message.partnerType = TLPartnerTypeUser;
+    message.friendID = userId;
+    
+    
+    
+    [[TLMessageManager sharedInstance] sendMessage:message progress:^(TLMessage * message, CGFloat pregress) {
+        
+    } success:^(TLMessage * message) {
+        NSLog(@"send success");
+        
+        
+        
+        
+    } failure:^(TLMessage * message) {
+        NSLog(@"send failure");
+    }];
+    
+//    [[TLMessageManager sharedInstance].conversationStore updateLastReadDateForConversationByUid:[self.partner chat_userID] key:self.conversationKey];
+}
 @end

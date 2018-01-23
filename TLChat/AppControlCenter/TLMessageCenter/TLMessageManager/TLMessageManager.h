@@ -34,4 +34,6 @@
             failure:(void (^)(TLMessage *))failure;
 
 
+- (void)sendTextMessageToUser:(NSString *)userId messageContent:(NSString *)messageContent context:(NSString *)context;
+
 @end
