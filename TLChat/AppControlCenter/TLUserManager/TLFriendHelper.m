@@ -159,6 +159,10 @@ static TLFriendHelper *friendHelper = nil;
         }
     }
     
+    NSString * avatarKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserAvatarFieldName"];
+    
+    NSString * avatarFieldName = avatarKey ?: kParseUserClassAttributeAvatar;
+    
     // TODO: persisent to db.
     NSArray * matches = [self.users filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"objectId == %@", userID]];
     if (matches.count > 0) {
@@ -170,9 +174,7 @@ static TLFriendHelper *friendHelper = nil;
         user.username = userObject.username;
         user.nikeName = userObject[kParseUserClassAttributeNickname] ?: user.username ;
         
-        NSString * avatarKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserAvatarFieldName"];
-        
-        NSString * avatarFieldName = avatarKey ?: kParseUserClassAttributeAvatar;
+
         
         PFFile * file = userObject[avatarFieldName];
         if (file) {
@@ -190,11 +192,14 @@ static TLFriendHelper *friendHelper = nil;
     
     TLUser * user = [TLUser new];
     user.userID = userObject.objectId;
-    DLog(@"user name: %@", userObject[kParseUserClassAttributeNickname]);
-    user.username = userObject.username;
-    user.nikeName = userObject[kParseUserClassAttributeNickname] ?: user.username;
     
-    PFFile * file = userObject[kParseUserClassAttributeAvatar];
+    NSString * nicknameKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserNickNameFieldName"];
+    NSString * nicknameFieldName = nicknameKey ?: kParseUserClassAttributeNickname;
+    DLog(@"user name: %@", userObject[nicknameFieldName]);
+    user.username = userObject.username;
+    user.nikeName = userObject[nicknameFieldName] ?: user.username;
+    
+    PFFile * file = userObject[avatarFieldName];
     if (file) {
         user.avatarURL = file.url;
     }
