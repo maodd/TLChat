@@ -80,19 +80,22 @@
         // 头像
         [self.avatarButton mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(AVATAR_WIDTH);
+    
             
-            if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatHideOwnAvatarInChat"] boolValue]) {
-                make.width.mas_equalTo(0);
-            }else{
-                make.width.mas_equalTo(AVATAR_WIDTH);
-            }
+            
             
             
             make.top.mas_equalTo(self.timeLabel.mas_bottom).mas_offset(AVATAR_SPACE_Y);
             if(message.ownerTyper == TLMessageOwnerTypeSelf) {
                 make.right.mas_equalTo(self.contentView).mas_offset(-AVATAR_SPACE_X);
+                if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatHideOwnAvatarInChat"] boolValue]) {
+                    make.width.mas_equalTo(0);
+                }else{
+                    make.width.mas_equalTo(AVATAR_WIDTH);
+                }
             }
             else {
+                make.width.mas_equalTo(AVATAR_WIDTH);
                 make.left.mas_equalTo(self.contentView).mas_offset(AVATAR_SPACE_X);
             }
         }];
