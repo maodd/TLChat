@@ -11,5 +11,6 @@
 @interface NSString (Message)
 
 - (NSAttributedString *)toMessageString;
+- (NSAttributedString *)toMessageStringInWhiteTextColor;
 
 @end

@@ -43,10 +43,14 @@ static BOOL isLoadingData = NO;
         return;
     }
     isLoadingData = YES;
-    NSString * nicknameKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserNickNameFieldName"];
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
+    
+    NSString * nicknameKey = [dict objectForKey:@"TLChatUserNickNameFieldName"];
     NSString * nicknameFieldName = nicknameKey ?: kParseUserClassAttributeNickname;
     
-    NSString * avatarKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserAvatarFieldName"];
+    NSString * avatarKey = [dict objectForKey:@"TLChatUserAvatarFieldName"];
     NSString * avatarFieldName = avatarKey ?: kParseUserClassAttributeAvatar;
     
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
@@ -68,11 +72,11 @@ static BOOL isLoadingData = NO;
             nickName = [regex stringByReplacingMatchesInString:nickName options:0 range:NSMakeRange(0, [nickName length]) withTemplate:@" "];
    
             model.username = nickName;
-            model.nikeName = user[nicknameFieldName];
+            model.nikeName = [nicknameFieldName isEqualToString:@"username"] ? user.username : user[nicknameFieldName];
             
       
-            if (user[avatarKey] && user[avatarKey] != [NSNull null]) {
-                PFFile * file = user[avatarKey];
+            if (user[avatarFieldName] && user[avatarFieldName] != [NSNull null]) {
+                PFFile * file = user[avatarFieldName];
                 model.avatarURL = file.url;
             }
             model.date = user.updatedAt;

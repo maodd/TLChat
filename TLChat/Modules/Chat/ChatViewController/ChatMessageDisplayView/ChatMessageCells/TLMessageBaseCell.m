@@ -57,7 +57,10 @@
  
         [self.avatarButton setImage:[UIImage imageNamed:path] forState:UIControlStateNormal];
         
-        if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatAvatarInRoundShape"] boolValue]) {
+        NSString *plistPath = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: plistPath];
+        
+        if ([[dict objectForKey:@"TLChatAvatarInRoundShape"] boolValue]) {
             [self.avatarButton.layer setCornerRadius:self.avatarButton.size.height / 2.0];
         }
         
@@ -88,7 +91,11 @@
             make.top.mas_equalTo(self.timeLabel.mas_bottom).mas_offset(AVATAR_SPACE_Y);
             if(message.ownerTyper == TLMessageOwnerTypeSelf) {
                 make.right.mas_equalTo(self.contentView).mas_offset(-AVATAR_SPACE_X);
-                if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatHideOwnAvatarInChat"] boolValue]) {
+                
+                NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+                NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
+                
+                if ([[dict objectForKey:@"TLChatHideOwnAvatarInChat"] boolValue]) {
                     make.width.mas_equalTo(0);
                 }else{
                     make.width.mas_equalTo(AVATAR_WIDTH);
@@ -160,7 +167,10 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatAvatarInRoundShape"] boolValue]) {
+    NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
+    
+    if ([[dict objectForKey:@"TLChatAvatarInRoundShape"] boolValue]) {
         [self.avatarButton.layer setCornerRadius:self.avatarButton.size.height / 2.0];
     }
 }

@@ -83,7 +83,10 @@
 //MARK: UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatShowContextInConversationCell"] boolValue]) {
+    NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
+    
+    if ([[dict objectForKey:@"TLChatShowContextInConversationCell"] boolValue]) {
         return HEIGHT_CONVERSATION_CELL + 20.0;
     }
     return HEIGHT_CONVERSATION_CELL;

@@ -168,7 +168,10 @@
         make.right.mas_lessThanOrEqualTo(self.timeLabel.mas_left).mas_offset(-5);
     }];
     
-    if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatShowContextInConversationCell"] boolValue]) {
+    NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
+    
+    if ([[dict objectForKey:@"TLChatShowContextInConversationCell"] boolValue]) {
         [self.contextLabel setContentCompressionResistancePriority:105 forAxis:UILayoutConstraintAxisHorizontal];
         [self.contextLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(self.usernameLabel.mas_bottom).mas_offset(3.0);
@@ -209,7 +212,11 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatAvatarInRoundShape"] boolValue]) {
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
+    
+    if ([[dict objectForKey:@"TLChatAvatarInRoundShape"] boolValue]) {
         [_avatarImageView.layer setCornerRadius:_avatarImageView.size.height / 2.0];
     }
 }
