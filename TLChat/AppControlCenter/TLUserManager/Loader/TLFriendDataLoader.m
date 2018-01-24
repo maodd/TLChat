@@ -33,8 +33,8 @@ static BOOL isLoadingData = NO;
 
 - (void)p_loadFriendsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *friends))completionBlock {
     
-    PFRelation * friendsRelation = [[PFUser currentUser] relationForKey:@"friends"];
-    PFQuery * query = [friendsRelation query] ;
+  
+    PFQuery * query = [PFUser query] ;
     query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     
     NSMutableArray<TLUser*> *friends = [NSMutableArray array];
@@ -43,7 +43,13 @@ static BOOL isLoadingData = NO;
         return;
     }
     isLoadingData = YES;
-    [[friendsRelation query] findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+    NSString * nicknameKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserNickNameFieldName"];
+    NSString * nicknameFieldName = nicknameKey ?: kParseUserClassAttributeNickname;
+    
+    NSString * avatarKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserAvatarFieldName"];
+    NSString * avatarFieldName = avatarKey ?: kParseUserClassAttributeAvatar;
+    
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         
         isLoadingData = NO;
         
@@ -62,11 +68,11 @@ static BOOL isLoadingData = NO;
             nickName = [regex stringByReplacingMatchesInString:nickName options:0 range:NSMakeRange(0, [nickName length]) withTemplate:@" "];
    
             model.username = nickName;
-            model.nikeName = nickName;
+            model.nikeName = user[nicknameFieldName];
             
       
-            if (user[@"headerImage1"] && user[@"headerImage1"] != [NSNull null]) {
-                PFFile * file = user[@"headerImage1"];
+            if (user[avatarKey] && user[avatarKey] != [NSNull null]) {
+                PFFile * file = user[avatarKey];
                 model.avatarURL = file.url;
             }
             model.date = user.updatedAt;
