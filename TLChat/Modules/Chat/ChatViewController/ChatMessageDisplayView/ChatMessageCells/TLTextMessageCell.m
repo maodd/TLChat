@@ -9,6 +9,7 @@
 #import "TLTextMessageCell.h"
 #import <Masonry/Masonry.h>
 #import "UIFont+TLChat.h"
+#import "NSString+Message.h"
 
 #define     MSG_SPACE_TOP       14
 #define     MSG_SPACE_BTM       20
@@ -38,7 +39,17 @@
     }
     TLMessageOwnerType lastOwnType = self.message ? self.message.ownerTyper : -1;
     [super setMessage:message];
-    [self.messageLabel setAttributedText:[message attrText]];
+    if (message.ownerTyper == TLMessageOwnerTypeSelf) {
+        NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
+        
+        if ([[dict objectForKey:@"TLChatOwnMessageTextInWhiteColor"] boolValue]) {
+            [self.messageLabel setAttributedText:[message.text toMessageStringInWhiteTextColor]];
+        }
+        
+    }else{
+        [self.messageLabel setAttributedText:[message attrText]];
+    }
     
     [self.messageLabel setContentCompressionResistancePriority:500 forAxis:UILayoutConstraintAxisHorizontal];
     [self.messageBackgroundView setContentCompressionResistancePriority:100 forAxis:UILayoutConstraintAxisHorizontal];
@@ -46,6 +57,8 @@
         if (message.ownerTyper == TLMessageOwnerTypeSelf) {
             [self.messageBackgroundView setImage:[UIImage imageNamed:@"message_sender_bg"]];
             [self.messageBackgroundView setHighlightedImage:[UIImage imageNamed:@"message_sender_bgHL"]];
+            
+
             
             [self.messageLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.right.mas_equalTo(self.messageBackgroundView).mas_offset(-MSG_SPACE_RIGHT);

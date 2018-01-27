@@ -73,12 +73,18 @@
             _user = [TLUser new];
             _user.userID = self.userID;
             _user.username = [PFUser currentUser].username;
-            _user.nikeName = [PFUser currentUser][kParseUserClassAttributeNickname] ?: _user.username;
             
+            NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+            NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
             
-            NSString * avatarKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserAvatarFieldName"];
-            
+            NSString * avatarKey = [dict objectForKey:@"TLChatUserAvatarFieldName"];
             NSString * avatarFieldName = avatarKey ?: kParseUserClassAttributeAvatar;
+            NSString * nicknameKey = [dict objectForKey:@"TLChatUserNickNameFieldName"];
+            NSString * nicknameFieldName = nicknameKey ?: kParseUserClassAttributeNickname;
+            
+            _user.nikeName = [PFUser currentUser][nicknameFieldName] ?: _user.username;
+            
+
             
             PFFile * file = [PFUser currentUser][avatarFieldName];
             if (file) {

@@ -16,7 +16,7 @@
 #import "TLMacros.h"
 
 @implementation TLFriendDataLoader {
-    
+ 
 }
 
 static TLFriendDataLoader *friendDataLoader = nil;
@@ -33,8 +33,8 @@ static BOOL isLoadingData = NO;
 
 - (void)p_loadFriendsDataWithCompletionBlock:(void(^)(NSArray<TLUser*> *friends))completionBlock {
     
-    PFRelation * friendsRelation = [[PFUser currentUser] relationForKey:@"friends"];
-    PFQuery * query = [friendsRelation query] ;
+  
+    PFQuery * query = [PFUser query] ;
     query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     
     NSMutableArray<TLUser*> *friends = [NSMutableArray array];
@@ -43,7 +43,17 @@ static BOOL isLoadingData = NO;
         return;
     }
     isLoadingData = YES;
-    [[friendsRelation query] findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
+    
+    NSString * nicknameKey = [dict objectForKey:@"TLChatUserNickNameFieldName"];
+    NSString * nicknameFieldName = nicknameKey ?: kParseUserClassAttributeNickname;
+    
+    NSString * avatarKey = [dict objectForKey:@"TLChatUserAvatarFieldName"];
+    NSString * avatarFieldName = avatarKey ?: kParseUserClassAttributeAvatar;
+    
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         
         isLoadingData = NO;
         
@@ -53,27 +63,27 @@ static BOOL isLoadingData = NO;
         for (PFUser * user in objects) {
             TLUser * model = [TLUser new];
             model.userID = user.objectId;
-            
+      
             NSString * nickName = [user.username stringByTrimmingCharactersInSet:
                                    [NSCharacterSet whitespaceCharacterSet]];
             NSError *error = nil;
             
             NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"  +" options:NSRegularExpressionCaseInsensitive error:&error];
             nickName = [regex stringByReplacingMatchesInString:nickName options:0 range:NSMakeRange(0, [nickName length]) withTemplate:@" "];
-            
+   
             model.username = nickName;
-            model.nikeName = nickName;
+            model.nikeName = [nicknameFieldName isEqualToString:@"username"] ? user.username : user[nicknameFieldName];
             
-            
-            if (user[@"headerImage1"] && user[@"headerImage1"] != [NSNull null]) {
-                PFFile * file = user[@"headerImage1"];
+      
+            if (user[avatarFieldName] && user[avatarFieldName] != [NSNull null]) {
+                PFFile * file = user[avatarFieldName];
                 model.avatarURL = file.url;
             }
             model.date = user.updatedAt;
             
             [friends addObject:model];
             
-            
+  
             
         }
         
@@ -88,11 +98,11 @@ static BOOL isLoadingData = NO;
     
     dispatch_group_t serviceGroup = dispatch_group_create();
     
-    
+
     __block NSInteger i = 0;
-    //    for (TLUser * friend in [TLFriendHelper sharedFriendHelper].friendsData)
+//    for (TLUser * friend in [TLFriendHelper sharedFriendHelper].friendsData)
     PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
-    //    [query whereKey:@"user" equalTo:[PFUser currentUser]];
+//    [query whereKey:@"user" equalTo:[PFUser currentUser]];
     [query whereKey:@"key" containsString:[PFUser currentUser].objectId];
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         for (PFObject * object in objects) {
@@ -108,7 +118,7 @@ static BOOL isLoadingData = NO;
                         
                         dispatch_group_enter(serviceGroup);
                         i = i + 1;
-                        //                        DLog(@"friends items %ld", (long)i);
+//                        DLog(@"friends items %ld", (long)i);
                         [self createFriendDialogWithLatestMessage:friend completionBlock:^{
                             
                             DLog(@"friend.userID %@", friend.userID);
@@ -129,7 +139,7 @@ static BOOL isLoadingData = NO;
                                 dispatch_group_leave(serviceGroup);
                                 
                                 i = i - 1;
-                                //                                DLog(@"friends items %ld", (long)i);
+//                                DLog(@"friends items %ld", (long)i);
                             }
                             
                             
@@ -210,11 +220,10 @@ static BOOL isLoadingData = NO;
             if (completionBlock) {
                 completionBlock();
             }
-            
-            
+           
+
         }];
     }];
 }
 
 @end
-

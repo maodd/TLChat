@@ -92,35 +92,47 @@ static TLFriendHelper *friendHelper = nil;
 
 - (void)loadFriendsAndGroupsData {
     
-    if (_isLoading) {
-        return;
-    }
-    
-    _isLoading = YES;
-    
-    dispatch_group_t serviceGroup = dispatch_group_create();
-    
-    dispatch_group_enter(serviceGroup);
-    NSLog(@"p_loadFriendsDataWithCompleetionBlcok started");
+//    if (_isLoading) {
+//        return;
+//    }
+//
+//    _isLoading = YES;
     [self p_loadFriendsDataWithCompleetionBlcok:^{
-        dispatch_group_leave(serviceGroup);
+      
         NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
-    }];
-    
-    dispatch_group_enter(serviceGroup);
-    NSLog(@"p_loadGroupsDataWithCompleetionBlcok started");
-    [self p_loadGroupsDataWithCompleetionBlcok:^{
-        dispatch_group_leave(serviceGroup);
-        NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
-    }];
-    
-    dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
-        
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
         NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
-        
-        _isLoading = NO;
-    });
+    }];
+    [self p_loadGroupsDataWithCompleetionBlcok:^{
+     
+        NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
+        [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
+        NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
+    }];
+    
+//    dispatch_group_t serviceGroup = dispatch_group_create();
+//
+//    dispatch_group_enter(serviceGroup);
+//    NSLog(@"p_loadFriendsDataWithCompleetionBlcok started");
+//    [self p_loadFriendsDataWithCompleetionBlcok:^{
+//        dispatch_group_leave(serviceGroup);
+//        NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
+//    }];
+//
+//    dispatch_group_enter(serviceGroup);
+//    NSLog(@"p_loadGroupsDataWithCompleetionBlcok started");
+//    [self p_loadGroupsDataWithCompleetionBlcok:^{
+//        dispatch_group_leave(serviceGroup);
+//        NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
+//    }];
+//
+//    dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
+//
+//        [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
+//        NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
+//
+//        _isLoading = NO;
+//    });
 }
 
 #pragma mark - Public Methods -
@@ -159,9 +171,13 @@ static TLFriendHelper *friendHelper = nil;
         }
     }
     
-    NSString * avatarKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserAvatarFieldName"];
+    NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
     
+    NSString * avatarKey = [dict objectForKey:@"TLChatUserAvatarFieldName"];
     NSString * avatarFieldName = avatarKey ?: kParseUserClassAttributeAvatar;
+    NSString * nicknameKey = [dict objectForKey:@"TLChatUserNickNameFieldName"];
+    NSString * nicknameFieldName = nicknameKey ?: kParseUserClassAttributeNickname;
     
     // TODO: persisent to db.
     NSArray * matches = [self.users filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"objectId == %@", userID]];
@@ -172,7 +188,7 @@ static TLFriendHelper *friendHelper = nil;
         user.userID = userObject.objectId;
 //        DLog(@"user name: %@", userObject.username);
         user.username = userObject.username;
-        user.nikeName = userObject[kParseUserClassAttributeNickname] ?: user.username ;
+        user.nikeName = userObject[nicknameFieldName] ?: user.username ;
         
 
         
@@ -193,8 +209,7 @@ static TLFriendHelper *friendHelper = nil;
     TLUser * user = [TLUser new];
     user.userID = userObject.objectId;
     
-    NSString * nicknameKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"TLChatUserNickNameFieldName"];
-    NSString * nicknameFieldName = nicknameKey ?: kParseUserClassAttributeNickname;
+
     DLog(@"user name: %@", userObject[nicknameFieldName]);
     user.username = userObject.username;
     user.nikeName = userObject[nicknameFieldName] ?: user.username;
