@@ -53,11 +53,16 @@ static TLUIManager *uiManager = nil;
     
         for (UIViewController * vc in tabVC.viewControllers) {
             if ([vc isKindOfClass:[UINavigationController class]]) {
-                TLChatViewController * chatVC = [navigationController findViewController:@"TLChatViewController"];
-                if (chatVC) {
+                UIViewController * topVC = [(UINavigationController*)vc viewControllers].lastObject;
+                if ([topVC isKindOfClass:[TLChatViewController class]]) {
+                    
+                
+                    TLChatViewController * chatVC = (TLChatViewController*)topVC;
+                
+                   
                     if ([dialogKey isEqualToString:chatVC.conversationKey]) {
                         
-                        [(UINavigationController*)vc popToViewControllerWithClassName:@"TLChatViewController" animated:YES];
+//                        [(UINavigationController*)vc popToViewControllerWithClassName:@"TLChatViewController" animated:YES];
                         
                         tabVC.selectedIndex = [tabVC.viewControllers indexOfObject:vc];
                         return;
