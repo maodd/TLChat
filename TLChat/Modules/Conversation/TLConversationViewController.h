@@ -23,7 +23,9 @@
 
 
 @property (nonatomic, strong) PFLiveQueryClient *client;
+@property (nonatomic, strong) PFLiveQueryClient *client1;
 @property (nonatomic, strong) PFQuery *query;
+@property (nonatomic, strong) PFQuery *query1;
 @property (nonatomic, strong) PFLiveQuerySubscription *subscription; // must use property to hold reference.
 @property (nonatomic, strong) PFLiveQuerySubscription *subscription1; // for group chat
 

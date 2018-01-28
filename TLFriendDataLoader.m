@@ -96,7 +96,7 @@ static BOOL isLoadingData = NO;
 
 - (void)recreateLocalDialogsForFriendsWithCompletionBlock:(void(^)())completionBlock {
     
-    dispatch_group_t serviceGroup = dispatch_group_create();
+
     
 
     __block NSInteger i = 0;
@@ -105,6 +105,9 @@ static BOOL isLoadingData = NO;
 //    [query whereKey:@"user" equalTo:[PFUser currentUser]];
     [query whereKey:@"key" containsString:[PFUser currentUser].objectId];
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+        
+        dispatch_group_t serviceGroup = dispatch_group_create();
+        
         for (PFObject * object in objects) {
             NSArray * userIds = [object[@"key"] componentsSeparatedByString:@":"];
             if ([userIds count] > 0 ) {
@@ -118,7 +121,7 @@ static BOOL isLoadingData = NO;
                         
                         dispatch_group_enter(serviceGroup);
                         i = i + 1;
-//                        DLog(@"friends items %ld", (long)i);
+                        DLog(@"friends items %ld", (long)i);
                         [self createFriendDialogWithLatestMessage:friend completionBlock:^{
                             
                             DLog(@"friend.userID %@", friend.userID);
@@ -131,6 +134,7 @@ static BOOL isLoadingData = NO;
                                     
                                     dispatch_group_leave(serviceGroup);
                                     i = i - 1;
+                                    DLog(@"friends items %ld", (long)i);
                                     DLog(@"friends item %@ unreadmessages: %ld", conversation.key, (long)count);
                                 }];
                             }else{
@@ -139,7 +143,7 @@ static BOOL isLoadingData = NO;
                                 dispatch_group_leave(serviceGroup);
                                 
                                 i = i - 1;
-//                                DLog(@"friends items %ld", (long)i);
+                                DLog(@"friends items %ld", (long)i);
                             }
                             
                             
@@ -152,18 +156,21 @@ static BOOL isLoadingData = NO;
             }
         }
         
+        
+        dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
+            
+            if (completionBlock) {
+                completionBlock();
+                NSLog(@"recreateLocalDialogsForFriendsWithCompletionBlock done");
+            }
+            
+        });
+        
     }];
     
     
     
-    dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
-        
-        if (completionBlock) {
-            completionBlock();
-            NSLog(@"recreateLocalDialogsForFriendsWithCompletionBlock done");
-        }
-        
-    });
+
 }
 
 - (void)createFriendDialogWithLatestMessage:(TLUser *)friend completionBlock:(void(^)())completionBlock

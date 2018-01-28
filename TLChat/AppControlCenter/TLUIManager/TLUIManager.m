@@ -13,6 +13,8 @@
 
 @implementation TLUIManager
 
+
+
 static TLUIManager *uiManager = nil;
 
 + (TLUIManager *)sharedUIManager
@@ -44,9 +46,34 @@ static TLUIManager *uiManager = nil;
 
 - (void)openChatDialog:(NSString *)dialogKey navigationController:(UINavigationController*)navigationController{
     
+    UIViewController * rootVC = [[UIApplication sharedApplication].delegate window].rootViewController;
+    if ([rootVC isKindOfClass:[UITabBarController class]]) {
     
+        UITabBarController * tabVC = (UITabBarController*)rootVC;
     
+        for (UIViewController * vc in tabVC.viewControllers) {
+            if ([vc isKindOfClass:[UINavigationController class]]) {
+                TLChatViewController * chatVC = [navigationController findViewController:@"TLChatViewController"];
+                if (chatVC) {
+                    if ([dialogKey isEqualToString:chatVC.conversationKey]) {
+                        
+                        [(UINavigationController*)vc popToViewControllerWithClassName:@"TLChatViewController" animated:YES];
+                        
+                        tabVC.selectedIndex = [tabVC.viewControllers indexOfObject:vc];
+                        return;
+                    }
+                    
+                }
+            }
+        }
+    }
     
+    [self handleOpenChatDialog:dialogKey navigationController:navigationController];
+   
+
+}
+
+- (void)handleOpenChatDialog:(NSString *)dialogKey navigationController:(UINavigationController*)navigationController {
     TLChatViewController * chatVC = [navigationController findViewController:@"TLChatViewController"];
     if (chatVC) {
         if ([dialogKey isEqualToString:chatVC.conversationKey]) {
@@ -60,9 +87,8 @@ static TLUIManager *uiManager = nil;
     TLChatViewController * vc = [TLChatViewController new];
     
     vc.conversationKey = dialogKey;
-
+    
     [navigationController pushViewController:vc animated:YES];
- 
 }
 
 - (void)openUserDetails:(TLUser *)user navigationController:(UINavigationController*)navigationController {

@@ -220,10 +220,16 @@
 //        [self.client disconnect];
         self.client = nil;
     }
+    if (self.client1) {
+        [self.client1 unsubscribeFromQuery:self.query];
+        //        [self.client disconnect];
+        self.client1 = nil;
+    }
     DLog(@"subscribed keys: %@", keys);
     
     
     self.client = [[PFLiveQueryClient alloc] init];
+    self.client1 = [[PFLiveQueryClient alloc] init];
     
  
     
@@ -235,11 +241,11 @@
     [query2 whereKey:@"dialogKey" containsString:[TLUserHelper sharedHelper].userID];
     
     self.query = query2; //[PFQuery orQueryWithSubqueries:@[query1, query2]];
-
+    self.query1 = query1;
     
     self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
     
-    self.subscription1 = [self.client  subscribeToQuery:query1 withHandler:self];
+    self.subscription1 = [self.client1  subscribeToQuery:query1 withHandler:self];
     __weak TLConversationViewController * weakSelf = self;
 //    [self.navigationItem setTitle:@"聊天"];
 //    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {

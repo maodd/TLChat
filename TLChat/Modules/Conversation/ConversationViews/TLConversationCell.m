@@ -15,6 +15,7 @@
 #define     CONV_SPACE_X            10.0f
 #define     CONV_SPACE_Y            9.5f
 #define     REDPOINT_WIDTH          10.0f
+#define     AVATAR_HEIGHT           40.0f
 
 @interface TLConversationCell()
 
@@ -155,8 +156,10 @@
 {
     [self.avatarImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(CONV_SPACE_X);
-        make.top.mas_equalTo(CONV_SPACE_Y);
-        make.bottom.mas_equalTo(- CONV_SPACE_Y);
+//        make.top.mas_equalTo(CONV_SPACE_Y);
+//        make.bottom.mas_equalTo(- CONV_SPACE_Y);
+        make.centerY.mas_equalTo(self.contentView.mas_centerY);
+        make.height.mas_equalTo(AVATAR_HEIGHT);
         make.width.mas_equalTo(self.avatarImageView.mas_height);
     }];
     
@@ -217,7 +220,7 @@
     NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
     
     if ([[dict objectForKey:@"TLChatAvatarInRoundShape"] boolValue]) {
-        [_avatarImageView.layer setCornerRadius:_avatarImageView.size.height / 2.0];
+        [_avatarImageView.layer setCornerRadius:AVATAR_HEIGHT / 2.0];
     }
 }
 
@@ -227,7 +230,14 @@
     if (_avatarImageView == nil) {
         _avatarImageView = [[UIImageView alloc] init];
         [_avatarImageView.layer setMasksToBounds:YES];
-        [_avatarImageView.layer setCornerRadius:3.0f];
+       
+        NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
+        if ([[dict objectForKey:@"TLChatAvatarInRoundShape"] boolValue]) {
+            [_avatarImageView.layer setCornerRadius:AVATAR_HEIGHT / 2.0];
+        }else{
+            [_avatarImageView.layer setCornerRadius:3.0f];
+        }
     }
     return _avatarImageView;
 }
