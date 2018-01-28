@@ -45,6 +45,8 @@
         
         if ([[dict objectForKey:@"TLChatOwnMessageTextInWhiteColor"] boolValue]) {
             [self.messageLabel setAttributedText:[message.text toMessageStringInWhiteTextColor]];
+        }else{
+            [self.messageLabel setAttributedText:[message attrText]];
         }
         
     }else{

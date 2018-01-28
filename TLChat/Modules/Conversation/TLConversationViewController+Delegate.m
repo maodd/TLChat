@@ -217,14 +217,14 @@
     
     if (self.client) {
         [self.client unsubscribeFromQuery:self.query];
-//        [self.client disconnect];
         self.client = nil;
     }
     if (self.client1) {
-        [self.client1 unsubscribeFromQuery:self.query];
-        //        [self.client disconnect];
+ 
+        [self.client1 unsubscribeFromQuery:self.query1];
         self.client1 = nil;
     }
+ 
     DLog(@"subscribed keys: %@", keys);
     
     
@@ -245,7 +245,9 @@
     
     self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
     
-    self.subscription1 = [self.client1  subscribeToQuery:query1 withHandler:self];
+ 
+    self.subscription1 = [self.client1  subscribeToQuery:self.query1 withHandler:self];
+ 
     __weak TLConversationViewController * weakSelf = self;
 //    [self.navigationItem setTitle:@"聊天"];
 //    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
@@ -318,61 +320,40 @@
     
     DLog(@"message received: %@ %@ %@", message.objectId, message[@"message"], message[@"sender"]);
     
-
+    TLConversation * conv = nil;
     NSArray * matches = [self.data filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@", message[@"dialogKey"]]];
     if (matches.count > 0) {
-        TLConversation * conv = matches.firstObject;
-        
-//        NSInteger idx = [self.data indexOfObject:conv];
-//
-//        NSIndexPath * indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
-//
-//
-        NSString * content = [TLMessage conversationContentForMessage:message[@"message"]];
+        conv = matches.firstObject;
 
-        NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:[TLMessage conversationContentForMessage:  message[@"message"]] fid:message[@"sender"]];
-//
-//
-        conv.content = conv.convType == TLConversationTypeGroup ? lastMsg : content;
-//
-//        conv.unreadCount = conv.unreadCount + 1;
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//             [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-//        });
+    }else{
+        // create new conversation
+        conv = [[TLConversation alloc] init];
+        NSMutableArray * ids = [[  message[@"dialogKey"] componentsSeparatedByString:@":"] mutableCopy];
+        [ids removeObject:[TLUserHelper sharedHelper].userID];
+        conv.partnerID = [ids firstObject];
+        conv.convType = TLConversationTypePersonal;
         
-     
-        [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[TLUserHelper sharedHelper].userID
-                                                                              fid:conv.partnerID
-                                                                             type:conv.convType
-                                                                             date:message.createdAt
-                                                                     last_message:conv.content
-                                                             last_message_context:message[@"context"]
-                                                                        localOnly:YES];
-        
-        [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conv.key] ;
-       
-        [self updateConversationData];
-        
-//        [[TLMessageManager sharedInstance] refreshConversationRecord];
-//
-//        [[TLMessageManager sharedInstance] conversationRecord:^(NSArray *data) {
-//
-//            self.data = [[NSMutableArray alloc] initWithArray:data];
-//
-//            NSInteger totalUnreadCount = 0;
-//            for (TLConversation *conversation in data) {
-//
-//
-//                totalUnreadCount = totalUnreadCount + conversation.unreadCount;
-//            }
-//
-//
-//            [[NSNotificationCenter defaultCenter] postNotificationName:@"updateTabbarBadgeValueNotifi"
-//                                                                object:@{@"unreadMessagesCount":[NSNumber numberWithInteger:totalUnreadCount]}];
-//
-//        }];
     }
+    
+    
+    NSString * content = [TLMessage conversationContentForMessage:message[@"message"]];
+    
+    NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:[TLMessage conversationContentForMessage:  message[@"message"]] fid:message[@"sender"]];
+    
+    conv.content = conv.convType == TLConversationTypeGroup ? lastMsg : content;
+    
+    
+    [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[TLUserHelper sharedHelper].userID
+                                                                          fid:conv.partnerID
+                                                                         type:conv.convType
+                                                                         date:message.createdAt
+                                                                 last_message:conv.content
+                                                         last_message_context:message[@"context"]
+                                                                    localOnly:YES];
+    
+    [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conv.key] ;
+    
+    [self updateConversationData];
     
 }
 

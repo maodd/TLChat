@@ -629,7 +629,7 @@
             bottomPadding = window.safeAreaInsets.bottom;
         }
         make.bottom.mas_equalTo(self.view).offset(-bottomPadding);
-        make.height.mas_greaterThanOrEqualTo(TABBAR_HEIGHT);
+        make.height.mas_greaterThanOrEqualTo(49.0f);
     }];
     [self.view layoutIfNeeded];
 }
