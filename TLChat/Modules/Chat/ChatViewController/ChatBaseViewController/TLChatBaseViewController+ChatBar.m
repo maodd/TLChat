@@ -15,6 +15,7 @@
 #import "NSFileManager+TLChat.h"
 #import <Masonry/Masonry.h>
 #import "TLMacros.h"
+#import <AVFoundation/AVFoundation.h>
 
 @implementation TLChatBaseViewController (ChatBar)
 
@@ -153,6 +154,7 @@
     message.fromUser = (id<TLChatUserProtocol>)[TLUserHelper sharedHelper].user;
     message.msgStatus = TLVoiceMessageStatusRecording;
     message.date = [NSDate date];
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     [[TLAudioRecorder sharedRecorder] startRecordingWithVolumeChangedBlock:^(CGFloat volume) {
         time_count ++;
         if (time_count == 2) {
