@@ -220,10 +220,11 @@
         self.client = nil;
     }
     if (self.client1) {
+ 
         [self.client1 unsubscribeFromQuery:self.query1];
         self.client1 = nil;
     }
-
+ 
     DLog(@"subscribed keys: %@", keys);
     
     
@@ -244,7 +245,9 @@
     
     self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
     
+ 
     self.subscription1 = [self.client1  subscribeToQuery:self.query1 withHandler:self];
+ 
     __weak TLConversationViewController * weakSelf = self;
 //    [self.navigationItem setTitle:@"聊天"];
 //    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
