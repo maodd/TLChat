@@ -13,7 +13,7 @@
 #import "UIColor+TLChat.h"
 #import "UIFont+TLChat.h"
 
-@implementation NSString (Message)  
+@implementation NSString (Message)
 
 - (NSAttributedString *)toMessageStringInWhiteTextColor {
     
@@ -31,7 +31,7 @@
     NSMutableAttributedString *attributeString = [[NSMutableAttributedString alloc] initWithString:self];
     [attributeString addAttribute:NSFontAttributeName value:[UIFont fontTextMessageText] range:NSMakeRange(0, self.length)];
     
-    [attributeString addAttribute:NSForegroundColorAttributeName value:isTextInWhiteColor? [UIColor darkGrayColor] : [UIColor groupTableViewBackgroundColor] range:NSMakeRange(0, self.length)];
+    [attributeString addAttribute:NSForegroundColorAttributeName value:isTextInWhiteColor? [UIColor groupTableViewBackgroundColor] : [UIColor darkGrayColor]  range:NSMakeRange(0, self.length)];
  
     //2、通过正则表达式来匹配字符串
     NSString *regex_emoji = @"\\[[a-zA-Z0-9\\/\\u4e00-\\u9fa5]+\\]"; //匹配表情
