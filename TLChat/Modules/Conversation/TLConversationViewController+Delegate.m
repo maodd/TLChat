@@ -348,6 +348,7 @@
         [ids removeObject:[TLUserHelper sharedHelper].userID];
         conv.partnerID = [ids firstObject];
         conv.convType = TLConversationTypePersonal;
+        conv.key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:conv.partnerID myId:[TLUserHelper sharedHelper].userID];
         
     }
     

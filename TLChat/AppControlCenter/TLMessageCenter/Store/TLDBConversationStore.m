@@ -155,7 +155,7 @@ last_message_context:(NSString*)last_message_context
 
     NSString *sqlString = [NSString stringWithFormat:SQL_UPDATE_CONV, CONV_TABLE_NAME, unreadCount, uid, key];
     
-    [self excuteSQL:sqlString withArrParameter:nil];
+    BOOL ok = [self excuteSQL:sqlString withArrParameter:nil];
     
     return;
 }
