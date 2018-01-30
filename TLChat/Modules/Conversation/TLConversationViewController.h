@@ -15,6 +15,7 @@
 
 @interface TLConversationViewController : TLTableViewController {
     NSArray * _currentKeys;
+    NSString * _currentUserId;
 }
 
 @property (nonatomic, strong) TLFriendSearchViewController *searchVC;
