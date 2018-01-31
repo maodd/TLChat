@@ -208,12 +208,17 @@
     NSArray * keys = [self.data valueForKeyPath:@"key"];
     
     
-    if (_currentKeys && [_currentKeys isEqualToArray: keys] ) {
-        NSLog(@"nothing changed in keys, skipping...");
+    if (_currentKeys && [_currentKeys isEqualToArray: keys]
+        
+        &&
+        
+        _currentUserId && [_currentUserId isEqualToString:[TLUserHelper sharedHelper].userID]
+        ) {
+        NSLog(@"nothing changed in keys or current User id, skipping...");
         return;
     }
     
-    _currentKeys = keys;
+
     
     if (self.client) {
         [self.client unsubscribeFromQuery:self.query];
@@ -225,30 +230,40 @@
         self.client1 = nil;
     }
  
-    DLog(@"subscribed keys: %@", keys);
-    
-    
-    self.client = [[PFLiveQueryClient alloc] init];
-    self.client1 = [[PFLiveQueryClient alloc] init];
+
+    _currentKeys = keys;
+    if (keys.count > 0) {
+        self.client = [[PFLiveQueryClient alloc] init];
+        PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
+        [query whereKey:@"dialogKey" containedIn:keys];
+        self.query = query; //[PFQuery orQueryWithSubqueries:@[query1, query2]];
+        
+        self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
+        
+        
+        DLog(@"keys to subscribe: %@", keys);
+    }else{
+        NSLog(@"key count is zero, no need to subscribe");
+    }
+ 
+    if ([TLUserHelper sharedHelper].userID) {
+        NSLog(@"subscribe message dialog key contains %@", [TLUserHelper sharedHelper].userID);
+        PFQuery * query1 = [PFQuery queryWithClassName:kParseClassNameMessage];
+        [query1 whereKey:@"dialogKey" containsString:[TLUserHelper sharedHelper].userID];
+        self.query1 = query1;
+        self.client1 = [[PFLiveQueryClient alloc] init];
+        self.subscription1 = [self.client1  subscribeToQuery:self.query1 withHandler:self];
+        
+        
+        _currentUserId = [TLUserHelper sharedHelper].userID;
+    }else{
+        NSLog(@"user id is null, logged out or not logged in yet");
+    }
     
  
     
-    PFQuery * query1 = [PFQuery queryWithClassName:kParseClassNameMessage];
-    [query1 whereKey:@"dialogKey" containedIn:keys];
-    
-    
-    PFQuery * query2 = [PFQuery queryWithClassName:kParseClassNameMessage];
-    [query2 whereKey:@"dialogKey" containsString:[TLUserHelper sharedHelper].userID];
-    
-    self.query = query2; //[PFQuery orQueryWithSubqueries:@[query1, query2]];
-    self.query1 = query1;
-    
-    self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
-    
  
-    self.subscription1 = [self.client1  subscribeToQuery:self.query1 withHandler:self];
- 
-    __weak TLConversationViewController * weakSelf = self;
+//    __weak TLConversationViewController * weakSelf = self;
 //    [self.navigationItem setTitle:@"聊天"];
 //    self.subscription = [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
 //        DLog(@"Subscribed");
@@ -313,6 +328,7 @@
 }
 
 - (void)liveQuery:(PFQuery<PFObject *> *)query didEncounterError:(NSError *)error inClient:(PFLiveQueryClient *)client {
+    NSLog(@"livequery error %@", error.localizedDescription);
     
 }
 
@@ -332,6 +348,7 @@
         [ids removeObject:[TLUserHelper sharedHelper].userID];
         conv.partnerID = [ids firstObject];
         conv.convType = TLConversationTypePersonal;
+        conv.key = [[TLFriendHelper sharedFriendHelper] makeDialogNameForFriend:conv.partnerID myId:[TLUserHelper sharedHelper].userID];
         
     }
     
