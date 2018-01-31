@@ -31,9 +31,10 @@
         return;
     }
     _username = username;
-    if (self.remarkName.length == 0 && self.nikeName.length == 0 && self.username.length > 0) {
+    if ( self.username.length > 0) {
         self.pinyin = username.pinyin;
-        self.pinyinInitial = username.pinyinInitial;
+        self.pinyinInitial = [username stringByTrimmingCharactersInSet:
+                              [NSCharacterSet whitespaceCharacterSet]].pinyinInitial;
     }
 }
 
@@ -43,7 +44,7 @@
         return;
     }
     _nikeName = nikeName;
-    if (self.remarkName.length == 0 && self.nikeName.length > 0) {
+    if ( self.nikeName.length > 0) {
         self.pinyin = nikeName.pinyin;
         self.pinyinInitial = nikeName.pinyinInitial;
     }

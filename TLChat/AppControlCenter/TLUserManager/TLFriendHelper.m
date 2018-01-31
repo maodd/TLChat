@@ -209,11 +209,14 @@ static TLFriendHelper *friendHelper = nil;
     TLUser * user = [TLUser new];
     user.userID = userObject.objectId;
     
+    DLog(@"user name: '%@'", userObject.username);
+    user.username = [userObject.username  stringByTrimmingCharactersInSet:
+    [NSCharacterSet whitespaceCharacterSet]];
+    user.nikeName = [userObject[nicknameFieldName] stringByTrimmingCharactersInSet:
+    [NSCharacterSet whitespaceCharacterSet]];
 
-    DLog(@"user name: %@", userObject[nicknameFieldName]);
-    user.username = userObject.username;
-    user.nikeName = userObject[nicknameFieldName] ?: user.username;
-    
+    DLog(@"user nick name: %@", user.nikeName);
+
     PFFile * file = userObject[avatarFieldName];
     if (file) {
         user.avatarURL = file.url;
@@ -350,14 +353,14 @@ static TLFriendHelper *friendHelper = nil;
  
         
 
-
-        [[TLFriendDataLoader sharedFriendDataLoader] recreateLocalDialogsForFriendsWithCompletionBlock:^{
-            
-            if (completionBlock) {
-                completionBlock();
-            }
-        }];
-
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            [[TLFriendDataLoader sharedFriendDataLoader] recreateLocalDialogsForFriendsWithCompletionBlock:^{
+                
+                if (completionBlock) {
+                    completionBlock();
+                }
+            }];
+        });
    
 
     
@@ -383,14 +386,15 @@ static TLFriendHelper *friendHelper = nil;
         }
         
  
-
-        [[TLGroupDataLoader sharedGroupDataLoader] recreateLocalDialogsForGroupsWithCompletionBlock:^{
-        
-            if (completionBlock) {
-                completionBlock();
-            }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            [[TLGroupDataLoader sharedGroupDataLoader] recreateLocalDialogsForGroupsWithCompletionBlock:^{
             
-        }];
+                if (completionBlock) {
+                    completionBlock();
+                }
+                
+            }];
+        });
         
         
         
