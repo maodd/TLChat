@@ -353,14 +353,14 @@ static TLFriendHelper *friendHelper = nil;
  
         
 
-
-        [[TLFriendDataLoader sharedFriendDataLoader] recreateLocalDialogsForFriendsWithCompletionBlock:^{
-            
-            if (completionBlock) {
-                completionBlock();
-            }
-        }];
-
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            [[TLFriendDataLoader sharedFriendDataLoader] recreateLocalDialogsForFriendsWithCompletionBlock:^{
+                
+                if (completionBlock) {
+                    completionBlock();
+                }
+            }];
+        });
    
 
     
@@ -386,14 +386,15 @@ static TLFriendHelper *friendHelper = nil;
         }
         
  
-
-        [[TLGroupDataLoader sharedGroupDataLoader] recreateLocalDialogsForGroupsWithCompletionBlock:^{
-        
-            if (completionBlock) {
-                completionBlock();
-            }
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            [[TLGroupDataLoader sharedGroupDataLoader] recreateLocalDialogsForGroupsWithCompletionBlock:^{
             
-        }];
+                if (completionBlock) {
+                    completionBlock();
+                }
+                
+            }];
+        });
         
         
         
