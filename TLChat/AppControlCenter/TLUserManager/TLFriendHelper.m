@@ -44,7 +44,19 @@ static TLFriendHelper *friendHelper = nil;
     dispatch_once(&once, ^{
         friendHelper = [[TLFriendHelper alloc] init];
         
+        PFQuery * myDialogQuery = [PFQuery queryWithClassName:@"ChatDialog"];
+        [myDialogQuery whereKey:@"user" equalTo:[PFUser currentUser]];
+        
+        PFQuery * chatFriendsQuery = [PFQuery queryWithClassName:@"ChatDialog"];
+        [chatFriendsQuery whereKey:@"key" matchesKey:@"key" inQuery:myDialogQuery];
+        
         PFQuery * query = [PFUser query];
+        [query whereKey:@"this" matchesKey:@"user" inQuery:chatFriendsQuery];
+        
+ 
+        //    PFQuery * query = [PFUser query];
+        
+        query.limit = 1000;
         [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
             friendHelper.users = objects;
         }];
@@ -98,35 +110,40 @@ static TLFriendHelper *friendHelper = nil;
 //
 //    _isLoading = YES;
     [self p_loadFriendsDataWithCompleetionBlcok:^{
-      
+
         NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
         NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
     }];
     [self p_loadGroupsDataWithCompleetionBlcok:^{
-     
+
         NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
         [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
         NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
     }];
     
 //    dispatch_group_t serviceGroup = dispatch_group_create();
+//    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
 //
 //    dispatch_group_enter(serviceGroup);
 //    NSLog(@"p_loadFriendsDataWithCompleetionBlcok started");
-//    [self p_loadFriendsDataWithCompleetionBlcok:^{
-//        dispatch_group_leave(serviceGroup);
-//        NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
-//    }];
+//    dispatch_async(queue, ^{
+//        [self p_loadFriendsDataWithCompleetionBlcok:^{
+//            dispatch_group_leave(serviceGroup);
+//            NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
+//        }];
+//    });
 //
 //    dispatch_group_enter(serviceGroup);
 //    NSLog(@"p_loadGroupsDataWithCompleetionBlcok started");
-//    [self p_loadGroupsDataWithCompleetionBlcok:^{
-//        dispatch_group_leave(serviceGroup);
-//        NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
-//    }];
+//    dispatch_async(queue, ^{
+//        [self p_loadGroupsDataWithCompleetionBlcok:^{
+//            dispatch_group_leave(serviceGroup);
+//            NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
+//        }];
+//    });
 //
-//    dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
+//    dispatch_group_notify(serviceGroup, queue, ^{
 //
 //        [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
 //        NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
@@ -353,14 +370,15 @@ static TLFriendHelper *friendHelper = nil;
  
         
 
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             [[TLFriendDataLoader sharedFriendDataLoader] recreateLocalDialogsForFriendsWithCompletionBlock:^{
                 
                 if (completionBlock) {
                     completionBlock();
                 }
             }];
-        });
+//        });
    
 
     
@@ -385,16 +403,16 @@ static TLFriendHelper *friendHelper = nil;
             [group createGroupAvatarWithCompleteAction:nil];
         }
         
- 
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             [[TLGroupDataLoader sharedGroupDataLoader] recreateLocalDialogsForGroupsWithCompletionBlock:^{
-            
+
                 if (completionBlock) {
                     completionBlock();
                 }
-                
+
             }];
-        });
+//        });
         
         
         
