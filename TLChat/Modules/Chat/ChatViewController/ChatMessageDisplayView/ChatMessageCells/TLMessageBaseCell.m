@@ -57,12 +57,7 @@
  
         [self.avatarButton setImage:[UIImage imageNamed:path] forState:UIControlStateNormal];
         
-        NSString *plistPath = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
-        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: plistPath];
-        
-        if ([[dict objectForKey:@"TLChatAvatarInRoundShape"] boolValue]) {
-            [self.avatarButton.layer setCornerRadius:self.avatarButton.size.height / 2.0];
-        }
+    
         
     }
     else if ([message.fromUser chat_avatarURL].length > 0) {
@@ -164,16 +159,7 @@
     }];
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    
-    NSString *path = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: path];
-    
-    if ([[dict objectForKey:@"TLChatAvatarInRoundShape"] boolValue]) {
-        [self.avatarButton.layer setCornerRadius:self.avatarButton.size.height / 2.0];
-    }
-}
+
 
 
 #pragma mark - Event Response -
@@ -226,6 +212,14 @@
         [_avatarButton.layer setMasksToBounds:YES];
         [_avatarButton.layer setBorderWidth:BORDER_WIDTH_1PX];
         [_avatarButton.layer setBorderColor:[UIColor colorWithWhite:0.7 alpha:1.0].CGColor];
+        
+        NSString *plistPath = [[NSBundle mainBundle] pathForResource: @"TLChat" ofType: @"plist"];
+        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile: plistPath];
+        
+        if ([[dict objectForKey:@"TLChatAvatarInRoundShape"] boolValue]) {
+            [self.avatarButton.layer setCornerRadius:AVATAR_WIDTH / 2.0f];
+        }
+        
         [_avatarButton addTarget:self action:@selector(avatarButtonDown:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _avatarButton;
