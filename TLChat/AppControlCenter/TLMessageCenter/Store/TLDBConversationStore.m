@@ -114,7 +114,6 @@ last_message_context:(NSString*)last_message_context
         }
     }];
     
-
     
     return ok;
 }
@@ -352,10 +351,22 @@ last_message_context:(NSString*)last_message_context
 - (void)countUnreadMessages:(TLConversation *)conversation withCompletionBlock:(void(^)(NSInteger))completionBlock
 {
     NSString * key = conversation.key;
-    PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
- 
-    [query whereKey:@"dialogKey" equalTo:key];
+
+    [self setUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:key newUnreadCount:conversation.unreadCount];
+    
+    if (completionBlock) {
+        completionBlock(conversation.unreadCount);
+    }
+    
+    return;
+    
+    
     if (conversation.lastReadDate && ![conversation.lastReadDate isEqualToDate:[NSDate dateWithTimeIntervalSince1970:0]]) {
+        
+        PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
+        
+        [query whereKey:@"dialogKey" equalTo:key];
+        
         DLog(@"conversation.lastReadDate: %@", conversation.lastReadDate);
         [query whereKey:@"createdAt" greaterThan:conversation.lastReadDate];
         [query whereKey:@"sender" notEqualTo:[TLUserHelper sharedHelper].userID];
@@ -373,11 +384,8 @@ last_message_context:(NSString*)last_message_context
         
     }else{
         
-        if (completionBlock) {
-            completionBlock(1);
-        }
-        
-        return;
+
+
         
         // TODO: move to dialog table, use cloud function to calc on the fly.
         

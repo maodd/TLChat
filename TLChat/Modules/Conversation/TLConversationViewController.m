@@ -84,9 +84,30 @@
                 NSString * friendID = matches.firstObject;
                 TLUser * friend = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:friendID];
                 
-                [[TLFriendDataLoader sharedFriendDataLoader] createFriendDialogWithLatestMessage:friend completionBlock:^{
-                    [weakSelf updateConversationData];
-                }];
+                NSArray * dialogMatches = [[TLFriendHelper sharedFriendHelper].myDialogList filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@", conversationKey]];
+                
+                if (dialogMatches.count > 0) {
+                    PFObject * dialog = dialogMatches.firstObject;
+                    
+                    PFQuery * query = [PFQuery queryWithClassName:@"ChatDialog"];
+                
+                    [query getObjectInBackgroundWithId:dialog.objectId block:^(PFObject * _Nullable object, NSError * _Nullable error) {
+                        
+                        if (object) {
+                            [[TLFriendHelper sharedFriendHelper].myDialogList removeObject:dialog];
+                            [[TLFriendHelper sharedFriendHelper].myDialogList addObject:object];
+                            
+                            [[TLFriendDataLoader sharedFriendDataLoader] createFriendDialogWithLatestMessage:friend completionBlock:^{
+                                [weakSelf updateConversationData];
+                            }];
+                            
+                        }
+                    }];
+                    
+
+                }
+                
+                
             }
         }else{
             

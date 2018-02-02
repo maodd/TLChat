@@ -46,7 +46,8 @@
     _nikeName = nikeName;
     if ( self.nikeName.length > 0) {
         self.pinyin = nikeName.pinyin;
-        self.pinyinInitial = nikeName.pinyinInitial;
+        self.pinyinInitial = [nikeName stringByTrimmingCharactersInSet:
+                              [NSCharacterSet whitespaceCharacterSet]].pinyinInitial;
     }
 }
 

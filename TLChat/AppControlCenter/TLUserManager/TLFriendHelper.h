@@ -22,7 +22,7 @@
 /// 好友数据(原始)
 @property (nonatomic, strong) NSMutableArray *friendsData;
 
-@property (nonatomic, strong) NSArray<PFObject*> *myDialogList;
+@property (nonatomic, strong) NSMutableArray<PFObject*> *myDialogList;
 
 /// 格式化的好友数据（二维数组，列表用）
 @property (nonatomic, strong) NSMutableArray *data;

@@ -144,6 +144,32 @@
            }
        }];
        
+       PFQuery * query1 = [PFQuery queryWithClassName:kParseClassNameDialog];
+       [query1 whereKey:@"key" equalTo:dialogKey];
+       
+       
+       
+       [query1 findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+           
+           for (PFObject * dialog in objects) {
+               
+               
+               
+               dialog[@"context"] = msgObject[@"context"];
+               dialog[@"lastMessage"] = msgObject[@"message"];
+               dialog[@"lastMessageSender"] = msgObject[@"sender"]; //??
+               
+               if  (![[dialog[@"user"] objectId] isEqualToString:[[PFUser currentUser] objectId]] ) {
+                   dialog[@"unreadMessagesCount"] = @([dialog[@"unreadMessagesCount"] integerValue] + 1);
+               }
+               
+           }
+           
+           [PFObject saveAllInBackground:objects block:^(BOOL succeeded, NSError * _Nullable error) {
+               
+           }];
+       }];
+       
        // TODO: handel saving result, then update local message sendState
        
 

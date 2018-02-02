@@ -53,7 +53,7 @@ static TLFriendHelper *friendHelper = nil;
 - (void)reset {
     self.friendsData = [@[] mutableCopy];
     self.groupsData = [@[] mutableCopy];
-    self.myDialogList = @[];
+    self.myDialogList = [@[] mutableCopy];
     _friendStore = nil;
     _groupsData = nil;
     [self p_resetFriendData];
@@ -124,7 +124,7 @@ static TLFriendHelper *friendHelper = nil;
     
         [myDialogQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
             
-            self.myDialogList = objects;
+            self.myDialogList = [objects mutableCopy];
             
             [self p_loadGroupsDataWithCompleetionBlcok:^{
                 
@@ -464,14 +464,14 @@ static TLFriendHelper *friendHelper = nil;
                 DLog(@"save group data success %d groups", self.groupsData.count);
             }
             
-            // 生成Group Icon
-            for (TLGroup *group in self.groupsData) {
-                [group createGroupAvatarWithCompleteAction:nil];
-            }
+
         });
         
         
-
+        // 生成Group Icon
+        for (TLGroup *group in self.groupsData) {
+            [group createGroupAvatarWithCompleteAction:nil];
+        }
         
 
 //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
