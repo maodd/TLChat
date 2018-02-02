@@ -36,6 +36,7 @@ static TLFriendHelper *friendHelper = nil;
 
 @implementation TLFriendHelper {
     BOOL _isLoading;
+    BOOL _isLoaded;
 }
 
 + (TLFriendHelper *)sharedFriendHelper
@@ -52,9 +53,11 @@ static TLFriendHelper *friendHelper = nil;
 - (void)reset {
     self.friendsData = [@[] mutableCopy];
     self.groupsData = [@[] mutableCopy];
+    self.myDialogList = @[];
     _friendStore = nil;
     _groupsData = nil;
     [self p_resetFriendData];
+    _isLoaded = NO;
    
 }
 
@@ -72,10 +75,10 @@ static TLFriendHelper *friendHelper = nil;
 //        [self p_initTestData];
 //        [self p_initTestGroupData];
         
-        if ([[TLUserHelper sharedHelper] isLogin]) {
-            
-            [self loadFriendsAndGroupsData];
-        }
+//        if ([[TLUserHelper sharedHelper] isLogin]) {
+//
+//            [self loadFriendsAndGroupsData];
+//        }
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadFriendsAndGroupsData) name:kAKUserLoggedInNotification object:nil];
  
@@ -88,12 +91,14 @@ static TLFriendHelper *friendHelper = nil;
 }
 
 - (void)loadFriendsAndGroupsData {
-    
-//    if (_isLoading) {
-//        return;
-//    }
-//
-//    _isLoading = YES;
+    if (_isLoaded) {
+        return;
+    }
+    if (_isLoading) {
+        return;
+    }
+
+    _isLoading = YES;
     [[PFUser currentUser] fetchIfNeededInBackground];
     
     PFRelation * friendsRelation = [[PFUser currentUser] relationForKey:@"friends"];
@@ -116,24 +121,34 @@ static TLFriendHelper *friendHelper = nil;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         friendHelper.users = [objects mutableCopy];
     
-        [self p_loadFriendsDataWithCompleetionBlcok:^{
+        [myDialogQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
             
-            NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
-            [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
-            NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
+            self.myDialogList = objects;
+            
+            [self p_loadFriendsDataWithCompleetionBlcok:^{
+                
+                NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
+                
+                [self p_loadGroupsDataWithCompleetionBlcok:^{
+                    _isLoading = NO;
+                    _isLoaded = YES;
+                    NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
+                    NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
+                }];
+                
+                
+            }];
+            
         }];
+        
+       
     
     }];
     
     
 
-    [self p_loadGroupsDataWithCompleetionBlcok:^{
 
-        NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
-        [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
-        NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
-    }];
-    
 //    dispatch_group_t serviceGroup = dispatch_group_create();
 //    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
 //
@@ -179,14 +194,31 @@ static TLFriendHelper *friendHelper = nil;
     NSString * lastMsg = @"";
     
     NSString * message = content;
-    if ([fid isEqualToString:[TLUserHelper sharedHelper].userID]) {
+    if (fid == nil || [fid isEqualToString:[TLUserHelper sharedHelper].userID]) {
         lastMsg = message;
     }else{
         TLUser * user = [self getFriendInfoByUserID:fid];
-        
-        lastMsg = [NSString stringWithFormat:@"%@: %@", user.nikeName, message];
+        if (user && user.nikeName) {
+            lastMsg = [NSString stringWithFormat:@"%@: %@", user.nikeName, message];
+        }else{
+            lastMsg = message;
+        }
     }
     return lastMsg;
+}
+
+- (TLUser *)getLocalFriendInfoByUserID:(NSString *)userID
+{
+    if (userID == nil) {
+        return nil;
+    }
+    for (TLUser *user in self.friendsData) {
+        if ([user.userID isEqualToString:userID]) {
+            return user;
+        }
+    }
+    
+    return nil;
 }
 
 - (TLUser *)getFriendInfoByUserID:(NSString *)userID
@@ -370,21 +402,27 @@ static TLFriendHelper *friendHelper = nil;
         
  
         
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            [self p_resetFriendData];
-        });
+//        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+//            [self p_resetFriendData];
+//        });
         
         // 更新好友数据到数据库
         
         self.friendsData = [friends mutableCopy];
-        BOOL ok = [self.friendStore updateFriendsData:self.friendsData forUid:[TLUserHelper sharedHelper].userID];
-        if (!ok) {
-            DDLogError(@"保存好友数据到数据库失败!");
-        }
+        
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            BOOL ok = [self.friendStore updateFriendsData:self.friendsData forUid:[TLUserHelper sharedHelper].userID];
+            if (!ok) {
+                DDLogError(@"保存好友数据到数据库失败!");
+            }else{
+                DLog(@"save friends data success %d friends", self.friendsData.count);
+            }
+            
+        });
  
         
 
-
+        DLog(@"starting recreateLocalDialogsForFriendsWithCompletionBlock...");
 //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             [[TLFriendDataLoader sharedFriendDataLoader] recreateLocalDialogsForFriendsWithCompletionBlock:^{
                 

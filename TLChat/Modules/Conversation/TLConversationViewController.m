@@ -47,9 +47,9 @@
    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkStatusChange:) name:AFNetworkingReachabilityDidChangeNotification object:nil];
     
-    if ([TLUserHelper sharedHelper].isLogin) {
-        [TLFriendHelper sharedFriendHelper]; // force a friend data load.
-    }
+//    if ([TLUserHelper sharedHelper].isLogin) {
+//        [TLFriendHelper sharedFriendHelper]; // force a friend data load.
+//    }
     
     [[NSNotificationCenter defaultCenter] addObserverForName:kAKUserLoggedInNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         [TLFriendHelper sharedFriendHelper]; // force a friend data load.

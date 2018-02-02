@@ -102,7 +102,8 @@ last_message_context:(NSString*)last_message_context
             dialog[@"user"] = [PFUser currentUser];
             
             dialog[@"context"] = last_message_context;
-
+            dialog[@"lastMessage"] = last_message;
+            dialog[@"lastMessageSender"] = uid; //??
             dialog[@"name"] = dialogName;
             
             [dialog saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
@@ -371,6 +372,8 @@ last_message_context:(NSString*)last_message_context
         }];
         
     }else{
+        
+        // TODO: move to dialog table, use cloud function to calc on the fly.
         
         PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
         [query whereKey:@"user" equalTo:[PFUser currentUser]];

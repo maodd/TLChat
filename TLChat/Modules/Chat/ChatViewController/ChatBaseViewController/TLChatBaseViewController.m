@@ -207,9 +207,7 @@
 - (void)liveQuery:(PFQuery<PFObject *> *)query didSubscribeInClient:(PFLiveQueryClient *)client {
     DLog(@"Subscribed to %@", self.conversationKey);
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.navigationItem setTitle:[self.partner chat_username]];
-    });
+
 }
 
 - (void)liveQuery:(PFQuery<PFObject *> *)query didRecieveEvent:(PFLiveQueryEvent *)event inClient:(PFLiveQueryClient *)client {

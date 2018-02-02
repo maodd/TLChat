@@ -311,9 +311,7 @@
 # pragma mark - PFLiveQuerySubscriptionHandling
 - (void)liveQuery:(PFQuery<PFObject *> *)query didSubscribeInClient:(PFLiveQueryClient *)client {
     DLog(@"Subscribed");
-    dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.navigationItem setTitle:@"聊天"];
-    });
+
 }
 
 - (void)liveQuery:(PFQuery<PFObject *> *)query didUnsubscribeInClient:(PFLiveQueryClient *)client {

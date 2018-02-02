@@ -151,18 +151,18 @@ static TLGroupDataLoader *groupDataLoader = nil;
             
         }
         
-        PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
-        [query whereKey:@"dialogKey" equalTo:key];
-        [query orderByDescending:@"createdAt"];
-        if (localDeleteDate) {
-            [query whereKey:@"createdAt" greaterThan:localDeleteDate];
-        }
+//        PFQuery * query = [PFQuery queryWithClassName:kParseClassNameMessage];
+//        [query whereKey:@"dialogKey" equalTo:key];
+//        [query orderByDescending:@"createdAt"];
+//        if (localDeleteDate) {
+//            [query whereKey:@"createdAt" greaterThan:localDeleteDate];
+//        }
+//
+//        [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
+//
+//            if (object) {
         
-        [query getFirstObjectInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
-            
-            if (object) {
-                
-                NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:[TLMessage conversationContentForMessage:  object[@"message"]] fid:object[@"sender"]];
+                NSString * lastMsg = [[TLFriendHelper sharedFriendHelper] formatLastMessage:[TLMessage conversationContentForMessage:  object[@"lastMessage"]] fid:object[@"lastMessageSender"]];
                 
                 
                 [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
@@ -172,20 +172,20 @@ static TLGroupDataLoader *groupDataLoader = nil;
                                                                              last_message:lastMsg
                                                                      last_message_context:object[@"context"] ?: @""
                                                                                 localOnly:YES];
-            }else{
-                
-                if (localDeleteDate) {
-                }else{
-                    [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
-                                                                                          fid:key
-                                                                                         type:TLConversationTypeGroup
-                                                                                         date:group.date
-                                                                                 last_message:@"Welcome"
-                                                                         last_message_context:@"" 
-                                                                                    localOnly:YES];
-                }
-            }
-            
+//            }else{
+//
+//                if (localDeleteDate) {
+//                }else{
+//                    [[TLMessageManager sharedInstance].conversationStore addConversationByUid:[PFUser currentUser].objectId
+//                                                                                          fid:key
+//                                                                                         type:TLConversationTypeGroup
+//                                                                                         date:group.date
+//                                                                                 last_message:@"Welcome"
+//                                                                         last_message_context:@""
+//                                                                                    localOnly:YES];
+//                }
+//            }
+        
             if (completionBlock) {
                 completionBlock();
             }
