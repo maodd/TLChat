@@ -68,7 +68,7 @@
             _user = [userStore userByID:self.userID];
  
  
-            [[PFUser currentUser] fetch];
+      
         
             _user = [TLUser new];
             _user.userID = self.userID;

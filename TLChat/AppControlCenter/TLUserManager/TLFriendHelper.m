@@ -30,7 +30,7 @@ static TLFriendHelper *friendHelper = nil;
 
 @property (nonatomic, strong) TLDBGroupStore *groupStore;
 
-@property (nonatomic, strong) NSArray<PFObject*> * users;
+@property (nonatomic, strong) NSMutableArray<PFObject*> * users;
 
 @end
 
@@ -44,22 +44,7 @@ static TLFriendHelper *friendHelper = nil;
     dispatch_once(&once, ^{
         friendHelper = [[TLFriendHelper alloc] init];
         
-        PFQuery * myDialogQuery = [PFQuery queryWithClassName:@"ChatDialog"];
-        [myDialogQuery whereKey:@"user" equalTo:[PFUser currentUser]];
         
-        PFQuery * chatFriendsQuery = [PFQuery queryWithClassName:@"ChatDialog"];
-        [chatFriendsQuery whereKey:@"key" matchesKey:@"key" inQuery:myDialogQuery];
-        
-        PFQuery * query = [PFUser query];
-        [query whereKey:@"this" matchesKey:@"user" inQuery:chatFriendsQuery];
-        
- 
-        //    PFQuery * query = [PFUser query];
-        
-        query.limit = 1000;
-        [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-            friendHelper.users = objects;
-        }];
     });
     return friendHelper;
 }
@@ -109,12 +94,39 @@ static TLFriendHelper *friendHelper = nil;
 //    }
 //
 //    _isLoading = YES;
-    [self p_loadFriendsDataWithCompleetionBlcok:^{
-
-        NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
-        [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
-        NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
+    [[PFUser currentUser] fetchIfNeeded];
+    
+    PFRelation * friendsRelation = [[PFUser currentUser] relationForKey:@"friends"];
+    PFQuery * query1 = [friendsRelation query];
+    
+    PFQuery * myDialogQuery = [PFQuery queryWithClassName:@"ChatDialog"];
+    [myDialogQuery whereKey:@"user" equalTo:[PFUser currentUser]];
+    
+    PFQuery * chatFriendsQuery = [PFQuery queryWithClassName:@"ChatDialog"];
+    [chatFriendsQuery whereKey:@"key" matchesKey:@"key" inQuery:myDialogQuery];
+    
+    PFQuery * query2 = [PFUser query];
+    [query2 whereKey:@"this" matchesKey:@"user" inQuery:chatFriendsQuery];
+    
+    
+//    PFQuery * query = query2;
+    PFQuery * query = [PFQuery orQueryWithSubqueries:@[query1, query2]];
+    
+    query.limit = 1000;
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+        friendHelper.users = [objects mutableCopy];
+    
+        [self p_loadFriendsDataWithCompleetionBlcok:^{
+            
+            NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
+            [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
+            NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
+        }];
+    
     }];
+    
+    
+
     [self p_loadGroupsDataWithCompleetionBlcok:^{
 
         NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
@@ -222,6 +234,8 @@ static TLFriendHelper *friendHelper = nil;
     query.cachePolicy = kPFCachePolicyNetworkOnly;
     [query whereKey:@"objectId" equalTo:userID];
     PFUser * userObject = [query getFirstObject];
+    
+    [self.users addObject:userObject];
     
     TLUser * user = [TLUser new];
     user.userID = userObject.objectId;
