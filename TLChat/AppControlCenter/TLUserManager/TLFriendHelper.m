@@ -94,7 +94,7 @@ static TLFriendHelper *friendHelper = nil;
 //    }
 //
 //    _isLoading = YES;
-    [[PFUser currentUser] fetchIfNeeded];
+    [[PFUser currentUser] fetchIfNeededInBackground];
     
     PFRelation * friendsRelation = [[PFUser currentUser] relationForKey:@"friends"];
     PFQuery * query1 = [friendsRelation query];
