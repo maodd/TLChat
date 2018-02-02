@@ -91,14 +91,15 @@ static TLFriendHelper *friendHelper = nil;
 }
 
 - (void)loadFriendsAndGroupsData {
-    if (_isLoaded) {
-        return;
-    }
-    if (_isLoading) {
+
+    if (_isLoaded || _isLoading) {
         return;
     }
 
+    DLog(@"isloading: %d, loaded: %d", _isLoading, _isLoaded);
+    
     _isLoading = YES;
+    
     [[PFUser currentUser] fetchIfNeededInBackground];
     
     PFRelation * friendsRelation = [[PFUser currentUser] relationForKey:@"friends"];
@@ -116,7 +117,7 @@ static TLFriendHelper *friendHelper = nil;
     
 //    PFQuery * query = query2;
     PFQuery * query = [PFQuery orQueryWithSubqueries:@[query1, query2]];
-    
+     query.cachePolicy = kPFCachePolicyNetworkOnly;
     query.limit = 1000;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         friendHelper.users = [objects mutableCopy];
@@ -125,20 +126,28 @@ static TLFriendHelper *friendHelper = nil;
             
             self.myDialogList = objects;
             
-            [self p_loadFriendsDataWithCompleetionBlcok:^{
+            [self p_loadGroupsDataWithCompleetionBlcok:^{
                 
-                NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
+                NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
                 
-                [self p_loadGroupsDataWithCompleetionBlcok:^{
+               
+                [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
+                
+            }];
+            
+            
+                [self p_loadFriendsDataWithCompleetionBlcok:^{
+     
                     _isLoading = NO;
                     _isLoaded = YES;
-                    NSLog(@"p_loadGroupsDataWithCompleetionBlcok finished");
+                    DLog(@"isloading: %d, loaded: %d", _isLoading, _isLoaded);
+                    
+                    NSLog(@"p_loadFriendsDataWithCompleetionBlcok finished");
                     [[NSNotificationCenter defaultCenter] postNotificationName:kAKFriendsAndGroupDataUpdateNotification object:nil];
                     NSLog(@"sending kAKFriendsAndGroupDataUpdateNotification");
                 }];
-                
-                
-            }];
+                 
+            
             
         }];
         
@@ -177,6 +186,8 @@ static TLFriendHelper *friendHelper = nil;
 //
 //        _isLoading = NO;
 //    });
+     
+
 }
 
 #pragma mark - Public Methods -
@@ -445,15 +456,22 @@ static TLFriendHelper *friendHelper = nil;
         self.groupsData = [groups mutableCopy];
         
         
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            BOOL ok = [self.groupStore updateGroupsData:self.groupsData forUid:[TLUserHelper sharedHelper].userID];
+            if (!ok) {
+                DDLogError(@"保存群数据到数据库失败!");
+            }else{
+                DLog(@"save group data success %d groups", self.groupsData.count);
+            }
+            
+            // 生成Group Icon
+            for (TLGroup *group in self.groupsData) {
+                [group createGroupAvatarWithCompleteAction:nil];
+            }
+        });
         
-        BOOL ok = [self.groupStore updateGroupsData:self.groupsData forUid:[TLUserHelper sharedHelper].userID];
-        if (!ok) {
-            DDLogError(@"保存群数据到数据库失败!");
-        }
-        // 生成Group Icon
-        for (TLGroup *group in self.groupsData) {
-            [group createGroupAvatarWithCompleteAction:nil];
-        }
+        
+
         
 
 //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{

@@ -373,6 +373,12 @@ last_message_context:(NSString*)last_message_context
         
     }else{
         
+        if (completionBlock) {
+            completionBlock(1);
+        }
+        
+        return;
+        
         // TODO: move to dialog table, use cloud function to calc on the fly.
         
         PFQuery * query = [PFQuery queryWithClassName:kParseClassNameDialog];
