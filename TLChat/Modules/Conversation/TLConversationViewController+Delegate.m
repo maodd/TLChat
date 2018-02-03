@@ -15,7 +15,7 @@
 #import "TLMessageManager.h"
 #import <TLKit/TLKit.h>
 #import "TLMacros.h"
-
+#import "TLConversationLiveQueryHandler.h"
 
 @interface TLConversationViewController (Delegate) <PFLiveQuerySubscriptionHandling>
 
@@ -37,6 +37,7 @@
     [[TLMessageManager sharedInstance] conversationRecord:^(NSArray *data) {
         
         NSInteger totalUnreadCount = 0;
+ 
         for (TLConversation *conversation in data) {
             if (conversation.convType == TLConversationTypePersonal) {
                 TLUser *user = [[TLFriendHelper sharedFriendHelper] getFriendInfoByUserID:conversation.partnerID];
@@ -45,6 +46,7 @@
             else if (conversation.convType == TLConversationTypeGroup) {
                 TLGroup *group = [[TLFriendHelper sharedFriendHelper] getGroupInfoByGroupID:conversation.partnerID];
                 [conversation updateGroupInfo:group];
+ 
             }
             
             totalUnreadCount = totalUnreadCount + conversation.unreadCount;
@@ -230,7 +232,7 @@
         self.client1 = nil;
     }
  
-
+    
     _currentKeys = keys;
     if (keys.count > 0) {
         self.client = [[PFLiveQueryClient alloc] init];
@@ -238,14 +240,26 @@
         [query whereKey:@"dialogKey" containedIn:keys];
         self.query = query; //[PFQuery orQueryWithSubqueries:@[query1, query2]];
         
-        self.subscription = [self.client  subscribeToQuery:self.query withHandler:self];
+        self.subscription = [self.client  subscribeToQuery:self.query];
         
         
         DLog(@"keys to subscribe: %@", keys);
     }else{
         NSLog(@"key count is zero, no need to subscribe");
     }
- 
+    
+    [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+        DLog(@"subscribed to existing keys client");
+    }];
+    
+    [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
+        
+            PFObject * message = object;
+            [self processMessageFromServer:message bypassMine:YES];
+        
+    }];
+    
+    
     if ([TLUserHelper sharedHelper].userID) {
         NSLog(@"subscribe message dialog key contains %@", [TLUserHelper sharedHelper].userID);
         PFQuery * query1 = [PFQuery queryWithClassName:kParseClassNameMessage];
@@ -253,12 +267,16 @@
         self.query1 = query1;
         self.client1 = [[PFLiveQueryClient alloc] init];
         self.subscription1 = [self.client1  subscribeToQuery:self.query1 withHandler:self];
-        
-        
+
+
         _currentUserId = [TLUserHelper sharedHelper].userID;
     }else{
         NSLog(@"user id is null, logged out or not logged in yet");
     }
+    
+
+ 
+
     
  
     
@@ -310,7 +328,7 @@
 
 # pragma mark - PFLiveQuerySubscriptionHandling
 - (void)liveQuery:(PFQuery<PFObject *> *)query didSubscribeInClient:(PFLiveQueryClient *)client {
-    DLog(@"Subscribed");
+    DLog(@"Subscribed to client ");
 
 }
 

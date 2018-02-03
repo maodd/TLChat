@@ -164,6 +164,17 @@ last_message_context:(NSString*)last_message_context
 {
     [self updateConversationByUid:uid key:key unreadCount:0];
     
+    // server side reset
+    NSArray * dialogMatches = [[TLFriendHelper sharedFriendHelper].myDialogList filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@", key]];
+    
+    if (dialogMatches.count > 0) {
+        PFObject * dialog = dialogMatches.firstObject;
+        dialog[@"unreadMessagesCount"] = @(0);
+        
+        [dialog saveInBackground];
+        
+    }
+    
     return;
 }
     

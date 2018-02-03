@@ -97,6 +97,8 @@
                             [[TLFriendHelper sharedFriendHelper].myDialogList removeObject:dialog];
                             [[TLFriendHelper sharedFriendHelper].myDialogList addObject:object];
                             
+                             [[TLMessageManager sharedInstance].conversationStore setUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conversationKey newUnreadCount:[dialog[@"unreadMessagesCount"] integerValue]];
+                            
                             [[TLFriendDataLoader sharedFriendDataLoader] createFriendDialogWithLatestMessage:friend completionBlock:^{
                                 [weakSelf updateConversationData];
                             }];
@@ -112,13 +114,34 @@
         }else{
             
             // GROUP
+            // TODO: resue same logic to update last msg for both group chat and persannal chat.
             
             TLGroup * group = [[TLFriendHelper sharedFriendHelper] getGroupInfoByGroupID:conversationKey];
             
             
-            [[TLGroupDataLoader sharedGroupDataLoader] createCourseDialogWithLatestMessage:group completionBlock:^{
-               [weakSelf updateConversationData];
-            }];
+            NSArray * dialogMatches = [[TLFriendHelper sharedFriendHelper].myDialogList filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@", conversationKey]];
+            
+            if (dialogMatches.count > 0) {
+                PFObject * dialog = dialogMatches.firstObject;
+                
+                PFQuery * query = [PFQuery queryWithClassName:@"ChatDialog"];
+                
+                [query getObjectInBackgroundWithId:dialog.objectId block:^(PFObject * _Nullable object, NSError * _Nullable error) {
+                    
+                    if (object) {
+                        [[TLFriendHelper sharedFriendHelper].myDialogList removeObject:dialog];
+                        [[TLFriendHelper sharedFriendHelper].myDialogList addObject:object];
+                        
+                         [[TLMessageManager sharedInstance].conversationStore setUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conversationKey newUnreadCount:[dialog[@"unreadMessagesCount"] integerValue]];
+                        
+                        [[TLGroupDataLoader sharedGroupDataLoader] createCourseDialogWithLatestMessage:group completionBlock:^{
+                            [weakSelf updateConversationData];
+                        }];
+                        
+                    }
+                }];
+            }
+
         }
     }
     
