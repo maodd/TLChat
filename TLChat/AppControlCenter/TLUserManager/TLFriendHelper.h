@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "TLUserGroup.h"
 #import "TLGroup.h"
+@import Parse;
 @class TLMessage;
 
 @interface TLFriendHelper : NSObject

@@ -83,7 +83,7 @@ last_message_context:(NSString*)last_message_context
 
     
     
-    if (localOnly || _isQueryingDialog) {
+    if (localOnly ) {
         return ok;
     }
     
@@ -94,7 +94,7 @@ last_message_context:(NSString*)last_message_context
     _isQueryingDialog = YES;
     [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
         
-        if (number == 0 && error == nil) {
+        if (number == 0) {
             PFObject * dialog = [PFObject objectWithClassName:kParseClassNameDialog];
             
             dialog[@"type"] = @(type);

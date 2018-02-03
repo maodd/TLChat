@@ -248,16 +248,35 @@
         NSLog(@"key count is zero, no need to subscribe");
     }
     
-    [self.subscription addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
-        DLog(@"subscribed to existing keys client");
-    }];
+    // UNI needs to enable this query to support group chat live query.
+    // for some reason old objective c style doesn't work swift bridged project
+    if ([self.subscription respondsToSelector:@selector(addSubscribeHandler:)]) {
+        [self.subscription performSelector:@selector(addSubscribeHandler:) withObject:^(PFQuery<PFObject *> * _Nonnull query) {
+                        DLog(@"subscribed to existing keys client");
+        }];
+    }
+
+    if ([self.subscription respondsToSelector:@selector(addCreateHandler:)]) {
+        [self.subscription performSelector:@selector(addCreateHandler:) withObject:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
+            
+                            PFObject * message = object;
+                            [self processMessageFromServer:message bypassMine:YES];
+            
+            
+        }];
+    }
     
-    [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
-        
-            PFObject * message = object;
-            [self processMessageFromServer:message bypassMine:YES];
-        
-    }];
+//        [self.subscription  addSubscribeHandler:^(PFQuery<PFObject *> * _Nonnull query) {
+//            DLog(@"subscribed to existing keys client");
+//        }];
+//
+//        [self.subscription addCreateHandler:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
+//
+//                PFObject * message = object;
+//                [self processMessageFromServer:message bypassMine:YES];
+//
+//        }];
+
     
     
     if ([TLUserHelper sharedHelper].userID) {
@@ -384,7 +403,7 @@
                                                          last_message_context:message[@"context"]
                                                                     localOnly:YES];
     
-    [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conv.key] ;
+//    [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conv.key] ;
     
     [self updateConversationData];
     

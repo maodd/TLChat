@@ -90,11 +90,11 @@
 //                                      @"headerIcon":user.avatarURL ?: @"",
 //                                      @"isFriend":@(YES)
 //                                      }]; // TODO: handle non-friend chat.
-    if ([[UIApplication sharedApplication].delegate respondsToSelector:@selector(openUserDetails:navigationController:)]) {
-        [[UIApplication sharedApplication].delegate performSelector:@selector(openUserDetails:navigationController:) withObject:user withObject:self.navigationController];
-    }
+//    if ([[UIApplication sharedApplication] respondsToSelector:@selector(openUserDetails:navigationController:)]) {
+//        [[UIApplication sharedApplication].delegate performSelector:@selector(openUserDetails:navigationController:) withObject:user withObject:self.navigationController];
+//    }
     // place this code in appdelegate if use default wechat style user details profile viewer.
-//    [[TLUIManager sharedUIManager]  openUserDetails:user navigationController:self.navigationController];
+    [[TLUIManager sharedUIManager]  openUserDetails:user navigationController:self.navigationController];
     
 }
 

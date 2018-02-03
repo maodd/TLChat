@@ -75,10 +75,10 @@ static TLFriendHelper *friendHelper = nil;
 //        [self p_initTestData];
 //        [self p_initTestGroupData];
         
-//        if ([[TLUserHelper sharedHelper] isLogin]) {
-//
-//            [self loadFriendsAndGroupsData];
-//        }
+        if ([[TLUserHelper sharedHelper] isLogin]) {
+
+            [self loadFriendsAndGroupsData];
+        }
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadFriendsAndGroupsData) name:kAKUserLoggedInNotification object:nil];
  
