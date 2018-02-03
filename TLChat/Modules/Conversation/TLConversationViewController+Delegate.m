@@ -15,7 +15,7 @@
 #import "TLMessageManager.h"
 #import <TLKit/TLKit.h>
 #import "TLMacros.h"
-#import "TLConversationLiveQueryHandler.h"
+
 
 @interface TLConversationViewController (Delegate) <PFLiveQuerySubscriptionHandling>
 
@@ -266,7 +266,7 @@
         [query1 whereKey:@"dialogKey" containsString:[TLUserHelper sharedHelper].userID];
         self.query1 = query1;
         self.client1 = [[PFLiveQueryClient alloc] init];
-        self.subscription1 = [self.client1  subscribeToQuery:self.query1 withHandler:self];
+        [self.client1  subscribeToQuery:self.query1 withHandler:self];
 
 
         _currentUserId = [TLUserHelper sharedHelper].userID;

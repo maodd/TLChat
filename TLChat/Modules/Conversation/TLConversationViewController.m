@@ -67,7 +67,12 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newChatMessageArrive:) name:@"NewChatMessageReceived" object:nil];
     
+    
+    // initial load, might from local db.
+    [self updateConversationData];
+    
     self.definesPresentationContext = YES;
+    
 }
 
 - (void)newChatMessageArrive:(NSNotification*)notificaion {
