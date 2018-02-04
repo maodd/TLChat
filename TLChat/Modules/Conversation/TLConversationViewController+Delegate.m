@@ -258,11 +258,11 @@
 
     if ([self.subscription respondsToSelector:@selector(addCreateHandler:)]) {
         [self.subscription performSelector:@selector(addCreateHandler:) withObject:^(PFQuery<PFObject *> * _Nonnull query, PFObject * _Nonnull object) {
-            
+
                             PFObject * message = object;
                             [self processMessageFromServer:message bypassMine:YES];
-            
-            
+
+
         }];
     }
     
@@ -403,7 +403,7 @@
                                                          last_message_context:message[@"context"]
                                                                     localOnly:YES];
     
-//    [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conv.key] ;
+    [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conv.key] ;
     
     [self updateConversationData];
     

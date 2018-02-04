@@ -85,9 +85,10 @@
         [self refreshDialogForKey:conversationKey];
     
     }else{
-        
-        for (NSString * key in [self.data valueForKeyPath:@"key"] ) {
-            [self refreshDialogForKey:key];
+        if ([TLFriendHelper sharedFriendHelper].myDialogList.count > 0 ) {
+            for (NSString * key in [self.data valueForKeyPath:@"key"] ) {
+                [self refreshDialogForKey:key];
+            }
         }
     }
  
@@ -118,7 +119,7 @@
                         [[TLFriendHelper sharedFriendHelper].myDialogList removeObject:dialog];
                         [[TLFriendHelper sharedFriendHelper].myDialogList addObject:object];
                         
-                        [[TLMessageManager sharedInstance].conversationStore setUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conversationKey newUnreadCount:[dialog[@"unreadMessagesCount"] integerValue]];
+                        [[TLMessageManager sharedInstance].conversationStore setUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conversationKey newUnreadCount:[object[@"unreadMessagesCount"] integerValue]];
                         
                         [[TLFriendDataLoader sharedFriendDataLoader] createFriendDialogWithLatestMessage:friend completionBlock:^{
                             [weakSelf updateConversationData];
@@ -152,7 +153,7 @@
                 if (object) {
                     [[TLFriendHelper sharedFriendHelper].myDialogList removeObject:dialog];
                     [[TLFriendHelper sharedFriendHelper].myDialogList addObject:object];
-                    
+                    DLog(@"conversation %@ unread number %d", conversationKey, [dialog[@"unreadMessagesCount"] integerValue]);
                     [[TLMessageManager sharedInstance].conversationStore setUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conversationKey newUnreadCount:[dialog[@"unreadMessagesCount"] integerValue]];
                     
                     [[TLGroupDataLoader sharedGroupDataLoader] createCourseDialogWithLatestMessage:group completionBlock:^{
