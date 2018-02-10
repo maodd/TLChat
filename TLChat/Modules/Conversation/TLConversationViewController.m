@@ -154,7 +154,7 @@
                     [[TLFriendHelper sharedFriendHelper].myDialogList removeObject:dialog];
                     [[TLFriendHelper sharedFriendHelper].myDialogList addObject:object];
                     DLog(@"conversation %@ unread number %d", conversationKey, [dialog[@"unreadMessagesCount"] integerValue]);
-                    [[TLMessageManager sharedInstance].conversationStore setUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conversationKey newUnreadCount:[dialog[@"unreadMessagesCount"] integerValue]];
+                    [[TLMessageManager sharedInstance].conversationStore setUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conversationKey newUnreadCount:[object[@"unreadMessagesCount"] integerValue]];
                     
                     [[TLGroupDataLoader sharedGroupDataLoader] createCourseDialogWithLatestMessage:group completionBlock:^{
                         [weakSelf updateConversationData];
