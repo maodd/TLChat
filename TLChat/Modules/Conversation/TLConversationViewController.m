@@ -64,6 +64,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateConversationData) name:kAKFriendsAndGroupDataUpdateNotification object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(freshAllDialogs) name:kAKFriendsAndGroupDataUpdateNotification object:nil];
+    
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newChatMessageArrive:) name:@"NewChatMessageReceived" object:nil];
     
@@ -85,14 +87,18 @@
         [self refreshDialogForKey:conversationKey];
     
     }else{
-        if ([TLFriendHelper sharedFriendHelper].myDialogList.count > 0 ) {
-            for (NSString * key in [self.data valueForKeyPath:@"key"] ) {
-                [self refreshDialogForKey:key];
-            }
-        }
+        [self freshAllDialogs];
     }
  
     
+}
+
+- (void)freshAllDialogs {
+    if ([TLFriendHelper sharedFriendHelper].myDialogList.count > 0 ) {
+        for (NSString * key in [self.data valueForKeyPath:@"key"] ) {
+            [self refreshDialogForKey:key];
+        }
+    }
 }
 
 - (void)refreshDialogForKey:(NSString *)conversationKey {
