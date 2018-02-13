@@ -402,8 +402,9 @@
                                                                  last_message:conv.content
                                                          last_message_context:message[@"context"]
                                                                     localOnly:YES];
-    
-    [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conv.key] ;
+    if (![message[@"sender"] isEqualToString:[TLUserHelper sharedHelper].userID]) {
+        [[TLMessageManager sharedInstance].conversationStore increaseUnreadNumberForConversationByUid:[TLUserHelper sharedHelper].userID key:conv.key] ;
+    }
     
     [self updateConversationData];
     
