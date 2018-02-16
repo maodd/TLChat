@@ -101,7 +101,7 @@ last_message_context:(NSString*)last_message_context
             dialog[@"key"] = dialogKey;
             dialog[@"user"] = [PFUser currentUser];
             
-            dialog[@"context"] = last_message_context;
+            dialog[@"context"] = last_message_context ?: @"";
             dialog[@"lastMessage"] = last_message;
             dialog[@"lastMessageSender"] = uid; //??
             dialog[@"name"] = dialogName;
